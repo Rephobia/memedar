@@ -1,0 +1,165 @@
+#include <ctime>
+#include <memory>
+
+#include <QString>
+
+#include "memedar/utils/time.hpp"
+#include "memedar/utils/storage.hpp"
+#include "memedar/utils/ref_wrapper.hpp"
+
+#include "memedar/model/side/side.hpp"
+#include "memedar/model/card/visitor.hpp"
+#include "memedar/model/card/card.hpp"
+#include "memedar/model/deck/deck.hpp"
+#include "memedar/model/task/task.hpp"
+#include "memedar/model/task/task_book.hpp"
+
+#include "memedar/model/dal/transaction.hpp"
+#include "memedar/model/dal/card_mapper.hpp"
+#include "memedar/model/dal/deck_mapper.hpp"
+#include "memedar/model/dal/task_mapper.hpp"
+#include "memedar/model/dal/transaction_guard.hpp"
+
+#include "memedar/view/error_delegate.hpp"
+#include "memedar/model/task_service.hpp"
+
+
+using md::model::task_service;
+
+task_service::task_service(md::view::error_delegate& error_delegate,
+                           dal::transaction& transaction,
+                           dal::card_mapper& card_mapper,
+                           dal::deck_mapper& deck_mapper,
+                           dal::task_mapper& task_mapper)
+	: m_error_delegate {error_delegate}
+	, m_transaction    {transaction}
+	, m_card_mapper    {card_mapper}
+	, m_deck_mapper    {deck_mapper}
+	, m_task_mapper    {task_mapper}
+{
+	try {
+		auto guard {dal::make_transaction(m_transaction)};
+
+		m_card_mapper.create_table();
+		m_deck_mapper.create_table();
+		m_task_mapper.create_table();
+
+		guard.commit();
+	}
+	catch (std::system_error &e) {
+		m_error_delegate.show_error(e);
+	}
+}
+
+md::model::task::task_book task_service::make_task(deck::deck& deck)
+{
+	md::model::task::task_book task_book {deck};
+	try {
+		auto guard {dal::make_transaction(m_transaction)};
+
+		if (deck.empty()) {
+			m_card_mapper.load_cards(deck);
+		}
+
+		if (not utils::time::is_today(deck.last_opening())) {
+			m_task_mapper.delete_done_task(deck);
+			m_deck_mapper.reset_daily(deck);
+		}
+
+		m_task_mapper.load_task_book(task_book);
+
+		for (auto it = deck.begin(); task_book.space() and it != deck.end(); it++) {
+
+			if (task_book.add_card(*it)) {
+				m_task_mapper.save_task(deck, task_book.back());
+			}
+		}
+
+		m_deck_mapper.update_last_opening(deck);
+
+		guard.commit();
+	}
+	catch (std::system_error &e) {
+
+		m_error_delegate.show_error(e);
+
+	}
+
+	return task_book;
+}
+
+void task_service::again_card(task::task& task)
+{
+	try {
+		auto guard {dal::make_transaction(m_transaction)};
+
+		m_card_mapper.reset_combo(task.card);
+
+		guard.commit();
+	}
+	catch (std::system_error &e) {
+
+		m_error_delegate.show_error(e);
+
+	}
+}
+
+
+class task_service::done_visitor : public card::visitor
+{
+public:
+	done_visitor(dal::card_mapper& card_mapper,
+	             dal::deck_mapper& deck_mapper,
+	             deck::deck& deck, task::task& task, std::time_t gap)
+		: m_card_mapper {card_mapper}
+		, m_deck_mapper {deck_mapper}
+		, m_deck        {deck}
+		, m_task        {task}
+		, m_gap         {gap}
+	{ ;}
+
+	void visit([[maybe_unused]] card::noob_t& ref) override
+	{
+		m_deck_mapper.decrement_daily_noob(m_deck);
+		m_card_mapper.update_repeat(m_task.card.get(),
+		                            m_gap + std::time(nullptr));
+	}
+
+	void visit([[maybe_unused]] card::ready_t& ref) override
+	{
+		m_deck_mapper.decrement_daily_ready(m_deck);
+		m_card_mapper.update_repeat(m_task.card.get(),
+		                            m_gap + m_task.card.get().repeat());
+	}
+
+	void visit([[maybe_unused]] card::delayed_t& ref) override
+	{
+		;
+	}
+protected:
+	dal::card_mapper& m_card_mapper;
+	dal::deck_mapper& m_deck_mapper;
+	deck::deck& m_deck;
+	task::task& m_task;
+	std::time_t m_gap;
+};
+
+
+void task_service::done_card(deck::deck& deck, task::task& task, std::time_t gap)
+{
+	try {
+		auto guard {dal::make_transaction(m_transaction)};
+
+		done_visitor visitor {m_card_mapper, m_deck_mapper,
+		                      deck, task, gap};
+		task.card.get().take_visitor(visitor);
+		deck.process_card(task.card);
+		m_task_mapper.change_state(task, task::state::done);
+		task.card.get().increment_combo();
+
+		guard.commit();
+	}
+	catch (std::system_error &e) {
+		m_error_delegate.show_error(e);
+	}
+}
