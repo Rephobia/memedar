@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 {
 	QApplication app {argc, argv};
 
-	auto db {md::model::dal::sqlite::adapter::open_sqlite("test.db")};
+	auto db {md::model::dal::sqlite::adapter::open_sqlite("memedar.db")};
 
 	auto qt_error {std::make_unique<md::view::qt::error_delegate>()};
 	auto transact {std::make_unique<md::model::dal::sqlite::transaction>(db)};
