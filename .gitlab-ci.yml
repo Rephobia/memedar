@@ -1,0 +1,14 @@
+# This file is a template, and might need editing before it works on your project.
+# use the official gcc image, based on debian
+# can use verions as well, like gcc:5.2
+# see https://hub.docker.com/_/gcc/
+image: ubuntu:19.04
+
+build:
+    before_script:
+        - apt-get update
+        - apt-get install -y g++ cmake libsqlite3-dev qt5-default 
+            libboost-signals-dev cppcheck
+    script:
+        - cmake .
+        - cmake --build .
