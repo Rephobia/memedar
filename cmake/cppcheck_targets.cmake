@@ -1,8 +1,11 @@
 function(cppcheck_targets)
 
+	# function doesn't start cppcheck, it concat sources of all passed targets
+	# and append them to passed property
+
 	cmake_parse_arguments(PARSED_ARGS # prefix of output variables
 	                      "" # list of names of the boolean arguments
-	                      "" # list of names of mono-valued arguments
+	                      "PROPERTY" # list of names of mono-valued arguments
 	                      "TARGETS;SUPPRESS;INCLUDE" # multi-valued arguments
 	                      ${ARGN}
 	                      )
@@ -36,6 +39,6 @@ function(cppcheck_targets)
 	    ${targets}
 	    )
 
-	set_property(GLOBAL APPEND PROPERTY memedar_cppcheck_property ${target_command})
+	set_property(GLOBAL APPEND PROPERTY ${PARSED_ARGS_PROPERTY} ${target_command})
 
 endfunction(cppcheck_targets)
