@@ -36,19 +36,19 @@ deck::deck(deck::info&& info)
 	: deck::identity {identity {}}
 	, deck::info     {std::move(info)}
 	, deck::limit    {limit {}}
-	, deck::interval {interval {}}
+	, deck::gaps     {gaps {}}
 	, m_accountant   {md::model::deck::accountant {}}
 { ;}
 
 deck::deck(deck::identity id,
            deck::info&& info,
            deck::limit limit,
-           deck::interval interval,
+           deck::gaps gaps,
            md::model::deck::accountant&& accountant)
 	: deck::identity {id}
 	, deck::info     {std::move(info)}
 	, deck::limit    {limit}
-	, deck::interval {interval}
+	, deck::gaps     {gaps}
 	, m_accountant   {std::move(accountant)}
 { ;}
 

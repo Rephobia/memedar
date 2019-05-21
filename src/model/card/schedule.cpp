@@ -22,8 +22,9 @@
 #include <ctime>
 #include <algorithm>
 
+#include "memedar/utils/constants.hpp"
 #include "memedar/model/card/schedule.hpp"
-
+#include "memedar/model/deck/gap.hpp"
 
 using md::model::card::combo;
 
@@ -95,4 +96,11 @@ void schedule::increment_combo()
 void schedule::reset_combo()
 {
 	m_combo = card::combo {};
+}
+
+std::time_t schedule::interval(md::model::deck::gap gap) const
+{
+	return gap.value/utils::constants::PTC_100 * gap.ratio * m_combo
+		+ gap.value
+		- gap.value/utils::constants::PTC_100 * gap.ratio;
 }
