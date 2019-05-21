@@ -105,8 +105,8 @@ void lesson::painter::marking_state(const model::task::task& task)
 	auto user_answer {new QLabel {task.user_answer}};
 	auto answer {new QLabel {card.answer.text()}};
 
-	auto good_intvl {m_deck.good_interval(card.combo())};
-	auto easy_intvl {m_deck.easy_interval(card.combo())};
+	auto good_intvl {card.interval(m_deck.good_gap())};
+	auto easy_intvl {card.interval(m_deck.easy_gap())};
 
 	auto again {new ui::button {"again\n", [this]() { m_lesson.again();}}};
 
