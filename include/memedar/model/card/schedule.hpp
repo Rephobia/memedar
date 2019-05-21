@@ -28,6 +28,11 @@ namespace md::model::card {
 	class schedule;
 }
 
+namespace md::model::deck {
+	class gap;
+}
+
+
 int operator*(const int lhs, const md::model::card::combo rhs);
 int operator*(const md::model::card::combo lhs, const int rhs);
 
@@ -65,6 +70,7 @@ public:
 	void increment_combo();
 	void reset_combo();
 
+	std::time_t interval(md::model::deck::gap gap) const;
 protected:
 	std::time_t m_added;
 	std::time_t m_repeat;
