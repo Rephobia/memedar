@@ -33,8 +33,8 @@ namespace md::model::deck {
 }
 
 
-int operator*(const int lhs, const md::model::card::combo rhs);
-int operator*(const md::model::card::combo lhs, const int rhs);
+int operator*(const std::time_t lhs, const md::model::card::combo rhs);
+int operator*(const md::model::card::combo lhs, const std::time_t rhs);
 
 class md::model::card::combo
 {
@@ -47,8 +47,8 @@ public:
 	explicit operator int() const;
 
 	md::model::card::combo& operator++();
-	friend int ::operator*(const int lhs, const md::model::card::combo rhs);
-	friend int ::operator*(const md::model::card::combo lhs, const int rhs);
+	friend int ::operator*(const std::time_t lhs, const md::model::card::combo rhs);
+	friend int ::operator*(const md::model::card::combo lhs, const std::time_t rhs);
 private:
 	int m_value;
 };
