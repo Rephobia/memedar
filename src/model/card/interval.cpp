@@ -41,16 +41,16 @@ combo::operator int() const
 
 combo& combo::operator++()
 {
-	++m_value;
+	m_value = std::clamp(m_value + 1, MIN_COMBO, MAX_COMBO);
 	return *this;
 }
 
-int operator*(const int lhs, const combo rhs)
+int operator*(const std::time_t lhs, const combo rhs)
 {
 	return lhs * rhs.m_value;
 }
 
-int operator*(const combo lhs, const int rhs)
+int operator*(const combo lhs, const std::time_t rhs)
 {
 	return lhs.m_value * rhs;
 }
