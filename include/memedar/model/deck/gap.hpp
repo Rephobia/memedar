@@ -36,7 +36,7 @@ public:
 	gap(std::time_t gap_value, md::model::deck::gap_ratio gap_ratio);
 
 	std::time_t value;
-	std::time_t ratio;
+	gap_ratio ratio;
 };
 
 
