@@ -29,6 +29,7 @@
 #include "memedar/model/card/visitor.hpp"
 #include "memedar/model/card/type.hpp"
 
+
 using md::model::card::card;
 
 card::card(side::side&& question_side,
@@ -36,6 +37,7 @@ card::card(side::side&& question_side,
            bool typing)
 	: identity       {identity {}}
 	, card::schedule {card::schedule {}}
+	, card::interval {card::interval {}}
 	, question       {std::move(question_side)}
 	, answer         {std::move(answer_side)}
 	, m_typing       {typing}
@@ -44,11 +46,13 @@ card::card(side::side&& question_side,
 
 card::card(identity id,
            card::schedule schedule,
+           card::interval interval,
            side::side&& question_side,
            side::side&& answer_side,
            bool typing)
 	: identity       {id}
 	, card::schedule {schedule}
+	, card::interval {interval}
 	, question       {std::move(question_side)}
 	, answer         {std::move(answer_side)}
 	, m_typing       {typing}
