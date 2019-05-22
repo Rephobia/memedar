@@ -91,8 +91,10 @@ void card_mapper::load_cards(deck::deck& deck)
 
 		auto added  {conn.read_int64t(ind.added())};
 		auto repeat {conn.read_int64t(ind.repeat())};
-		auto combo  {static_cast<card::combo>(conn.read_int64t(ind.combo()))};
-		card::schedule schedule {added, repeat, combo};
+		card::schedule schedule {added, repeat};
+
+		auto combo {static_cast<card::combo>(conn.read_int64t(ind.combo()))};
+		card::interval interval {combo};
 
 		auto q {read_side(conn, ind.question)};
 		auto a {read_side(conn, ind.answer)};
@@ -100,7 +102,7 @@ void card_mapper::load_cards(deck::deck& deck)
 		bool typing {conn.read_int64t(ind.typing())};
 
 		deck.add_card(card::card
-		              {id, schedule, std::move(q), std::move(a), typing});
+		              {id, schedule, interval, std::move(q), std::move(a), typing});
 	}
 }
 
