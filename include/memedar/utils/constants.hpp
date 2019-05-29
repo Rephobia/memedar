@@ -25,8 +25,9 @@
 
 namespace md::utils::constants {
 
-	inline constexpr unsigned int PTC_100 {100};
-	inline constexpr unsigned int PTC_200 {200};
+	inline constexpr int PTC_50 {50};
+	inline constexpr int PTC_100 {100};
+	inline constexpr int PTC_200 {200};
 
 }
 

@@ -37,7 +37,7 @@ card::card(side::side&& question_side,
            bool typing)
 	: identity       {identity {}}
 	, card::schedule {card::schedule {}}
-	, card::interval {card::interval {}}
+	, card::combo    {card::combo {}}
 	, question       {std::move(question_side)}
 	, answer         {std::move(answer_side)}
 	, m_typing       {typing}
@@ -46,13 +46,13 @@ card::card(side::side&& question_side,
 
 card::card(identity id,
            card::schedule schedule,
-           card::interval interval,
+           card::combo combo,
            side::side&& question_side,
            side::side&& answer_side,
            bool typing)
 	: identity       {id}
 	, card::schedule {schedule}
-	, card::interval {interval}
+	, card::combo    {combo}
 	, question       {std::move(question_side)}
 	, answer         {std::move(answer_side)}
 	, m_typing       {typing}

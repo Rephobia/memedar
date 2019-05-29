@@ -24,7 +24,6 @@
 
 
 namespace md::model::deck {
-	using gap_ratio = unsigned int;
 	class gap;
 	class gaps;
 }
@@ -33,10 +32,14 @@ namespace md::model::deck {
 class md::model::deck::gap
 {
 public:
-	gap(std::time_t gap_value, md::model::deck::gap_ratio gap_ratio);
+	gap(std::time_t gap_value, int gap_ratio);
 
-	std::time_t value;
-	gap_ratio ratio;
+	std::time_t netto_value() const;
+	std::time_t brutto_value() const;
+	int ratio() const;
+protected:
+	std::time_t m_value;
+	int m_ratio;
 };
 
 
