@@ -26,14 +26,30 @@
 #include "memedar/model/deck/gap.hpp"
 
 
-using md::model::deck::gap_ratio;
 using md::model::deck::gap;
-using md::model::deck::gaps;
 
-gap::gap(std::time_t gap_value, gap_ratio gap_ratio)
-	: value {gap_value}
-	, ratio {gap_ratio}
+gap::gap(std::time_t gap_value, int gap_ratio)
+	: m_value {gap_value}
+	, m_ratio {gap_ratio}
 { ;}
+
+std::time_t gap::netto_value() const
+{
+	return m_value;
+}
+
+std::time_t gap::brutto_value() const
+{
+	return m_value/utils::constants::PTC_100 * m_ratio;
+}
+
+int gap::ratio() const
+{
+	return m_ratio;
+}
+
+
+using md::model::deck::gaps;
 
 gaps::gaps()
 	: m_good_gap {utils::time::DAY, utils::constants::PTC_100}

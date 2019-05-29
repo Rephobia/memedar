@@ -19,13 +19,12 @@
  */
 
 
-#ifndef MEMEDAR_MODEL_CARD_INTERVAL_HPP
-#define MEMEDAR_MODEL_CARD_INTERVAL_HPP
+#ifndef MEMEDAR_MODEL_CARD_COMBO_HPP
+#define MEMEDAR_MODEL_CARD_COMBO_HPP
 
 
 namespace md::model::card {
 	class combo;
-	class interval;
 }
 
 namespace md::model::deck {
@@ -33,41 +32,23 @@ namespace md::model::deck {
 }
 
 
-int operator*(const std::time_t lhs, const md::model::card::combo rhs);
-int operator*(const md::model::card::combo lhs, const std::time_t rhs);
-
 class md::model::card::combo
 {
-private:
+public:
 	static constexpr int MIN_COMBO {1};
 	static constexpr int MAX_COMBO {600};
-public:
+
 	explicit combo(int value = MIN_COMBO);
 
-	explicit operator int() const;
-
-	md::model::card::combo& operator++();
-	friend int ::operator*(const std::time_t lhs, const md::model::card::combo rhs);
-	friend int ::operator*(const md::model::card::combo lhs, const std::time_t rhs);
-private:
-	int m_value;
-};
-
-
-class md::model::card::interval
-{
-public:
-	explicit interval(md::model::card::combo combo = md::model::card::combo {});
-
-	md::model::card::combo combo() const;
+	int get_combo() const;
+	std::time_t interval(md::model::deck::gap gap) const;
 
 	void increment_combo();
 	void reset_combo();
+private:
+	int m_combo;
 
-	std::time_t get_interval(md::model::deck::gap gap) const;
-protected:
-	md::model::card::combo m_combo;
 };
 
 
-#endif // MEMEDAR_MODEL_CARD_INTERVAL_HPP
+#endif // MEMEDAR_MODEL_CARD_COMBO_HPP

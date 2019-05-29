@@ -69,7 +69,7 @@ void card_mapper::save_card(deck::deck& deck, card::card&& card)
 	               binder {ind.answer_id(), card.answer.id()},
 	               binder {ind.added(), card.added()},
 	               binder {ind.repeat(), card.repeat()},
-	               binder {ind.combo(), static_cast<int>(card.combo())},
+	               binder {ind.combo(), card.get_combo()},
 	               binder {ind.typing(), card.has_typing()});
 
 	identity id {::sqlite3_last_insert_rowid(m_db.get())};
@@ -93,8 +93,7 @@ void card_mapper::load_cards(deck::deck& deck)
 		auto repeat {conn.read_int64t(ind.repeat())};
 		card::schedule schedule {added, repeat};
 
-		auto combo {static_cast<card::combo>(conn.read_int64t(ind.combo()))};
-		card::interval interval {combo};
+		card::combo combo {static_cast<int>(conn.read_int64t(ind.combo()))};
 
 		auto q {read_side(conn, ind.question)};
 		auto a {read_side(conn, ind.answer)};
@@ -102,7 +101,7 @@ void card_mapper::load_cards(deck::deck& deck)
 		bool typing {conn.read_int64t(ind.typing())};
 
 		deck.add_card(card::card
-		              {id, schedule, interval, std::move(q), std::move(a), typing});
+		              {id, schedule, combo, std::move(q), std::move(a), typing});
 	}
 }
 
