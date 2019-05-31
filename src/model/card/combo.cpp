@@ -19,6 +19,8 @@
  */
 
 
+#include <cassert>
+
 #include <ctime>
 #include <algorithm>
 
@@ -29,8 +31,10 @@
 using md::model::card::combo;
 
 combo::combo(int value)
-	: m_combo {std::clamp(value, MIN_COMBO, MAX_COMBO)}
-{ ;}
+	: m_combo {std::min(value, MAX_COMBO)}
+{
+	assert(m_combo >= MIN_COMBO && "combo isn't valid");
+}
 
 int combo::get_combo() const
 {
@@ -39,7 +43,7 @@ int combo::get_combo() const
 
 void combo::increment_combo()
 {
-	m_combo = std::clamp(m_combo + 1, MIN_COMBO, MAX_COMBO);
+	m_combo = std::min(m_combo + 1, MAX_COMBO);
 }
 
 void combo::reset_combo()
