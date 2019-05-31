@@ -19,6 +19,8 @@
  */
 
 
+#include <cassert>
+
 #include <ctime>
 
 #include "memedar/utils/time.hpp"
@@ -31,7 +33,10 @@ using md::model::deck::gap;
 gap::gap(std::time_t gap_value, int gap_ratio)
 	: m_value {gap_value}
 	, m_ratio {gap_ratio}
-{ ;}
+{
+	assert(m_value > 0 && "gap_value is negative");
+	assert(m_ratio > 0 && "gap_ratio is negative");
+}
 
 std::time_t gap::netto_value() const
 {
