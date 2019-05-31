@@ -67,10 +67,10 @@ void deck_mapper::save_deck(deck::deck& deck)
 	               binder {ind.max_ready_cards(), deck.max_ready_cards()},
 	               binder {ind.daily_noob_cards(), deck.daily_noob_cards()},
 	               binder {ind.daily_ready_cards(), deck.daily_ready_cards()},
-	               binder {ind.good_gap(), good_gap.value},
-	               binder {ind.good_ratio(), good_gap.ratio},
-	               binder {ind.easy_gap(), easy_gap.value},
-	               binder {ind.easy_ratio(), easy_gap.ratio}
+	               binder {ind.good_gap(), good_gap.netto_value()},
+	               binder {ind.good_ratio(), good_gap.ratio()},
+	               binder {ind.easy_gap(), easy_gap.netto_value()},
+	               binder {ind.easy_ratio(), easy_gap.ratio()}
 	               );
 
 	identity id {::sqlite3_last_insert_rowid(m_db.get())};
@@ -101,11 +101,11 @@ md::utils::storage<md::model::deck::deck> deck_mapper::load_decks()
 		deck::limit limit {max_noob, max_ready, daily_noob, daily_ready};
 
 		auto g_gap_value {conn.read_int64t(ind.good_gap())};
-		auto g_gap_ratio {static_cast<deck::gap_ratio>(conn.read_int64t(ind.good_ratio()))};
+		auto g_gap_ratio {static_cast<int>(conn.read_int64t(ind.good_ratio()))};
 		deck::gap g_gap {g_gap_value, g_gap_ratio};
 
 		auto e_gap_value {conn.read_int64t(ind.easy_gap())};
-		auto e_gap_ratio {static_cast<deck::gap_ratio>(conn.read_int64t(ind.easy_ratio()))};
+		auto e_gap_ratio {static_cast<int>(conn.read_int64t(ind.easy_ratio()))};
 		deck::gap e_gap {e_gap_value, e_gap_ratio};
 
 		deck::gaps gaps {g_gap, e_gap};

@@ -22,62 +22,33 @@
 #include <ctime>
 #include <algorithm>
 
-#include "memedar/utils/constants.hpp"
 #include "memedar/model/deck/gap.hpp"
-#include "memedar/model/card/interval.hpp"
+#include "memedar/model/card/combo.hpp"
 
 
 using md::model::card::combo;
-using md::model::card::interval;
 
 combo::combo(int value)
-	: m_value {std::clamp(value, MIN_COMBO, MAX_COMBO)}
+	: m_combo {std::clamp(value, MIN_COMBO, MAX_COMBO)}
 { ;}
 
-combo::operator int() const
-{
-	return m_value;
-}
-
-combo& combo::operator++()
-{
-	m_value = std::clamp(m_value + 1, MIN_COMBO, MAX_COMBO);
-	return *this;
-}
-
-int operator*(const std::time_t lhs, const combo rhs)
-{
-	return lhs * rhs.m_value;
-}
-
-int operator*(const combo lhs, const std::time_t rhs)
-{
-	return lhs.m_value * rhs;
-}
-
-
-interval::interval(md::model::card::combo combo)
-	: m_combo {combo}
-{ ;}
-
-combo interval::combo() const
+int combo::get_combo() const
 {
 	return m_combo;
 }
 
-void interval::increment_combo()
+void combo::increment_combo()
 {
-	++m_combo;
+	m_combo = std::clamp(m_combo + 1, MIN_COMBO, MAX_COMBO);
 }
 
-void interval::reset_combo()
+void combo::reset_combo()
 {
-	m_combo = card::combo {};
+	m_combo = MIN_COMBO;
 }
 
-std::time_t interval::get_interval(md::model::deck::gap gap) const
+std::time_t combo::interval(md::model::deck::gap gap) const
 {
-	return gap.value/utils::constants::PTC_100 * gap.ratio * m_combo
-		+ gap.value
-		- gap.value/utils::constants::PTC_100 * gap.ratio;
+	return gap.brutto_value() * m_combo - gap.brutto_value()
+		+ gap.netto_value();
 }

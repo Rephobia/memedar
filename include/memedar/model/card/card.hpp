@@ -25,7 +25,7 @@
 
 #include "memedar/model/identity.hpp"
 #include "memedar/model/card/schedule.hpp"
-#include "memedar/model/card/interval.hpp"
+#include "memedar/model/card/combo.hpp"
 
 
 namespace md::model::card {
@@ -38,7 +38,7 @@ namespace md::model::card {
 
 class md::model::card::card : public md::model::identity
                             , public md::model::card::schedule
-                            , public md::model::card::interval
+                            , public md::model::card::combo
 {
 public:
 	card(md::model::side::side&& question,
@@ -47,7 +47,7 @@ public:
 
 	card(md::model::identity id,
 	     md::model::card::schedule schedule,
-	     md::model::card::interval interval,
+	     md::model::card::combo combo,
 	     md::model::side::side&& question,
 	     md::model::side::side&& answer,
 	     bool typing);
