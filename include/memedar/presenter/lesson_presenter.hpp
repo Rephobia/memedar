@@ -68,8 +68,7 @@ protected:
 	md::view::error_delegate& m_error_delegate;
 	md::view::lesson& m_lesson;
 
-	class body;
-	std::unique_ptr<md::lesson_presenter::body> m_body;
+	std::unique_ptr<md::model::task::task_book> m_task_book;
 };
 
 
