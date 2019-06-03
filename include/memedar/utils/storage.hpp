@@ -38,7 +38,7 @@ public:
 	using container = std::vector<T>;
 	using iterator = typename container::iterator;
 	using const_iterator = typename container::const_iterator;
-
+	
 	storage() = default;
 
 	storage(const storage& other) = delete;
@@ -56,6 +56,16 @@ public:
 		return *this;
 	}
 
+	T& index(typename container::size_type pos)
+	{
+		return m_storage[pos];
+	}
+		
+	const T& index(typename container::size_type pos) const
+	{
+		return m_storage[pos];
+	}
+	
 	iterator begin()
 	{
 		return m_storage.begin();
@@ -86,10 +96,10 @@ public:
 		return m_storage.back();
 	}
 
-	// typename container::size_type size() const
-	// {
-		// return m_storage.size();
-	// }
+	typename container::size_type size() const
+	{
+		return m_storage.size();
+	}
 
 	bool empty() const
 	{
