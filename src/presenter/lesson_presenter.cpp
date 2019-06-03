@@ -43,36 +43,6 @@
 
 using md::lesson_presenter;
 
-class lesson_presenter::body
-{
-public:
-	body(md::model::task::task_book&& book,
-	     view::lesson& lesson)
-		: task_book {std::move(book)}
-		, current_task {task_book.begin()}
-		, m_lesson {lesson}
-	{ ;}
-
-	void prev_task()
-	{
-		if (std::prev(current_task) >= task_book.begin()) {
-			m_lesson.re_draw(*(--current_task));
-		}
-	}
-
-	void next_task()
-	{
-		if (std::next(current_task) != task_book.end()) {
-			m_lesson.re_draw(*(++current_task));
-		}
-	}
-	md::model::task::task_book task_book;
-	md::model::task::task_book::iterator current_task;
-protected:
-	view::lesson& m_lesson;
-};
-
-
 lesson_presenter::~lesson_presenter() = default;
 
 lesson_presenter::lesson_presenter(model::deck_service& deck_service,
@@ -83,10 +53,10 @@ lesson_presenter::lesson_presenter(model::deck_service& deck_service,
 	, m_task_service   {task_service}
 	, m_error_delegate {error_delegate}
 	, m_lesson         {lesson}
-	, m_body           {nullptr}
+	, m_task_book      {nullptr}
 {
-	m_lesson.prev_task.connect([this]() { m_body->prev_task(); });
-	m_lesson.next_task.connect([this]() { m_body->next_task(); });
+	m_lesson.prev_task.connect([this]() { m_lesson.re_draw(m_task_book->prev_task()); });
+	m_lesson.next_task.connect([this]() { m_lesson.re_draw(m_task_book->next_task()); });
 	m_lesson.answer.connect([this]() { show_answer(); });
 	m_lesson.answer_text.connect([this](const QString answer)
 	                             { show_answer(answer); });
@@ -97,40 +67,41 @@ lesson_presenter::lesson_presenter(model::deck_service& deck_service,
 
 void lesson_presenter::run(std::int64_t deck_id)
 {
+	using md::model::task::task_book;
 	decltype(auto) deck {utils::find_by_id(deck_id, m_deck_service)};
-	m_body = std::make_unique<body>(m_task_service.make_task(*deck),
-	                                m_lesson);
-	m_lesson.show(*m_body->current_task, m_body->task_book.deck);
+	m_task_book = std::make_unique<task_book>(m_task_service.make_task(*deck));
+	m_lesson.show(m_task_book->current_task(), m_task_book->deck);
 }
 
 void lesson_presenter::show_answer()
 {
-	decltype(auto) current {m_body->current_task};
-	current->state = model::task::state::marking;
-	m_lesson.re_draw(*current);
+	decltype(auto) current {m_task_book->current_task()};
+	current.state = model::task::state::marking;
+	m_lesson.re_draw(current);
 }
 
 void lesson_presenter::show_answer(const QString& answer)
 {
-	decltype(auto) current {m_body->current_task};
-	current->state = model::task::state::marking;
-	current->user_answer = answer;
-	m_lesson.re_draw(*current);
+	decltype(auto) current {m_task_book->current_task()};
+	current.state = model::task::state::marking;
+	current.user_answer = answer;
+	m_lesson.re_draw(current);
 }
 
 void lesson_presenter::again()
 {
-	decltype(auto) current {m_body->current_task};
-	m_task_service.again_card(*current);
-	current->state = model::task::state::answering;
-	std::rotate(current, current + 1, m_body->task_book.end());
-	m_lesson.re_draw(*current);
+	decltype(auto) current {m_task_book->current_task()};
+	m_task_service.again_card(current);
+	current.state = model::task::state::answering;
+	m_task_book->push_back_current();
+	m_lesson.re_draw(current);
 }
 
 void lesson_presenter::done(std::time_t gap)
 {
-	decltype(auto) current {m_body->current_task};
-	m_task_service.done_card(m_body->task_book.deck, *current, gap);
-	m_body->next_task();
+	m_task_service.done_card(m_task_book->deck,
+	                         m_task_book->current_task(),
+	                         gap);
+	m_lesson.re_draw(m_task_book->next_task());
 
 }

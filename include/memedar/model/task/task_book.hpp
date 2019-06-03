@@ -56,6 +56,12 @@ public:
 	std::int64_t ready_space() const;
 	std::int64_t space() const;
 
+	md::model::task::task& current_task();
+	md::model::task::task& prev_task();
+	md::model::task::task& next_task();
+
+	void push_back_current();
+
 	md::model::deck::deck& deck;
 private:
 	friend class md::model::task::add_visitor;
@@ -63,6 +69,7 @@ private:
 protected:
 	std::int64_t m_noob_space;
 	std::int64_t m_ready_space;
+	std::size_t m_current_index;
 };
 
 

@@ -40,9 +40,10 @@
 using md::model::task::task_book;
 
 task_book::task_book(deck::deck& deck)
-	: deck          {deck}
-	, m_noob_space  {deck.daily_noob_cards()}
-	, m_ready_space {deck.daily_ready_cards()}
+	: deck            {deck}
+	, m_noob_space    {deck.daily_noob_cards()}
+	, m_ready_space   {deck.daily_ready_cards()}
+	, m_current_index {0}
 { ;}
 
 bool task_book::add_card(card::card& card)
@@ -75,4 +76,29 @@ std::int64_t task_book::ready_space() const
 std::int64_t task_book::space() const
 {
 	return noob_space() + ready_space();
+}
+
+md::model::task::task& task_book::current_task()
+{
+	return storage::index(m_current_index);
+}
+
+md::model::task::task& task_book::prev_task()
+{
+	return m_current_index > 0
+		? storage::index(--m_current_index)
+		: storage::index(m_current_index);
+}
+
+md::model::task::task& task_book::next_task()
+{
+	return m_current_index < storage::size() - 1
+		? storage::index(++m_current_index)
+		: storage::index(m_current_index);
+}
+
+void task_book::push_back_current()
+{
+	decltype(auto) current_it = storage::begin() + m_current_index;
+	std::rotate(current_it, current_it + 1, storage::end());
 }
