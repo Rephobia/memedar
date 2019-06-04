@@ -38,6 +38,7 @@ public:
 	using container = std::vector<T>;
 	using iterator = typename container::iterator;
 	using const_iterator = typename container::const_iterator;
+	using value_type = typename container::value_type;
 	
 	storage() = default;
 
