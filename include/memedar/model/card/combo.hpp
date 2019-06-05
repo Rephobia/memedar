@@ -35,10 +35,10 @@ namespace md::model::deck {
 class md::model::card::combo
 {
 public:
-	static constexpr int MIN_COMBO {1};
+	static constexpr int WITHOUT_COMBO {1};
 	static constexpr int MAX_COMBO {600};
 
-	explicit combo(int value = MIN_COMBO);
+	explicit combo(int value = WITHOUT_COMBO);
 
 	int get_combo() const;
 	std::time_t interval(md::model::deck::gap gap) const;
