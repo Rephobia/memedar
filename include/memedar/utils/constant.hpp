@@ -19,11 +19,11 @@
  */
 
 
-#ifndef MEMEDAR_UTILS_CONSTANTS_HPP
-#define MEMEDAR_UTILS_CONSTANTS_HPP
+#ifndef MEMEDAR_UTILS_CONSTANT_HPP
+#define MEMEDAR_UTILS_CONSTANT_HPP
 
 
-namespace md::utils::constants {
+namespace md::utils::constant {
 
 	inline constexpr int PTC_50 {50};
 	inline constexpr int PTC_100 {100};
@@ -32,4 +32,4 @@ namespace md::utils::constants {
 }
 
 
-#endif // MEMEDAR_UTILS_CONSTANTS_HPP
+#endif // MEMEDAR_UTILS_CONSTANT_HPP
