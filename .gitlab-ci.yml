@@ -12,4 +12,4 @@ build (Ubuntu 19.04):
         - cd ..
     script:
         - cmake -Bbuild -H.
-	- cmake --build ./build -- -j4
+        - cmake --build ./build -- -j4
