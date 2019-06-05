@@ -33,7 +33,7 @@ using md::model::card::combo;
 combo::combo(int value)
 	: m_combo {std::min(value, MAX_COMBO)}
 {
-	assert(m_combo >= MIN_COMBO && "combo isn't valid");
+	assert(m_combo >= WITHOUT_COMBO && "combo isn't valid");
 }
 
 int combo::get_combo() const
@@ -48,7 +48,7 @@ void combo::increment_combo()
 
 void combo::reset_combo()
 {
-	m_combo = MIN_COMBO;
+	m_combo = WITHOUT_COMBO;
 }
 
 std::time_t combo::interval(md::model::deck::gap gap) const
