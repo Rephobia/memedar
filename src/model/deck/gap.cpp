@@ -24,7 +24,7 @@
 #include <ctime>
 
 #include "memedar/utils/time.hpp"
-#include "memedar/utils/constants.hpp"
+#include "memedar/utils/constant.hpp"
 #include "memedar/model/deck/gap.hpp"
 
 
@@ -45,7 +45,7 @@ std::time_t gap::netto_value() const
 
 std::time_t gap::brutto_value() const
 {
-	return m_value/utils::constants::PTC_100 * m_ratio;
+	return m_value/utils::constant::PTC_100 * m_ratio;
 }
 
 int gap::ratio() const
@@ -57,8 +57,8 @@ int gap::ratio() const
 using md::model::deck::gaps;
 
 gaps::gaps()
-	: m_good_gap {utils::time::DAY, utils::constants::PTC_100}
-	, m_easy_gap {utils::time::DAY * 3, utils::constants::PTC_200}
+	: m_good_gap {utils::time::DAY, utils::constant::PTC_100}
+	, m_easy_gap {utils::time::DAY * 3, utils::constant::PTC_200}
 { ;}
 
 gaps::gaps(gap good_gap, gap easy_gap)
