@@ -18,15 +18,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <catch2/catch.hpp>
+#include <ctime>
 
+#include <catch2/catch.hpp>
+#include <QString>
+
+#include "memedar/utils/time.hpp"
+#include "memedar/model/side/side.hpp"
+#include "memedar/model/card/card.hpp"
 #include "memedar/model/deck/accountant.hpp"
 
-
+using namespace md::utils;
 using md::model::deck::accountant;
+using md::model::side::side;
+using md::model::card::card;
 
-
-TEST_CASE("result of accountant counts if database didn't load", "[deck][accountant]")
+TEST_CASE("result of accountant counts if db didn't load", "[deck][accountant]")
 {	
 	std::int64_t noob_count {10};
 	std::int64_t ready_count {13};
@@ -43,3 +50,43 @@ TEST_CASE("result of accountant counts if database didn't load", "[deck][account
 	        + ready_count + delayed_count);		
 }
 
+
+TEST_CASE("accountant processes card", "[deck][accountant]")
+{
+	bool typing {false};
+	card card {side {"q"}, side {"a"}, typing};
+	
+	accountant accountant {};
+	bool loaded {true};
+	
+	SECTION("process noob card") {
+		
+		accountant.process_card(card);
+		
+		REQUIRE(accountant.noob_cards(loaded) == 1);
+		REQUIRE(accountant.ready_cards(loaded) == 0);
+		REQUIRE(accountant.delayed_cards(loaded) == 0);
+		REQUIRE(accountant.total_cards(loaded) == 1);
+	}
+	
+	SECTION("process ready card") {
+		
+		card.change_repeat(std::time(nullptr) - time::DAY);
+		accountant.process_card(card);
+		
+		REQUIRE(accountant.noob_cards(loaded) == 0);
+		REQUIRE(accountant.ready_cards(loaded) == 1);
+		REQUIRE(accountant.delayed_cards(loaded) == 0);
+		REQUIRE(accountant.total_cards(loaded) == 1);
+	}
+	
+	SECTION("process delayed card") {
+		card.change_repeat(std::time(nullptr) + time::DAY);
+		accountant.process_card(card);
+		
+		REQUIRE(accountant.noob_cards(loaded) == 0);
+		REQUIRE(accountant.ready_cards(loaded) == 0);
+		REQUIRE(accountant.delayed_cards(loaded) == 1);
+		REQUIRE(accountant.total_cards(loaded) == 1);
+	}
+}
