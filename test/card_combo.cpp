@@ -29,20 +29,38 @@
 #include "memedar/model/deck/gap.hpp"
 
 
+using md::model::card::combo;
+using md::model::deck::gap;
+using namespace md::utils;
+
+
 TEST_CASE("card interval equal gap value without combo", "[card][combo]")
 {
-	using md::model::card::combo;
-	using md::model::deck::gap;
-
 	combo combo {combo::WITHOUT_COMBO};
 
-	std::time_t value {md::utils::time::DAY};
+	std::time_t value {time::DAY};
 	
-	gap gap50  {value, md::utils::constant::PTC_50};
-	gap gap100 {value, md::utils::constant::PTC_100};
-	gap gap200 {value, md::utils::constant::PTC_200};
+	gap gap50  {value, constant::PTC_50};
+	gap gap100 {value, constant::PTC_100};
+	gap gap200 {value, constant::PTC_200};
 	
 	REQUIRE(combo.interval(gap50) == value);
 	REQUIRE(combo.interval(gap100) == value);
 	REQUIRE(combo.interval(gap200) == value);
+}
+
+
+TEST_CASE("card interval is gaining combo correctly", "[card][combo]")
+{
+	combo combo {10};
+
+	std::time_t value {time::DAY};
+	int gap_ratio {constant::PTC_50};
+	gap gap {value, gap_ratio};
+
+	std::time_t correct_answer {gap.brutto_value() * combo.get_combo()
+	                            - gap.brutto_value()
+	                            + value};
+	
+	REQUIRE(combo.interval(gap) == correct_answer);
 }
