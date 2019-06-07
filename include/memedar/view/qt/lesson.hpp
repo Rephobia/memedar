@@ -38,6 +38,7 @@ class md::view::qt::lesson : public md::view::lesson
 {
 public:
 	explicit lesson(md::view::qt::main_window* main_window);
+	void show() override;
 	void show(const md::model::task::task& task,
 	          const md::model::deck::deck& deck) override;
 	class painter;
