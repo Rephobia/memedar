@@ -70,7 +70,10 @@ void lesson_presenter::run(std::int64_t deck_id)
 	using md::model::task::task_book;
 	decltype(auto) deck {utils::find_by_id(deck_id, m_deck_service)};
 	m_task_book = std::make_unique<task_book>(m_task_service.make_task(*deck));
-	m_lesson.show(m_task_book->current_task(), m_task_book->deck);
+	
+	m_task_book->empty()
+		? m_lesson.show()
+		: m_lesson.show(m_task_book->current_task(), m_task_book->deck);
 }
 
 void lesson_presenter::show_answer()

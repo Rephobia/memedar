@@ -31,9 +31,9 @@ namespace md::view {
 class md::view::lesson
 {
 public:
+	virtual void show() = 0;
 	virtual void show(const md::model::task::task& task,
 	                  const md::model::deck::deck& deck) = 0;
-
 
 	boost::signals2::signal<void()> prev_task {};
 	boost::signals2::signal<void()> next_task {};
