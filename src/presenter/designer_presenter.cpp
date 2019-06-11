@@ -35,8 +35,8 @@
 #include "memedar/view/designer.hpp"
 #include "memedar/presenter/designer_presenter.hpp"
 
-using md::designer_presenter;
 
+using md::designer_presenter;
 
 designer_presenter::designer_presenter(model::deck_service& deck_service,
                                        model::card_service& cards_service,
@@ -46,6 +46,7 @@ designer_presenter::designer_presenter(model::deck_service& deck_service,
 	, m_card_service   {cards_service}
 	, m_error_delegate {error_delegate}
 	, m_designer       {designer}
+	, m_quit           {nullptr}
 {
 	m_designer.add_card.connect([this](std::int64_t id, model::card::card& card)
 	                            { add_card(id, std::move(card)); });
@@ -53,17 +54,24 @@ designer_presenter::designer_presenter(model::deck_service& deck_service,
 	m_designer.add_deck.connect([this](model::deck::deck& deck)
 	                            { add_deck(std::move(deck)); });
 
-	m_designer.cancel.connect([this]() { cancel(); });
+	m_designer.cancel.connect([this]()
+	                          {
+		                          if (m_quit) {
+			                          m_quit();
+		                          }
+	                          });
 }
 
-void designer_presenter::run(const model::deck::deck& deck)
+void designer_presenter::run(std::function<void()> quit)
 {
-	m_designer.show(deck);
-}
-
-void designer_presenter::run()
-{
+	m_quit = quit;
 	m_designer.show();
+}
+
+void designer_presenter::run(const md::model::deck::deck& deck, std::function<void()> quit)
+{
+	m_quit = quit;
+	m_designer.show(deck);
 }
 
 void designer_presenter::add_card(std::int64_t id, model::card::card&& card)
@@ -83,5 +91,4 @@ void designer_presenter::add_card(std::int64_t id, model::card::card&& card)
 void designer_presenter::add_deck(model::deck::deck&& deck)
 {
 	m_deck_service.save_deck(std::move(deck));
-	cancel();
 }
