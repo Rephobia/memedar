@@ -53,10 +53,8 @@ public:
 	                   md::view::error_delegate& error_delegate,
 	                   md::view::designer& designer);
 
-	boost::signals2::signal<void()> cancel {};
-
-	void run(const md::model::deck::deck& deck);
-	void run();
+	void run(std::function<void()> quit);
+	void run(const md::model::deck::deck& deck, std::function<void()> quit);
 protected:
 	void add_card(std::int64_t deck_id, md::model::card::card&& card);
 	void add_deck(md::model::deck::deck&& deck);
@@ -65,6 +63,7 @@ protected:
 	md::model::card_service& m_card_service;
 	md::view::error_delegate& m_error_delegate;
 	md::view::designer& m_designer;
+	std::function<void()> m_quit;
 };
 
 
