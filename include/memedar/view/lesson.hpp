@@ -44,6 +44,7 @@ public:
 	boost::signals2::signal<void()> again {};
 	boost::signals2::signal<void(std::time_t gap)> done {};
 
+	boost::signals2::signal<void()> add_card {};
 	virtual ~lesson() = default;
 };
 

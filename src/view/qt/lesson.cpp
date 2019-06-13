@@ -52,7 +52,8 @@ lesson::lesson(md::view::qt::main_window* main_window)
 void lesson::show()
 {
 	auto label {new QLabel {"the deck doesn't have tasks"}};
-	m_main_window->set_widget(new ui::box {QBoxLayout::TopToBottom, label});
+	auto designer {new ui::button {"add_card", [this]() { add_card(); }}};
+	m_main_window->set_widget(new ui::box {QBoxLayout::TopToBottom, label, designer});
 }
 
 void lesson::show(const md::model::task::task& task,

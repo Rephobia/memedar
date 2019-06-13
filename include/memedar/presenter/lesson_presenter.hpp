@@ -25,6 +25,10 @@
 
 class QString;
 
+namespace md::model::deck {
+	class deck;
+}
+
 namespace md::model::task {
 	class task_book;
 }
@@ -56,8 +60,13 @@ public:
 	                 md::view::lesson& lesson);
 
 	void run(std::int64_t deck_id);
+	
+	boost::signals2::signal<void(md::model::deck::deck& deck,
+	                             std::function<void()> quit)> go_to_designer {};
+	
 	~lesson_presenter();
 protected:
+	void run_current();
 	void show_answer();
 	void show_answer(const QString& answer);
 	void again();
