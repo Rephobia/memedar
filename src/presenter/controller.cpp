@@ -20,6 +20,7 @@
 
 
 #include <ctime>
+
 #include <boost/signals2.hpp>
 
 #include "memedar/presenter/menu_presenter.hpp"
@@ -40,14 +41,16 @@ controller::controller(md::menu_presenter& menu,
 	, m_designer {designer}
 	, m_lesson   {lesson}
 {
-	m_menu.go_to_designer.connect([this]() { m_designer.run(); });
+	auto run_lobby {[this] { m_lobby.run(); }};
+	m_menu.go_to_designer.connect([this, run_lobby]() { m_designer.run(run_lobby); });
 
 	m_lobby.go_to_lesson.connect([this](std::int64_t id)
 	                             { m_lesson.run(id); });
 
-	m_lobby.go_to_designer.connect([this](const md::model::deck::deck& deck)
-	                               { m_designer.run(deck); });
+	m_lobby.go_to_designer.connect([this, run_lobby](const md::model::deck::deck& deck)
+	                               { m_designer.run(deck, run_lobby); });
 
-	m_designer.cancel.connect([this]() { m_lobby.run(); });
+	m_lesson.go_to_designer.connect([this](md::model::deck::deck& deck, std::function<void()> quit)
+	                                { m_designer.run(deck, quit); });
 	m_lobby.run();
 }
