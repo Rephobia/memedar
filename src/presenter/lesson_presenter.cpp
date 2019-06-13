@@ -62,7 +62,7 @@ lesson_presenter::lesson_presenter(model::deck_service& deck_service,
 	                             { show_answer(answer); });
 	m_lesson.again.connect([this]() { again(); });
 	m_lesson.done.connect([this](std::time_t gap) { done( gap); });
-
+	m_lesson.add_card.connect([this]() { go_to_designer(m_task_book->deck, [this]() { run_current(); }); });
 }
 
 void lesson_presenter::run(std::int64_t deck_id)
@@ -70,6 +70,16 @@ void lesson_presenter::run(std::int64_t deck_id)
 	using md::model::task::task_book;
 	decltype(auto) deck {utils::find_by_id(deck_id, m_deck_service)};
 	m_task_book = std::make_unique<task_book>(m_task_service.make_task(*deck));
+	
+	m_task_book->empty()
+		? m_lesson.show()
+		: m_lesson.show(m_task_book->current_task(), m_task_book->deck);
+}
+
+void lesson_presenter::run_current()
+{
+	using md::model::task::task_book;
+	m_task_book = std::make_unique<task_book>(m_task_service.make_task(m_task_book->deck));
 	
 	m_task_book->empty()
 		? m_lesson.show()
