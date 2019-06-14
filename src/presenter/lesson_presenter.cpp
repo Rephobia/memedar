@@ -78,8 +78,7 @@ void lesson_presenter::run(std::int64_t deck_id)
 
 void lesson_presenter::run_current()
 {
-	using md::model::task::task_book;
-	m_task_book = std::make_unique<task_book>(m_task_service.make_task(m_task_book->deck));
+	m_task_service.update_task_book(*m_task_book);
 	
 	m_task_book->empty()
 		? m_lesson.show()
