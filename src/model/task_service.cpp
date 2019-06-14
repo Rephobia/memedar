@@ -88,14 +88,7 @@ md::model::task::task_book task_service::make_task(deck::deck& deck)
 		}
 
 		m_task_mapper.load_task_book(task_book);
-
-		for (auto it = deck.begin(); task_book.space() and it != deck.end(); it++) {
-
-			if (task_book.add_card(*it)) {
-				m_task_mapper.save_task(deck, task_book.back());
-			}
-		}
-
+		fill_from_deck(task_book);
 		m_deck_mapper.update_last_opening(deck);
 
 		guard.commit();
@@ -107,6 +100,34 @@ md::model::task::task_book task_service::make_task(deck::deck& deck)
 	}
 
 	return task_book;
+}
+
+void task_service::update_task_book(md::model::task::task_book& task_book)
+{
+	try {
+		auto guard {dal::make_transaction(m_transaction)};
+
+		fill_from_deck(task_book);
+		m_deck_mapper.update_last_opening(task_book.deck);
+
+		guard.commit();
+	}
+	catch (std::system_error &e) {
+
+		m_error_delegate.show_error(e);
+
+	}
+}
+
+void task_service::fill_from_deck(md::model::task::task_book& task_book)
+{
+	decltype(auto) deck {task_book.deck};
+	for (auto it = deck.begin(); task_book.space() and it != deck.end(); it++) {
+
+		if (task_book.add_card(*it)) {
+			m_task_mapper.save_task(deck, task_book.back());
+		}
+	}
 }
 
 void task_service::again_card(task::task& task)

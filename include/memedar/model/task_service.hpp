@@ -57,10 +57,12 @@ public:
 	             md::model::dal::task_mapper& task_mapper);
 
 	md::model::task::task_book make_task(md::model::deck::deck& deck);
-
+	void update_task_book(md::model::task::task_book& task_book);
+	
 	void again_card(md::model::task::task& task);
 	void done_card(md::model::deck::deck& deck, md::model::task::task& task, std::time_t gap);
 protected:
+	void fill_from_deck(md::model::task::task_book& task_book);
 	class done_visitor;
 protected:
 	md::view::error_delegate& m_error_delegate;
