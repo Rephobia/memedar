@@ -155,13 +155,13 @@ void deck_mapper::update_last_opening(deck::deck& deck)
 	deck.change_last_opening(timestamp);
 }
 
-void deck_mapper::reset_daily(deck::deck& deck)
+void deck_mapper::reset_daily_limits(deck::deck& deck)
 {
-	static connector conn {m_db, res::reset_daily_cmd()};
-	deck_index ind {res::reset_daily_index()};
+	static connector conn {m_db, res::reset_daily_limits_cmd()};
+	deck_index ind {res::reset_daily_limits_index()};
 
 	conn.exec_bind(binder {ind.daily_noob_cards(), deck.max_noob_cards()},
 	               binder {ind.daily_ready_cards(), deck.max_ready_cards()},
 	               binder {ind.id(), deck.id()});
-	deck.reset_daily();
+	deck.reset_daily_limits();
 }
