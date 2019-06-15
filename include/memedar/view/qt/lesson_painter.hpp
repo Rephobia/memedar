@@ -19,31 +19,31 @@
  */
 
 
-#ifndef MEMEDAR_VIEW_QT_LESSON_HPP
-#define MEMEDAR_VIEW_QT_LESSON_HPP
+#ifndef MEMEDAR_VIEW_QT_LESSON_PAINTER_HPP
+#define MEMEDAR_VIEW_QT_LESSON_PAINTER_HPP
 
 
 namespace md::view::qt {
-	class main_window;
 	class lesson;
+	class lesson_painter;
 }
 
 
-#pragma GCC diagnostic ignored "-Weffc++"
-
-class md::view::qt::lesson : public md::view::lesson
+class md::view::qt::lesson_painter : public md::view::qt::ui::box
 {
 public:
-	explicit lesson(md::view::qt::main_window* main_window);
-	void show() override;
-	void show(const md::model::task::task& task,
-	          const md::model::deck::deck& deck) override;
-	class lesson_painter;
+	lesson_painter(const md::model::deck::deck& deck,
+	               md::view::qt::lesson& lesson);
+	void draw(const md::model::task::task& task);
 protected:
-	md::view::qt::main_window* m_main_window;
+	void answering_state(const md::model::card::card& card);
+	void answering_state_input(const md::model::card::card& card);
+	void marking_state(const md::model::task::task& task);
+	void done_state(const md::model::card::card& card);
+protected:
+	const md::model::deck::deck& m_deck;
+	md::view::qt::lesson& m_lesson;
 };
 
-#pragma GCC diagnostic pop
 
-
-#endif // MEMEDAR_VIEW_QT_LESSON_HPP
+#endif // MEMEDAR_VIEW_QT_LESSON_PAINTER_HPP
