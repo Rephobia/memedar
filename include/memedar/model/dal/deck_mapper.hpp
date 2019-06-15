@@ -43,7 +43,7 @@ public:
 	virtual	void decrement_daily_noob(md::model::deck::deck& deck) = 0;
 	virtual	void decrement_daily_ready(md::model::deck::deck& deck) = 0;
 	virtual void update_last_opening(md::model::deck::deck& deck) = 0;
-	virtual void reset_daily(md::model::deck::deck& deck) = 0;
+	virtual void reset_daily_limits(md::model::deck::deck& deck) = 0;
 
 	virtual ~deck_mapper() = default;
 };
