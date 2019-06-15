@@ -44,7 +44,7 @@ public:
 
 	void decrement_daily_noob(md::model::deck::deck& deck) override;
 	void decrement_daily_ready(md::model::deck::deck& deck) override;
-	void reset_daily(md::model::deck::deck& deck) override;
+	void reset_daily_limits(md::model::deck::deck& deck) override;
 	void update_last_opening(md::model::deck::deck& deck) override;
 protected:
 	md::model::dal::sqlite::adapter::handle& m_db;

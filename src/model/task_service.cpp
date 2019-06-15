@@ -84,7 +84,7 @@ md::model::task::task_book task_service::make_task(deck::deck& deck)
 
 		if (not utils::time::is_today(deck.last_opening())) {
 			m_task_mapper.delete_done_task(deck);
-			m_deck_mapper.reset_daily(deck);
+			m_deck_mapper.reset_daily_limits(deck);
 		}
 
 		m_task_mapper.load_task_book(task_book);
