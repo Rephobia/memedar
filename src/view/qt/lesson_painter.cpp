@@ -48,23 +48,27 @@ lesson_painter::lesson_painter(const md::model::deck::deck& deck,
 	, m_lesson  {lesson}
 { ;}
 
+
 void lesson_painter::answering_state(const model::card::card& card)
 {
 	auto question {new QLabel {card.question.text()}};
-	auto button {new ui::button {"show", [this]() { m_lesson.answer(); }}};
-	box::set_widget(question, button);
-
-}
-
-void lesson_painter::answering_state_input(const model::card::card& card)
-{
-	auto question {new QLabel {card.question.text()}};
-	auto edit {new QLineEdit {}};
-	auto show_btn {new ui::button {"show",
-	                               [this, edit]()
-	                               { m_lesson.answer_text(edit->text()); }}};
-	box::set_widget(question, edit, show_btn);
-
+	auto show {new ui::button {"show"}};
+	
+	if (card.has_typing()) {
+		
+		auto edit {new QLineEdit {}};
+		auto signal {[this, edit]() { m_lesson.answer_text(edit->text()); }};
+		show->attach(signal);
+		box::set_widget(question, edit, show);
+		
+	}
+	else {
+		
+		auto signal {[this]() { m_lesson.answer(); }};
+		show->attach(signal);
+		box::set_widget(question, show);
+		
+	}
 }
 
 void lesson_painter::marking_state(const model::task::task& task)
@@ -103,9 +107,7 @@ void lesson_painter::draw(const model::task::task& task)
 {
 	switch (task.state) {
 	case md::model::task::state::answering: {
-		task.card.get().has_typing()
-			? answering_state_input(task.card)
-			: answering_state(task.card);
+		answering_state(task.card);
 		break;
 	}
 	case md::model::task::state::marking: {
