@@ -161,7 +161,7 @@ deck_index res::update_opening_index()
 	return ind;
 }
 
-std::string res::reset_daily_cmd()
+std::string res::reset_daily_limits_cmd()
 {
 	std::string cmd {"update decks set daily_noob_cards = ?1, "
 	                 "daily_ready_cards = ?2 "
@@ -169,7 +169,7 @@ std::string res::reset_daily_cmd()
 	return cmd;
 }
 
-deck_index res::reset_daily_index()
+deck_index res::reset_daily_limits_index()
 {
 	deck_index ind {};
 	ind.set_daily_noob_cards(1);
