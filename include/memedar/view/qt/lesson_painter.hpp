@@ -19,34 +19,30 @@
  */
 
 
-#ifndef MEMEDAR_VIEW_LESSON_HPP
-#define MEMEDAR_VIEW_LESSON_HPP
+#ifndef MEMEDAR_VIEW_QT_LESSON_PAINTER_HPP
+#define MEMEDAR_VIEW_QT_LESSON_PAINTER_HPP
 
 
-namespace md::view {
+namespace md::view::qt {
 	class lesson;
+	class lesson_painter;
 }
 
 
-class md::view::lesson
+class md::view::qt::lesson_painter : public md::view::qt::ui::box
 {
 public:
-	virtual void show() = 0;
-	virtual void show(const md::model::task::task& task,
-	                  const md::model::deck::deck& deck) = 0;
-
-	boost::signals2::signal<void()> prev_task {};
-	boost::signals2::signal<void()> next_task {};
-
-	boost::signals2::signal<void(const md::model::task::task& task)> redraw {};
-	boost::signals2::signal<void()> answer {};
-	boost::signals2::signal<void(const QString& answer)> answer_text {};
-	boost::signals2::signal<void()> again {};
-	boost::signals2::signal<void(std::time_t gap)> done {};
-
-	boost::signals2::signal<void()> call_designer {};
-	virtual ~lesson() = default;
+	lesson_painter(const md::model::deck::deck& deck,
+	               md::view::qt::lesson& lesson);
+	void draw(const md::model::task::task& task);
+protected:
+	void answering_state(const md::model::card::card& card);
+	void marking_state(const md::model::task::task& task);
+	void done_state(const md::model::card::card& card);
+protected:
+	const md::model::deck::deck& m_deck;
+	md::view::qt::lesson& m_lesson;
 };
 
 
-#endif // MEMEDAR_VIEW_LESSON_HPP
+#endif // MEMEDAR_VIEW_QT_LESSON_PAINTER_HPP
