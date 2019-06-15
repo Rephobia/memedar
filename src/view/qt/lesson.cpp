@@ -21,12 +21,9 @@
 
 #include <boost/signals2.hpp>
 
-#include <QLabel>
-#include <QTextEdit>
-#include <QMainWindow>
 #include <QString>
-#include <QCheckBox>
-#include <QLineEdit>
+#include <QLabel>
+#include <QMainWindow>
 
 #include "memedar/utils/storage.hpp"
 #include "memedar/utils/ref_wrapper.hpp"
@@ -53,24 +50,22 @@ lesson::lesson(md::view::qt::main_window* main_window)
 void lesson::show()
 {
 	auto label {new QLabel {"the deck doesn't have tasks"}};
-	auto designer {new ui::button {"add_card", [this]() { add_card(); }}};
-	m_main_window->set_widget(new ui::box {QBoxLayout::TopToBottom, label, designer});
+	auto designer {new ui::button {"add_card",
+	                               [this]() { call_designer(); }}};
+	auto box {new ui::box {QBoxLayout::TopToBottom, label, designer}};
+	m_main_window->set_widget(box);
 }
 
-void lesson::show(const md::model::task::task& task,
-                  const md::model::deck::deck& deck)
+void lesson::show(const model::task::task& task, const model::deck::deck& deck)
 {
-	auto prev {new md::view::qt::ui::button {"prev", [this]()
-	                                                 { prev_task(); }}};
-	auto next {new md::view::qt::ui::button {"next", [this]()
-	                                                 { next_task(); }}};
+	auto prev {new ui::button {"prev", [this]() { prev_task(); }}};
+	auto next {new ui::button {"next", [this]() { next_task(); }}};
 	auto iter {new ui::box {QBoxLayout::LeftToRight, prev, next}};
-
 
 	auto painter {new qt::lesson_painter {deck, *this}};
 
-	re_draw.disconnect_all_slots();
-	re_draw.connect([painter](const md::model::task::task& task)
+	redraw.disconnect_all_slots();
+	redraw.connect([painter](const model::task::task& task)
 	                { painter->draw(task); });
 
 	auto box {new ui::box {QBoxLayout::TopToBottom, iter, painter}};

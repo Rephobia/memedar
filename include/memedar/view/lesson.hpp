@@ -38,13 +38,13 @@ public:
 	boost::signals2::signal<void()> prev_task {};
 	boost::signals2::signal<void()> next_task {};
 
-	boost::signals2::signal<void(const md::model::task::task& task)> re_draw {};
+	boost::signals2::signal<void(const md::model::task::task& task)> redraw {};
 	boost::signals2::signal<void()> answer {};
 	boost::signals2::signal<void(const QString& answer)> answer_text {};
 	boost::signals2::signal<void()> again {};
 	boost::signals2::signal<void(std::time_t gap)> done {};
 
-	boost::signals2::signal<void()> add_card {};
+	boost::signals2::signal<void()> call_designer {};
 	virtual ~lesson() = default;
 };
 

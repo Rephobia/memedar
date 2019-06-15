@@ -55,14 +55,14 @@ lesson_presenter::lesson_presenter(model::deck_service& deck_service,
 	, m_lesson         {lesson}
 	, m_task_book      {nullptr}
 {
-	m_lesson.prev_task.connect([this]() { m_lesson.re_draw(m_task_book->prev_task()); });
-	m_lesson.next_task.connect([this]() { m_lesson.re_draw(m_task_book->next_task()); });
+	m_lesson.prev_task.connect([this]() { m_lesson.redraw(m_task_book->prev_task()); });
+	m_lesson.next_task.connect([this]() { m_lesson.redraw(m_task_book->next_task()); });
 	m_lesson.answer.connect([this]() { show_answer(); });
 	m_lesson.answer_text.connect([this](const QString answer)
 	                             { show_answer(answer); });
 	m_lesson.again.connect([this]() { again(); });
-	m_lesson.done.connect([this](std::time_t gap) { done( gap); });
-	m_lesson.add_card.connect([this]() { go_to_designer(m_task_book->deck, [this]() { run_current(); }); });
+	m_lesson.done.connect([this](std::time_t gap) { done(gap); });
+	m_lesson.call_designer.connect([this]() { go_to_designer(m_task_book->deck, [this]() { run_current(); }); });
 }
 
 void lesson_presenter::run(std::int64_t deck_id)
@@ -89,7 +89,7 @@ void lesson_presenter::show_answer()
 {
 	decltype(auto) current {m_task_book->current_task()};
 	current.state = model::task::state::marking;
-	m_lesson.re_draw(current);
+	m_lesson.redraw(current);
 }
 
 void lesson_presenter::show_answer(const QString& answer)
@@ -97,7 +97,7 @@ void lesson_presenter::show_answer(const QString& answer)
 	decltype(auto) current {m_task_book->current_task()};
 	current.state = model::task::state::marking;
 	current.user_answer = answer;
-	m_lesson.re_draw(current);
+	m_lesson.redraw(current);
 }
 
 void lesson_presenter::again()
@@ -106,7 +106,7 @@ void lesson_presenter::again()
 	m_task_service.again_card(current);
 	current.state = model::task::state::answering;
 	m_task_book->push_back_current();
-	m_lesson.re_draw(current);
+	m_lesson.redraw(current);
 }
 
 void lesson_presenter::done(std::time_t gap)
@@ -114,6 +114,6 @@ void lesson_presenter::done(std::time_t gap)
 	m_task_service.done_card(m_task_book->deck,
 	                         m_task_book->current_task(),
 	                         gap);
-	m_lesson.re_draw(m_task_book->next_task());
+	m_lesson.redraw(m_task_book->next_task());
 
 }
