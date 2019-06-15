@@ -37,7 +37,6 @@ public:
 	void draw(const md::model::task::task& task);
 protected:
 	void answering_state(const md::model::card::card& card);
-	void answering_state_input(const md::model::card::card& card);
 	void marking_state(const md::model::task::task& task);
 	void done_state(const md::model::card::card& card);
 protected:
