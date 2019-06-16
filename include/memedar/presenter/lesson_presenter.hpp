@@ -51,6 +51,7 @@ namespace md {
 
 }
 
+
 class md::lesson_presenter
 {
 public:
@@ -62,12 +63,12 @@ public:
 	void run(std::int64_t deck_id);
 	
 	boost::signals2::signal<void(md::model::deck::deck& deck,
-	                             std::function<void()> quit)> go_to_designer {};
+	                             std::function<void()> quit)> call_designer {};
 	
 	~lesson_presenter();
 protected:
 	void run_current();
-	void show_answer();
+	
 	void show_answer(const QString& answer);
 	void again();
 	void done(std::time_t gap);

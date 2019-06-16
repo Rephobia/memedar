@@ -41,6 +41,7 @@
 #include "memedar/view/lesson.hpp"
 #include "memedar/presenter/lesson_presenter.hpp"
 
+
 using md::lesson_presenter;
 
 lesson_presenter::~lesson_presenter() = default;
@@ -57,12 +58,15 @@ lesson_presenter::lesson_presenter(model::deck_service& deck_service,
 {
 	m_lesson.prev_task.connect([this]() { m_lesson.redraw(m_task_book->prev_task()); });
 	m_lesson.next_task.connect([this]() { m_lesson.redraw(m_task_book->next_task()); });
-	m_lesson.answer.connect([this]() { show_answer(); });
-	m_lesson.answer_text.connect([this](const QString answer)
-	                             { show_answer(answer); });
+	
+	m_lesson.answer.connect([this](const QString& answer) { show_answer(answer); });
 	m_lesson.again.connect([this]() { again(); });
 	m_lesson.done.connect([this](std::time_t gap) { done(gap); });
-	m_lesson.call_designer.connect([this]() { go_to_designer(m_task_book->deck, [this]() { run_current(); }); });
+	
+	m_lesson.call_designer.connect([this]()
+	                               { call_designer(m_task_book->deck,
+	                                               [this]()
+	                                               { run_current(); }); });
 }
 
 void lesson_presenter::run(std::int64_t deck_id)
@@ -83,13 +87,6 @@ void lesson_presenter::run_current()
 	m_task_book->empty()
 		? m_lesson.show()
 		: m_lesson.show(m_task_book->current_task(), m_task_book->deck);
-}
-
-void lesson_presenter::show_answer()
-{
-	decltype(auto) current {m_task_book->current_task()};
-	current.state = model::task::state::marking;
-	m_lesson.redraw(current);
 }
 
 void lesson_presenter::show_answer(const QString& answer)
@@ -115,5 +112,4 @@ void lesson_presenter::done(std::time_t gap)
 	                         m_task_book->current_task(),
 	                         gap);
 	m_lesson.redraw(m_task_book->next_task());
-
 }
