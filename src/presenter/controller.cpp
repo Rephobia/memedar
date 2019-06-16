@@ -50,7 +50,7 @@ controller::controller(md::menu_presenter& menu,
 	m_lobby.go_to_designer.connect([this, run_lobby](const md::model::deck::deck& deck)
 	                               { m_designer.run(deck, run_lobby); });
 
-	m_lesson.go_to_designer.connect([this](md::model::deck::deck& deck, std::function<void()> quit)
-	                                { m_designer.run(deck, quit); });
+	m_lesson.call_designer.connect([this](md::model::deck::deck& deck, std::function<void()> quit)
+	                               { m_designer.run(deck, quit); });
 	m_lobby.run();
 }
