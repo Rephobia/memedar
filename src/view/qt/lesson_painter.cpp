@@ -57,14 +57,14 @@ void lesson_painter::answering_state(const model::card::card& card)
 	if (card.has_typing()) {
 		
 		auto edit {new QLineEdit {}};
-		auto signal {[this, edit]() { m_lesson.answer_text(edit->text()); }};
+		auto signal {[this, edit]() { m_lesson.answer(edit->text()); }};
 		show->attach(signal);
 		box::set_widget(question, edit, show);
 		
 	}
 	else {
 		
-		auto signal {[this]() { m_lesson.answer(); }};
+		auto signal {[this]() { m_lesson.answer(QString {}); }};
 		show->attach(signal);
 		box::set_widget(question, show);
 		

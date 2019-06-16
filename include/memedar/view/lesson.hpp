@@ -39,8 +39,8 @@ public:
 	boost::signals2::signal<void()> next_task {};
 
 	boost::signals2::signal<void(const md::model::task::task& task)> redraw {};
-	boost::signals2::signal<void()> answer {};
-	boost::signals2::signal<void(const QString& answer)> answer_text {};
+	
+	boost::signals2::signal<void(const QString& answer)> answer {};
 	boost::signals2::signal<void()> again {};
 	boost::signals2::signal<void(std::time_t gap)> done {};
 
