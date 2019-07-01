@@ -23,11 +23,25 @@
 #define MEMEDAR_CONTROLLER_HPP
 
 
+namespace md::model::deck {
+	class deck;
+}
+
+namespace md::model {
+	class card_service;
+	class deck_service;
+	class task_service;
+}
+
+namespace md::view {
+	class menu;
+	class lobby;
+	class designer;
+	class lesson;
+}
+
 namespace md {
-	class menu_presenter;
-	class lobby_presenter;
-	class designer_presenter;
-	class lesson_presenter;
+	class presenter;
 	class controller;
 }
 
@@ -35,15 +49,33 @@ namespace md {
 class md::controller
 {
 public:
-	controller(md::menu_presenter& menu,
-	           md::lobby_presenter& lobby,
-	           md::designer_presenter& designer,
-	           md::lesson_presenter& lesson);
+	controller(md::model::card_service& card_service,
+	           md::model::deck_service& deck_service,
+	           md::model::task_service& task_service,
+	           md::view::menu& menu,
+	           md::view::lobby& lobby,
+	           md::view::lesson& lesson,
+	           md::view::designer& designer);
+       
+	void run_lobby();
+	void run_lesson(md::model::deck::deck& deck);
+	void run_designer(md::model::deck::deck& deck);
+	
+	~controller();
 protected:
-	md::menu_presenter& m_menu;
-	md::lobby_presenter& m_lobby;
-	md::designer_presenter& m_designer;
-	md::lesson_presenter& m_lesson;
+	md::model::card_service& m_card_service;
+	md::model::deck_service& m_deck_service;
+	md::model::task_service& m_task_service;
+
+	md::view::menu& m_menu;
+	md::view::lobby& m_lobby;
+	md::view::lesson& m_lesson;
+	md::view::designer& m_designer;
+protected:
+	std::unique_ptr<md::presenter> m_presenter;
+	std::unique_ptr<md::presenter> m_designer_presenter;
+
 };
+
 
 #endif // MEMEDAR_CONTROLLER_HPP

@@ -36,6 +36,8 @@
 #include "memedar/model/card/visitor.hpp"
 #include "memedar/model/card/card.hpp"
 #include "memedar/model/deck/deck.hpp"
+#include "memedar/model/task/task.hpp"
+#include "memedar/model/task/task_book.hpp"
 
 #include "memedar/view/error_delegate.hpp"
 #include "memedar/model/dal/transaction.hpp"
@@ -66,10 +68,6 @@
 #include "memedar/view/qt/designer.hpp"
 #include "memedar/view/qt/lesson.hpp"
 
-#include "memedar/presenter/menu_presenter.hpp"
-#include "memedar/presenter/lobby_presenter.hpp"
-#include "memedar/presenter/designer_presenter.hpp"
-#include "memedar/presenter/lesson_presenter.hpp"
 #include "memedar/presenter/controller.hpp"
 
 int main(int argc, char *argv[])
@@ -95,12 +93,8 @@ int main(int argc, char *argv[])
 	auto lesson   {std::make_unique<md::view::qt::lesson>(main_window)};
 	main_window->show();
 
-	md::menu_presenter menu_p {*menu};
-	md::lobby_presenter lobby_p {deck_service, *lobby};
-	md::designer_presenter designer_p {deck_service, card_service, *qt_error, *designer};
-	md::lesson_presenter lesson_p {deck_service, task_service, *qt_error, *lesson};
-
-	md::controller controller {menu_p, lobby_p, designer_p, lesson_p};
+	md::controller controller {card_service, deck_service, task_service,
+	                           *menu, *lobby, *lesson, *designer};
 
 	return app.exec();
 }

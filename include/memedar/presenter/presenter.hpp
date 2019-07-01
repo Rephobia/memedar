@@ -19,41 +19,27 @@
  */
 
 
-#ifndef MEMEDAR_LOBBY_PRESENTER_HPP
-#define MEMEDAR_LOBBY_PRESENTER_HPP
+#ifndef MEMDAR_PRESENTER_HPP
+#define MEMDAR_PRESENTER_HPP
 
-
-namespace md::model {
-	class deck_service;
-}
-
-namespace md::view {
-	class lobby;
-}
 
 namespace md {
 	class presenter;
-	class lobby_presenter;
-	class controller;
 }
 
 
-class md::lobby_presenter : public md::presenter
+class md::presenter
 {
 public:
-	lobby_presenter(md::controller& controller,
-	                md::model::deck_service& deck_service,
-	                md::view::lobby& lobby);
-	
-	void run() override;
+	virtual void run() = 0;
+	virtual ~presenter() = default;
 protected:
-	void run_lesson(std::int64_t id);
-	void run_designer(std::int64_t id);
-protected:	
-	md::controller& m_controller;
-	md::model::deck_service& m_deck_service;
-	md::view::lobby& m_lobby;
+	void add_connect(boost::signals2::connection&& connection)
+	{
+		conn.push_back(std::move(connection));
+	}
+	std::vector<boost::signals2::scoped_connection> conn {};
 };
 
 
-#endif // MEMEDAR_LOBBY_PRESENTER_HPP
+#endif // MEMDAR_PRESENTER_HPP

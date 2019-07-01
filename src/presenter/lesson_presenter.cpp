@@ -20,7 +20,7 @@
 
 
 #include <ctime>
-#include <memory>
+
 #include <boost/signals2.hpp>
 
 #include <QString>
@@ -37,61 +37,51 @@
 #include "memedar/model/deck_service.hpp"
 #include "memedar/model/task_service.hpp"
 
-#include "memedar/view/error_delegate.hpp"
+
 #include "memedar/view/lesson.hpp"
+#include "memedar/presenter/controller.hpp"
+#include "memedar/presenter/presenter.hpp"
 #include "memedar/presenter/lesson_presenter.hpp"
 
 
 using md::lesson_presenter;
 
-lesson_presenter::~lesson_presenter() = default;
-
-lesson_presenter::lesson_presenter(model::deck_service& deck_service,
+lesson_presenter::lesson_presenter(md::controller& controller,
+                                   model::deck::deck& deck,
+                                   model::deck_service& deck_service,
                                    model::task_service& task_service,
-                                   view::error_delegate& error_delegate,
                                    view::lesson& lesson)
-	: m_deck_service   {deck_service}
+	: m_controller     {controller}
+	, m_deck_service   {deck_service}
 	, m_task_service   {task_service}
-	, m_error_delegate {error_delegate}
 	, m_lesson         {lesson}
-	, m_task_book      {nullptr}
+	, m_task_book      {task_service.get_task_book(deck)}
 {
-	m_lesson.prev_task.connect([this]() { m_lesson.redraw(m_task_book->prev_task()); });
-	m_lesson.next_task.connect([this]() { m_lesson.redraw(m_task_book->next_task()); });
+	add_connect(m_lesson.prev_task.connect([this]()
+	                                       { m_lesson.redraw(m_task_book.prev_task()); }));
+	add_connect(m_lesson.next_task.connect([this]()
+	                                       { m_lesson.redraw(m_task_book.next_task()); }));
 	
-	m_lesson.answer.connect([this](const QString& answer) { show_answer(answer); });
-	m_lesson.again.connect([this]() { again(); });
-	m_lesson.done.connect([this](std::time_t gap) { done(gap); });
+	add_connect(m_lesson.answer.connect([this](const QString& answer)
+	                                    { show_answer(answer); }));
+	add_connect(m_lesson.again.connect([this]() { again(); }));
+	add_connect(m_lesson.done.connect([this](std::time_t gap) { done(gap); }));
 	
-	m_lesson.call_designer.connect([this]()
-	                               { call_designer(m_task_book->deck,
-	                                               [this]()
-	                                               { run_current(); }); });
+	add_connect(m_lesson.call_designer.connect([this]()
+	                                           { m_controller.run_designer(m_task_book.deck); }));
+	run();
 }
 
-void lesson_presenter::run(std::int64_t deck_id)
-{
-	using md::model::task::task_book;
-	decltype(auto) deck {utils::find_by_id(deck_id, m_deck_service)};
-	m_task_book = std::make_unique<task_book>(m_task_service.make_task(*deck));
-	
-	m_task_book->empty()
+void lesson_presenter::run()
+{	
+	m_task_book.empty()
 		? m_lesson.show()
-		: m_lesson.show(m_task_book->current_task(), m_task_book->deck);
-}
-
-void lesson_presenter::run_current()
-{
-	m_task_service.update_task_book(*m_task_book);
-	
-	m_task_book->empty()
-		? m_lesson.show()
-		: m_lesson.show(m_task_book->current_task(), m_task_book->deck);
+		: m_lesson.show(m_task_book.current_task(), m_task_book.deck);
 }
 
 void lesson_presenter::show_answer(const QString& answer)
 {
-	decltype(auto) current {m_task_book->current_task()};
+	decltype(auto) current {m_task_book.current_task()};
 	current.state = model::task::state::marking;
 	current.user_answer = answer;
 	m_lesson.redraw(current);
@@ -99,17 +89,17 @@ void lesson_presenter::show_answer(const QString& answer)
 
 void lesson_presenter::again()
 {
-	decltype(auto) current {m_task_book->current_task()};
+	decltype(auto) current {m_task_book.current_task()};
 	m_task_service.again_card(current);
 	current.state = model::task::state::answering;
-	m_task_book->push_back_current();
+	m_task_book.push_back_current();
 	m_lesson.redraw(current);
 }
 
 void lesson_presenter::done(std::time_t gap)
 {
-	m_task_service.done_card(m_task_book->deck,
-	                         m_task_book->current_task(),
+	m_task_service.done_card(m_task_book.deck,
+	                         m_task_book.current_task(),
 	                         gap);
-	m_lesson.redraw(m_task_book->next_task());
+	m_lesson.redraw(m_task_book.next_task());
 }
