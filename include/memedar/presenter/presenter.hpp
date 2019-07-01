@@ -19,49 +19,27 @@
  */
 
 
-#ifndef MEMEDAR_DESIGNER_PRESENTER_HPP
-#define MEMEDAR_DESIGNER_PRESENTER_HPP
+#ifndef MEMDAR_PRESENTER_HPP
+#define MEMDAR_PRESENTER_HPP
 
-
-namespace md::model::card {
-	class card;
-}
-
-namespace md::model::deck {
-	class deck;
-}
-namespace md::model {
-	class card_service;
-	class deck_service;
-}
-
-namespace md::view {
-	class designer;
-}
 
 namespace md {
 	class presenter;
-	class designer_presenter;
 }
 
 
-class md::designer_presenter : public md::presenter
+class md::presenter
 {
 public:
-	designer_presenter(md::model::deck::deck& deck,
-	                   md::model::card_service& card_service,
-	                   md::model::deck_service& deck_service,
-	                   md::view::designer& designer);
-
-	void run() override;
+	virtual void run() = 0;
+	virtual ~presenter() = default;
 protected:
-	void add_card(md::model::card::card&& card);
-protected:
-	md::model::deck::deck& m_deck;
-	md::model::card_service& m_card_service;
-	md::model::deck_service& m_deck_service;
-	md::view::designer& m_designer;
+	void add_connect(boost::signals2::connection&& connection)
+	{
+		conn.push_back(std::move(connection));
+	}
+	std::vector<boost::signals2::scoped_connection> conn {};
 };
 
 
-#endif // MEMEDAR_DESIGNER_PRESENTER_HPP
+#endif // MEMDAR_PRESENTER_HPP

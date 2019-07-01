@@ -54,14 +54,14 @@ void designer::show(const model::deck::deck& deck,
 	auto a_edit {new QTextEdit {answer}};
 	auto typing {new QCheckBox {"typing"}};
 
-	auto add_action {[this, &deck, q_edit, a_edit, typing]()
+	auto add_action {[this, q_edit, a_edit, typing]()
 	                 {
 		                 model::side::side q {q_edit->toPlainText()};
 		                 model::side::side a {a_edit->toPlainText()};
 		                 model::card::card card {std::move(q),
 		                                         std::move(a),
 		                                         typing->isChecked()};
-		                 add_card(deck.id(), card);
+		                 add_card(card);
 	                 }};
 
 	auto ok {new ui::button {"ok", add_action}};

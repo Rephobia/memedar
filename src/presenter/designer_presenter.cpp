@@ -31,64 +31,34 @@
 #include "memedar/model/card_service.hpp"
 #include "memedar/model/deck_service.hpp"
 
-#include "memedar/view/error_delegate.hpp"
 #include "memedar/view/designer.hpp"
+
+#include "memedar/presenter/presenter.hpp"
 #include "memedar/presenter/designer_presenter.hpp"
 
 
 using md::designer_presenter;
 
-designer_presenter::designer_presenter(model::deck_service& deck_service,
-                                       model::card_service& cards_service,
-                                       view::error_delegate& error_delegate,
+designer_presenter::designer_presenter(model::deck::deck& deck,
+                                       model::card_service& card_service,
+                                       model::deck_service& deck_service,
                                        view::designer& designer)
-	: m_deck_service   {deck_service}
-	, m_card_service   {cards_service}
-	, m_error_delegate {error_delegate}
-	, m_designer       {designer}
-	, m_quit           {nullptr}
+	: m_deck         {deck}
+	, m_card_service {card_service}
+	, m_deck_service {deck_service}
+	, m_designer     {designer}
 {
-	m_designer.add_card.connect([this](std::int64_t id, model::card::card& card)
-	                            { add_card(id, std::move(card)); });
-
-	m_designer.add_deck.connect([this](model::deck::deck& deck)
-	                            { add_deck(std::move(deck)); });
-
-	m_designer.cancel.connect([this]()
-	                          {
-		                          if (m_quit) {
-			                          m_quit();
-		                          }
-	                          });
+	add_connect(m_designer.add_card.connect([this](model::card::card& card)
+	                                        { add_card(std::move(card)); }));
+	run();
 }
 
-void designer_presenter::run(std::function<void()> quit)
+void designer_presenter::run()
 {
-	m_quit = quit;
-	m_designer.show();
+	m_designer.show(m_deck);	
 }
 
-void designer_presenter::run(const md::model::deck::deck& deck, std::function<void()> quit)
+void designer_presenter::add_card(model::card::card&& card)
 {
-	m_quit = quit;
-	m_designer.show(deck);
-}
-
-void designer_presenter::add_card(std::int64_t id, model::card::card&& card)
-{
-	auto deck_it {utils::find_by_id(id, m_deck_service)};
-
-	if (deck_it != m_deck_service.end()) {
-		m_card_service.save_card(*deck_it, std::move(card));
-	}
-	else {
-		m_error_delegate.show_error("deck (id: "
-		                           + QString::number(id)
-		                           + ") doesn't exists");
-	}
-}
-
-void designer_presenter::add_deck(model::deck::deck&& deck)
-{
-	m_deck_service.save_deck(std::move(deck));
+	m_card_service.save_card(m_deck, std::move(card));
 }

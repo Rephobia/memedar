@@ -19,31 +19,52 @@
  */
 
 
+#include <ctime>
+
+#include <QString>
 #include <boost/signals2.hpp>
 
+#include "memedar/utils/find.hpp"
 #include "memedar/utils/storage.hpp"
 
+#include "memedar/model/deck/deck.hpp"
 #include "memedar/model/deck_service.hpp"
 
 #include "memedar/view/lobby.hpp"
+
+#include "memedar/presenter/presenter.hpp"
 #include "memedar/presenter/lobby_presenter.hpp"
+#include "memedar/presenter/controller.hpp"
 
 
 using md::lobby_presenter;
 
-lobby_presenter::lobby_presenter(model::deck_service& deck_service,
-                                 view::lobby& lobby)
-	: m_deck_service {deck_service}
+lobby_presenter::lobby_presenter(md::controller& controller,
+                                 md::model::deck_service& deck_service,
+                                 md::view::lobby& lobby)
+	: m_controller   {controller}
+	, m_deck_service {deck_service}
 	, m_lobby        {lobby}
 {
-	m_lobby.go_to_lesson.connect([this](std::int64_t id)
-	                             { go_to_lesson(id); });
-
-	m_lobby.go_to_designer.connect([this](const md::model::deck::deck& deck)
-	                               { go_to_designer(deck); });
+	add_connect(m_lobby.call_lesson.connect([this](std::int64_t id)
+	                                        { run_lesson(id); }));
+	add_connect(m_lobby.call_designer.connect([this](std::int64_t id)
+	                                          { run_designer(id); }));
+	
+	m_lobby.show(deck_service);
 }
 
 void lobby_presenter::run()
 {
 	m_lobby.show(m_deck_service);
+}
+
+void lobby_presenter::run_lesson(std::int64_t id)
+{
+	m_controller.run_lesson(*utils::find_by_id(id, m_deck_service));	
+}
+
+void lobby_presenter::run_designer(std::int64_t id)
+{
+	m_controller.run_designer(*utils::find_by_id(id, m_deck_service));	
 }

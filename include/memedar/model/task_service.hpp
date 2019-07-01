@@ -56,12 +56,12 @@ public:
 	             md::model::dal::deck_mapper& deck_mapper,
 	             md::model::dal::task_mapper& task_mapper);
 
-	md::model::task::task_book make_task(md::model::deck::deck& deck);
-	void update_task_book(md::model::task::task_book& task_book);
-	
+
+	md::model::task::task_book& get_task_book(md::model::deck::deck& deck);
 	void again_card(md::model::task::task& task);
 	void done_card(md::model::deck::deck& deck, md::model::task::task& task, std::time_t gap);
 protected:
+	md::model::task::task_book make_task_book(md::model::deck::deck& deck);
 	void fill_from_deck(md::model::task::task_book& task_book);
 	class done_visitor;
 protected:
@@ -70,6 +70,10 @@ protected:
 	md::model::dal::card_mapper& m_card_mapper;
 	md::model::dal::deck_mapper& m_deck_mapper;
 	md::model::dal::task_mapper& m_task_mapper;
+protected:
+	std::map<md::utils::ref_wrapper<md::model::deck::deck>,
+	         md::model::task::task_book,
+	         std::less<const md::model::deck::deck>> m_tasks {};
 };
 
 
