@@ -30,7 +30,6 @@
 #include "memedar/view/lesson.hpp"
 
 #include "memedar/presenter/presenter.hpp"
-#include "memedar/presenter/menu_presenter.hpp"
 #include "memedar/presenter/lobby_presenter.hpp"
 #include "memedar/presenter/lesson_presenter.hpp"
 #include "memedar/presenter/designer_presenter.hpp"
@@ -58,6 +57,7 @@ controller::controller(md::model::card_service& card_service,
 	, m_presenter          {nullptr}
 	, m_designer_presenter {nullptr}
 {
+	m_menu.call_lobby.connect([this]() { run_lobby(); });
 	m_designer.cancel.connect([this]() { m_presenter->run(); });
 	run_lobby();
 }

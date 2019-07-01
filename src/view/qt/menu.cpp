@@ -34,10 +34,10 @@ using md::view::qt::menu;
 
 menu::menu(qt::main_window* main_window)
 {
-	auto quit     {new ui::button {"quit", []() { ::QApplication::quit(); }}};
-	auto designer {new ui::button {"add deck", [this]() { go_to_designer(); }}};
+	auto quit  {new ui::button {"quit", []() { ::QApplication::quit(); }}};
+	auto lobby {new ui::button {"lobby", [this]() { call_lobby(); }}};
 
-	auto box {new ui::box {QBoxLayout::LeftToRight, quit, designer}};
+	auto box {new ui::box {QBoxLayout::LeftToRight, quit, lobby}};
 
 	main_window->setMenuWidget(box);
 }
