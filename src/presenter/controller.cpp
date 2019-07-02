@@ -58,6 +58,7 @@ controller::controller(md::model::card_service& card_service,
 	, m_designer_presenter {nullptr}
 {
 	m_menu.call_lobby.connect([this]() { run_lobby(); });
+	m_menu.call_designer.connect([this]() { run_designer(); });
 	m_designer.cancel.connect([this]() { m_presenter->run(); });
 	run_lobby();
 }
@@ -67,16 +68,22 @@ void controller::run_lobby()
 	m_presenter = std::make_unique<md::lobby_presenter>(*this, m_deck_service, m_lobby);
 }
 
-void controller::run_designer(md::model::deck::deck& deck)
-{
-	m_designer_presenter = std::make_unique<md::designer_presenter>(deck, m_card_service,
-	                                                                m_deck_service,
-	                                                                m_designer);	
-}
-
 void controller::run_lesson(md::model::deck::deck& deck)
 {
 	m_presenter = std::make_unique<md::lesson_presenter>(*this, deck, m_deck_service,
 	                                                     m_task_service,
 	                                                     m_lesson);	
+}
+
+void controller::run_designer(md::model::deck::deck& deck)
+{
+	m_designer_presenter = std::make_unique<md::card_designer_presenter>(deck, 
+	                                                                     m_card_service,
+	                                                                     m_designer);	
+}
+
+void controller::run_designer()
+{
+	m_designer_presenter = std::make_unique<md::deck_designer_presenter>(m_deck_service,
+	                                                                     m_designer);	
 }
