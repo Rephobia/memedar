@@ -41,17 +41,17 @@ namespace md::view {
 
 namespace md {
 	class presenter;
-	class designer_presenter;
+	class card_designer_presenter;
+	class deck_designer_presenter;
 }
 
 
-class md::designer_presenter : public md::presenter
+class md::card_designer_presenter : public md::presenter
 {
 public:
-	designer_presenter(md::model::deck::deck& deck,
-	                   md::model::card_service& card_service,
-	                   md::model::deck_service& deck_service,
-	                   md::view::designer& designer);
+	card_designer_presenter(md::model::deck::deck& deck,
+	                        md::model::card_service& card_service,
+	                        md::view::designer& designer);
 
 	void run() override;
 protected:
@@ -59,6 +59,20 @@ protected:
 protected:
 	md::model::deck::deck& m_deck;
 	md::model::card_service& m_card_service;
+	md::view::designer& m_designer;
+};
+
+
+class md::deck_designer_presenter : public md::presenter
+{
+public:
+	deck_designer_presenter(md::model::deck_service& deck_service,
+	                        md::view::designer& designer);
+
+	void run() override;
+protected:
+	void add_deck(model::deck::deck&& deck);
+protected:
 	md::model::deck_service& m_deck_service;
 	md::view::designer& m_designer;
 };

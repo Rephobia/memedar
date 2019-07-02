@@ -60,7 +60,7 @@ public:
 	void run_lobby();
 	void run_lesson(md::model::deck::deck& deck);
 	void run_designer(md::model::deck::deck& deck);
-	
+	void run_designer();	
 	~controller();
 protected:
 	md::model::card_service& m_card_service;

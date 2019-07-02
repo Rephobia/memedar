@@ -37,15 +37,13 @@
 #include "memedar/presenter/designer_presenter.hpp"
 
 
-using md::designer_presenter;
+using md::card_designer_presenter;
 
-designer_presenter::designer_presenter(model::deck::deck& deck,
+card_designer_presenter::card_designer_presenter(model::deck::deck& deck,
                                        model::card_service& card_service,
-                                       model::deck_service& deck_service,
                                        view::designer& designer)
 	: m_deck         {deck}
 	, m_card_service {card_service}
-	, m_deck_service {deck_service}
 	, m_designer     {designer}
 {
 	add_connect(m_designer.add_card.connect([this](model::card::card& card)
@@ -53,12 +51,35 @@ designer_presenter::designer_presenter(model::deck::deck& deck,
 	run();
 }
 
-void designer_presenter::run()
+void card_designer_presenter::run()
 {
 	m_designer.show(m_deck);	
 }
 
-void designer_presenter::add_card(model::card::card&& card)
+void card_designer_presenter::add_card(model::card::card&& card)
 {
 	m_card_service.save_card(m_deck, std::move(card));
+}
+
+using md::deck_designer_presenter;
+
+deck_designer_presenter::deck_designer_presenter(model::deck_service& deck_service,
+                                                 view::designer& designer)
+	: m_deck_service {deck_service}
+	, m_designer     {designer}
+{
+	add_connect(m_designer.add_deck.connect([this](model::deck::deck& deck)
+	                                        { add_deck(std::move(deck)); }));
+	run();
+}
+
+void deck_designer_presenter::run()
+{
+	m_designer.show();	
+}
+
+void deck_designer_presenter::add_deck(model::deck::deck&& deck)
+{
+	m_deck_service.save_deck(std::move(deck));
+	m_designer.cancel();
 }
