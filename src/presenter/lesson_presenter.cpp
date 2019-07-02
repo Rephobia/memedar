@@ -57,18 +57,22 @@ lesson_presenter::lesson_presenter(md::controller& controller,
 	, m_lesson         {lesson}
 	, m_task_book      {task_service.get_task_book(deck)}
 {
-	add_connect(m_lesson.prev_task.connect([this]()
-	                                       { m_lesson.redraw(m_task_book.prev_task()); }));
-	add_connect(m_lesson.next_task.connect([this]()
-	                                       { m_lesson.redraw(m_task_book.next_task()); }));
+
+	auto prev {[this]() { m_lesson.redraw(m_task_book.prev_task()); }};
+	auto next {[this]() { m_lesson.redraw(m_task_book.next_task()); }};
 	
-	add_connect(m_lesson.answer.connect([this](const QString& answer)
-	                                    { show_answer(answer); }));
-	add_connect(m_lesson.again.connect([this]() { again(); }));
-	add_connect(m_lesson.done.connect([this](std::time_t gap) { done(gap); }));
+	auto answer_task {[this](const QString& answer) { show_answer(answer); }};
+	auto again_task  {[this]() { again(); }};
+	auto done_task   {[this](std::time_t gap) { done(gap); }};
 	
-	add_connect(m_lesson.call_designer.connect([this]()
-	                                           { m_controller.run_designer(m_task_book.deck); }));
+	auto designer {[this]() { m_controller.run_designer(m_task_book.deck); }};
+	
+	add_connect(m_lesson.prev_task.connect(prev),
+	            m_lesson.next_task.connect(next),
+	            m_lesson.answer.connect(answer_task),
+	            m_lesson.again.connect(again_task),
+	            m_lesson.done.connect(done_task),
+	            m_lesson.call_designer.connect(designer));
 	run();
 }
 

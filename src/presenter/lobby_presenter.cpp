@@ -46,10 +46,11 @@ lobby_presenter::lobby_presenter(md::controller& controller,
 	, m_deck_service {deck_service}
 	, m_lobby        {lobby}
 {
-	add_connect(m_lobby.call_lesson.connect([this](std::int64_t id)
-	                                        { run_lesson(id); }));
-	add_connect(m_lobby.call_designer.connect([this](std::int64_t id)
-	                                          { run_designer(id); }));
+	auto lesson   {[this](std::int64_t id) { run_lesson(id); }};
+	auto designer {[this](std::int64_t id) { run_designer(id); }};
+	
+	add_connect(m_lobby.call_lesson.connect(lesson),
+	            m_lobby.call_designer.connect(designer));
 	
 	m_lobby.show(deck_service);
 }

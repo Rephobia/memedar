@@ -34,9 +34,10 @@ public:
 	virtual void run() = 0;
 	virtual ~presenter() = default;
 protected:
-	void add_connect(boost::signals2::connection&& connection)
+	template<class... C>
+	void add_connect(C&&... connections)
 	{
-		conn.push_back(std::move(connection));
+		(conn.push_back(std::move(connections)), ...);
 	}
 	std::vector<boost::signals2::scoped_connection> conn {};
 };
