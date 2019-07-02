@@ -46,8 +46,10 @@ card_designer_presenter::card_designer_presenter(model::deck::deck& deck,
 	, m_card_service {card_service}
 	, m_designer     {designer}
 {
-	add_connect(m_designer.add_card.connect([this](model::card::card& card)
-	                                        { add_card(std::move(card)); }));
+	auto action {[this](model::card::card& card) { add_card(std::move(card)); }};
+	
+	add_connect(m_designer.add_card.connect(action));
+	
 	run();
 }
 
@@ -68,8 +70,8 @@ deck_designer_presenter::deck_designer_presenter(model::deck_service& deck_servi
 	: m_deck_service {deck_service}
 	, m_designer     {designer}
 {
-	add_connect(m_designer.add_deck.connect([this](model::deck::deck& deck)
-	                                        { add_deck(std::move(deck)); }));
+	auto action {[this](model::deck::deck& deck) { add_deck(std::move(deck)); }};
+	add_connect(m_designer.add_deck.connect(action));
 	run();
 }
 
