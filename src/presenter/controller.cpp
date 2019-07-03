@@ -21,36 +21,69 @@
 
 #include <ctime>
 
+#include <QString>
 #include <boost/signals2.hpp>
 
-#include "memedar/presenter/menu_presenter.hpp"
+#include "memedar/view/lobby.hpp"
+#include "memedar/view/menu.hpp"
+#include "memedar/view/designer.hpp"
+#include "memedar/view/lesson.hpp"
+
+#include "memedar/presenter/presenter.hpp"
 #include "memedar/presenter/lobby_presenter.hpp"
-#include "memedar/presenter/designer_presenter.hpp"
 #include "memedar/presenter/lesson_presenter.hpp"
+#include "memedar/presenter/designer_presenter.hpp"
 #include "memedar/presenter/controller.hpp"
 
 
 using md::controller;
 
-controller::controller(md::menu_presenter& menu,
-                       md::lobby_presenter& lobby,
-                       md::designer_presenter& designer,
-                       md::lesson_presenter& lesson)
-	: m_menu     {menu}
-	, m_lobby    {lobby}
-	, m_designer {designer}
-	, m_lesson   {lesson}
+controller::~controller() = default;
+
+controller::controller(md::model::card_service& card_service,
+                       md::model::deck_service& deck_service,
+                       md::model::task_service& task_service,
+                       md::view::menu& menu,
+                       md::view::lobby& lobby,
+                       md::view::lesson& lesson,
+                       md::view::designer& designer)
+	: m_card_service       {card_service}
+	, m_deck_service       {deck_service}
+	, m_task_service       {task_service}
+	, m_menu               {menu}
+	, m_lobby              {lobby}
+	, m_lesson             {lesson}
+	, m_designer           {designer}
+	, m_presenter          {nullptr}
+	, m_designer_presenter {nullptr}
 {
-	auto run_lobby {[this] { m_lobby.run(); }};
-	m_menu.go_to_designer.connect([this, run_lobby]() { m_designer.run(run_lobby); });
+	m_menu.call_lobby.connect([this]() { run_lobby(); });
+	m_menu.call_designer.connect([this]() { run_designer(); });
+	m_designer.cancel.connect([this]() { m_presenter->run(); });
+	run_lobby();
+}
 
-	m_lobby.go_to_lesson.connect([this](std::int64_t id)
-	                             { m_lesson.run(id); });
+void controller::run_lobby()
+{
+	m_presenter = std::make_unique<md::lobby_presenter>(*this, m_deck_service, m_lobby);
+}
 
-	m_lobby.go_to_designer.connect([this, run_lobby](const md::model::deck::deck& deck)
-	                               { m_designer.run(deck, run_lobby); });
+void controller::run_lesson(md::model::deck::deck& deck)
+{
+	m_presenter = std::make_unique<md::lesson_presenter>(*this, deck, m_deck_service,
+	                                                     m_task_service,
+	                                                     m_lesson);	
+}
 
-	m_lesson.call_designer.connect([this](md::model::deck::deck& deck, std::function<void()> quit)
-	                               { m_designer.run(deck, quit); });
-	m_lobby.run();
+void controller::run_designer(md::model::deck::deck& deck)
+{
+	m_designer_presenter = std::make_unique<md::card_designer_presenter>(deck, 
+	                                                                     m_card_service,
+	                                                                     m_designer);	
+}
+
+void controller::run_designer()
+{
+	m_designer_presenter = std::make_unique<md::deck_designer_presenter>(m_deck_service,
+	                                                                     m_designer);	
 }

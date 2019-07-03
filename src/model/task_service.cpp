@@ -18,9 +18,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 #include <ctime>
 #include <memory>
+#include <map>
 
 #include <QString>
 
@@ -72,7 +72,23 @@ task_service::task_service(md::view::error_delegate& error_delegate,
 	}
 }
 
-md::model::task::task_book task_service::make_task(deck::deck& deck)
+md::model::task::task_book& task_service::get_task_book(md::model::deck::deck& deck)
+{
+	md::utils::ref_wrapper deck_ref {deck};
+	decltype(auto) it {m_tasks.find(deck_ref)};
+	
+	if (it == m_tasks.end()) {
+
+		decltype(auto) pair = std::make_pair(deck_ref, make_task_book(deck_ref));
+		return m_tasks.insert(std::move(pair)).first->second;
+		
+	}
+	else {
+		return it->second;
+	}
+}
+
+md::model::task::task_book task_service::make_task_book(deck::deck& deck)
 {
 	md::model::task::task_book task_book {deck};
 	try {
@@ -100,23 +116,6 @@ md::model::task::task_book task_service::make_task(deck::deck& deck)
 	}
 
 	return task_book;
-}
-
-void task_service::update_task_book(md::model::task::task_book& task_book)
-{
-	try {
-		auto guard {dal::make_transaction(m_transaction)};
-
-		fill_from_deck(task_book);
-		m_deck_mapper.update_last_opening(task_book.deck);
-
-		guard.commit();
-	}
-	catch (std::system_error &e) {
-
-		m_error_delegate.show_error(e);
-
-	}
 }
 
 void task_service::fill_from_deck(md::model::task::task_book& task_book)
