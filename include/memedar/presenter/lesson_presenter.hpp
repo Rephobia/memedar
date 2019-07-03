@@ -39,46 +39,36 @@ namespace md::model {
 }
 
 namespace md::view {
-	class error_delegate;
-}
-
-namespace md::view {
 	class lesson;
 }
 
 namespace md {
+	class presenter;
 	class lesson_presenter;
 
 }
 
 
-class md::lesson_presenter
+class md::lesson_presenter : public md::presenter
 {
 public:
-	lesson_presenter(md::model::deck_service& deck_service,
-	                 md::model::task_service& task_service,
-	                 md::view::error_delegate& error_delegate,
-	                 md::view::lesson& lesson);
+	lesson_presenter(md::controller& controller,
+	                 model::deck::deck& deck,
+	                 model::deck_service& deck_service,
+	                 model::task_service& task_service,
+	                 view::lesson& lesson);
 
-	void run(std::int64_t deck_id);
-	
-	boost::signals2::signal<void(md::model::deck::deck& deck,
-	                             std::function<void()> quit)> call_designer {};
-	
-	~lesson_presenter();
+	void run() override;
 protected:
-	void run_current();
-	
 	void show_answer(const QString& answer);
 	void again();
 	void done(std::time_t gap);
 protected:
+	md::controller& m_controller;
 	md::model::deck_service& m_deck_service;
 	md::model::task_service& m_task_service;
-	md::view::error_delegate& m_error_delegate;
 	md::view::lesson& m_lesson;
-
-	std::unique_ptr<md::model::task::task_book> m_task_book;
+	md::model::task::task_book& m_task_book;
 };
 
 

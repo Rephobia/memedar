@@ -57,9 +57,9 @@ void lobby::show(const utils::storage<model::deck::deck>& decks)
 		              QString::number(e.total_cards())};
 
 		auto btn {new ui::button {stat, [this, &e]()
-		                                { go_to_lesson(e.id()); }}};
+		                                { call_lesson(e.id()); }}};
 		auto designer {new ui::button {"add", [this, &e]()
-		                                      { go_to_designer(e); }}};
+		                                      { call_designer(e.id()); }}};
 
 		box->put_widget(QBoxLayout::LeftToRight, btn, designer);
 	}

@@ -23,6 +23,14 @@
 #define MEMEDAR_VIEW_LESSON_HPP
 
 
+namespace md::model::task {
+	class task;
+}
+
+namespace md::model::deck {
+	class deck;
+}
+
 namespace md::view {
 	class lesson;
 }

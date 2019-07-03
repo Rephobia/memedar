@@ -31,7 +31,8 @@ namespace md::view {
 class md::view::menu
 {
 public:
-	boost::signals2::signal<void()> go_to_designer {};
+	boost::signals2::signal<void()> call_lobby {};
+	boost::signals2::signal<void()> call_designer {};
 
 	virtual ~menu() = default;
 };

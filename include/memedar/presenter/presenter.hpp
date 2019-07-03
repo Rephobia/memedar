@@ -19,15 +19,28 @@
  */
 
 
-#include <boost/signals2.hpp>
+#ifndef MEMDAR_PRESENTER_HPP
+#define MEMDAR_PRESENTER_HPP
 
-#include "memedar/presenter/menu_presenter.hpp"
-#include "memedar/view/menu.hpp"
 
-using md::menu_presenter;
-
-menu_presenter::menu_presenter(md::view::menu& menu)
-	: m_menu {menu}
-{
-	m_menu.go_to_designer.connect([this]() { go_to_designer(); });
+namespace md {
+	class presenter;
 }
+
+
+class md::presenter
+{
+public:
+	virtual void run() = 0;
+	virtual ~presenter() = default;
+protected:
+	template<class... C>
+	void add_connect(C&&... connections)
+	{
+		(conn.push_back(std::move(connections)), ...);
+	}
+	std::vector<boost::signals2::scoped_connection> conn {};
+};
+
+
+#endif // MEMDAR_PRESENTER_HPP
