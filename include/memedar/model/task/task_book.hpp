@@ -49,8 +49,9 @@ class md::model::task::task_book : public md::utils::storage<md::model::task::ta
 {
 public:
 	explicit task_book(md::model::deck::deck& deck);
-	bool add_card(md::model::card::card& card);
-	void add_card(md::model::card::card& card, md::model::task::state state);
+	bool add_card(std::shared_ptr<md::model::card::card> card);
+	void add_card(std::shared_ptr<md::model::card::card> card,
+	              md::model::task::state state);
 
 	std::int64_t noob_space() const;
 	std::int64_t ready_space() const;

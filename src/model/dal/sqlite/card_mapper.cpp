@@ -98,7 +98,7 @@ void card_mapper::load_cards(deck::deck& deck)
 		auto q {read_side(conn, ind.question)};
 		auto a {read_side(conn, ind.answer)};
 
-		bool typing {conn.read_int64t(ind.typing())};
+		bool typing {static_cast<bool>(conn.read_int64t(ind.typing()))};
 
 		deck.add_card(card::card
 		              {id, schedule, combo, std::move(q), std::move(a), typing});

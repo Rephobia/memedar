@@ -48,7 +48,7 @@ class md::model::deck::deck : public md::model::identity
                             , public md::model::deck::info
                             , public md::model::deck::limit
                             , public md::model::deck::gaps
-                            , public md::utils::storage<md::model::card::card>
+                            , public md::utils::storage<std::shared_ptr<md::model::card::card>>
 {
 public:
 	explicit deck(md::model::deck::info&& info);

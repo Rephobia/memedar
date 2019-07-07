@@ -26,9 +26,8 @@
 #include <sqlite3.h>
 #include <QString>
 
-#include "memedar/utils/find.hpp"
 #include "memedar/utils/storage.hpp"
-#include "memedar/utils/ref_wrapper.hpp"
+#include "memedar/utils/find.hpp"
 
 #include "memedar/model/side/side.hpp"
 #include "memedar/model/card/card.hpp"
@@ -64,7 +63,7 @@ void task_mapper::save_task(const deck::deck& deck,
 	static connector conn {m_db, res::insert_cmd()};
 	task_index ind {res::insert_index()};
 
-	conn.exec_bind(binder {ind.card_id(), task.card.get().id()},
+	conn.exec_bind(binder {ind.card_id(), task.card->id()},
 	               binder {ind.deck_id(), deck.id()},
 	               binder {ind.state(), static_cast<int>(task.state)});
 }

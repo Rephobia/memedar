@@ -31,8 +31,7 @@ class md::model::task::add_visitor : public md::model::card::visitor
 {
 public:
 	add_visitor(md::model::task::task_book& task_book,
-	            md::model::card::card& card,
-	            md::model::task::state state);
+	            md::model::task::task task);
 
 	void visit(md::model::card::noob_t& ref) override;
 	void visit(md::model::card::ready_t& ref) override;
@@ -40,10 +39,9 @@ public:
 
 	bool is_task() const;
 protected:
-	bool m_task_status;
 	md::model::task::task_book& m_task_book;
-	md::model::card::card& m_card;
-	md::model::task::state m_state;
+	md::model::task::task m_task;
+	bool m_task_status;
 };
 
 
