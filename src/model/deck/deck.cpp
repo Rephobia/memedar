@@ -65,7 +65,7 @@ void deck::process_card(card::card& card)
 void deck::add_card(card::card&& card)
 {
 	m_accountant.process_card(card);
-	storage::add(std::move(card));
+	storage::add(std::make_shared<card::card>(std::move(card)));
 }
 
 std::int64_t deck::noob_cards() const

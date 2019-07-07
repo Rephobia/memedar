@@ -134,7 +134,7 @@ void task_service::again_card(task::task& task)
 	try {
 		auto guard {dal::make_transaction(m_transaction)};
 
-		m_card_mapper.reset_combo(task.card);
+		m_card_mapper.reset_combo(*task.card);
 
 		guard.commit();
 	}
@@ -162,15 +162,15 @@ public:
 	void visit([[maybe_unused]] card::noob_t& ref) override
 	{
 		m_deck_mapper.decrement_daily_noob(m_deck);
-		m_card_mapper.update_repeat(m_task.card.get(),
+		m_card_mapper.update_repeat(*m_task.card,
 		                            m_gap + std::time(nullptr));
 	}
 
 	void visit([[maybe_unused]] card::ready_t& ref) override
 	{
 		m_deck_mapper.decrement_daily_ready(m_deck);
-		m_card_mapper.update_repeat(m_task.card.get(),
-		                            m_gap + m_task.card.get().repeat());
+		m_card_mapper.update_repeat(*m_task.card,
+		                            m_gap + m_task.card->repeat());
 	}
 
 	void visit([[maybe_unused]] card::delayed_t& ref) override
@@ -193,10 +193,10 @@ void task_service::done_card(deck::deck& deck, task::task& task, std::time_t gap
 
 		done_visitor visitor {m_card_mapper, m_deck_mapper,
 		                      deck, task, gap};
-		task.card.get().take_visitor(visitor);
-		deck.process_card(task.card);
+		task.card->take_visitor(visitor);
+		deck.process_card(*task.card);
 		m_task_mapper.change_state(task, task::state::done);
-		task.card.get().increment_combo();
+		task.card->increment_combo();
 
 		guard.commit();
 	}

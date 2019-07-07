@@ -35,9 +35,10 @@ namespace md::model::task {
 class md::model::task::task : public md::model::identity
 {
 public:
-	task(md::model::card::card& card, md::model::task::state state);
+	task(std::shared_ptr<md::model::card::card> card,
+	     md::model::task::state state);
 
-	md::utils::ref_wrapper<md::model::card::card> card;
+	std::shared_ptr<md::model::card::card> card;
 	md::model::task::state state;
 	QString user_answer;
 };
