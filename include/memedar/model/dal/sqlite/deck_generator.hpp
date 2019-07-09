@@ -19,37 +19,24 @@
  */
 
 
-#ifndef MEMEDAR_MODEL_DAL_SQLITE_DECK_MAPPER_HPP
-#define MEMEDAR_MODEL_DAL_SQLITE_DECK_MAPPER_HPP
+#ifndef MEMEDAR_MODEL_DAL_SQLITE_DECK_GENERATOR_HPP
+#define MEMEDAR_MODEL_DAL_SQLITE_DECK_GENERATOR_HPP
 
-
-namespace md::model::deck {
-	class deck;
-}
 
 namespace md::model::dal::sqlite {
 	class deck_generator;
-	class deck_mapper;
 }
 
 
-class md::model::dal::sqlite::deck_mapper : public md::model::dal::deck_mapper
+class md::model::dal::sqlite::deck_generator : public md::model::dal::deck_generator
 {
 public:
-	explicit deck_mapper(md::model::dal::sqlite::adapter::handle& db);
-
-	void create_table() override;
-
-	std::unique_ptr<md::model::dal::deck_generator> get_generator() override;
-	void save_deck(md::model::deck::deck& deck) override;
-
-	void decrement_daily_noob(md::model::deck::deck& deck) override;
-	void decrement_daily_ready(md::model::deck::deck& deck) override;
-	void reset_daily_limits(md::model::deck::deck& deck) override;
-	void update_last_opening(md::model::deck::deck& deck) override;
+	explicit deck_generator(md::model::dal::sqlite::adapter::connector& connector);
+	std::optional<md::model::deck::deck> get_deck() override;
 protected:
-	md::model::dal::sqlite::adapter::handle& m_db;
+	md::model::dal::sqlite::adapter::connector& m_conn;
+	md::model::dal::sqlite::deck_index m_ind;	
 };
 
 
-#endif // MEMEDAR_MODEL_DAL_SQLITE_DECK_MAPPER_HPP
+#endif // MEMEDAR_MODEL_DAL_SQLITE_DECK_GENERATOR_HPP

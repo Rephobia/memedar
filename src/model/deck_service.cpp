@@ -74,7 +74,10 @@ void deck_service::load_decks()
 	try {
 		auto guard {dal::make_transaction(m_transaction)};
 
-		storage::operator=(m_deck_mapper.load_decks());
+		auto generator {m_deck_mapper.get_generator()};
+		while (auto deck = generator->get_deck()) {
+			storage::add(std::move(deck.value()));
+		}
 
 		guard.commit();
 	}
