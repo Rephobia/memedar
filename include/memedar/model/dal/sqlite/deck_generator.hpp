@@ -19,29 +19,24 @@
  */
 
 
-#ifndef MEMEDAR_MODEL_TASK_TASK_HPP
-#define MEMEDAR_MODEL_TASK_TASK_HPP
+#ifndef MEMEDAR_MODEL_DAL_SQLITE_DECK_GENERATOR_HPP
+#define MEMEDAR_MODEL_DAL_SQLITE_DECK_GENERATOR_HPP
 
 
-#include "memedar/model/identity.hpp"
-
-namespace md::model::task {
-	class task;
-	enum class state : int { answering = 0, marking, done };
-
+namespace md::model::dal::sqlite {
+	class deck_generator;
 }
 
 
-class md::model::task::task : public md::model::identity
+class md::model::dal::sqlite::deck_generator : public md::model::dal::deck_generator
 {
 public:
-	task(std::shared_ptr<md::model::card::card> card,
-	     md::model::task::state state);
-
-	std::shared_ptr<md::model::card::card> card;
-	md::model::task::state state;
-	QString user_answer;
+	explicit deck_generator(md::model::dal::sqlite::adapter::connector& connector);
+	std::optional<md::model::deck::deck> get_deck() override;
+protected:
+	md::model::dal::sqlite::adapter::connector& m_conn;
+	md::model::dal::sqlite::deck_index m_ind;	
 };
 
 
-#endif // MEMEDAR_MODEL_TASK_TASK_HPP
+#endif // MEMEDAR_MODEL_DAL_SQLITE_DECK_GENERATOR_HPP

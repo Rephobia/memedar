@@ -21,6 +21,7 @@
 
 #include <ctime>
 #include <boost/signals2.hpp>
+#include <deque>
 
 #include <QString>
 
@@ -28,6 +29,8 @@
 #include "memedar/utils/storage.hpp"
 
 #include "memedar/model/deck/deck.hpp"
+#include "memedar/model/task/task.hpp"
+#include "memedar/model/task/task_book.hpp"
 #include "memedar/model/card_service.hpp"
 #include "memedar/model/deck_service.hpp"
 

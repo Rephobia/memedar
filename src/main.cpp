@@ -22,6 +22,7 @@
 #include <memory>
 #include <filesystem>
 #include <boost/signals2.hpp>
+#include <deque>
 
 #include <sqlite3.h>
 #include <QString>

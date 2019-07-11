@@ -22,10 +22,6 @@
 #ifndef MEMEDAR_VIEW_LOBBY_HPP
 #define MEMEDAR_VIEW_LOBBY_HPP
 
-namespace md::utils {
-	template<class T>
-	class storage;
-}
 
 namespace md::model::deck {
 	class deck;
@@ -39,10 +35,10 @@ namespace md::view {
 class md::view::lobby
 {
 public:
-	virtual void show(const md::utils::storage<md::model::deck::deck>& decks) = 0;
+	virtual void show(std::deque<md::model::deck::deck>& decks) = 0;
 
-	boost::signals2::signal<void(std::int64_t deck_id)> call_lesson {};
-	boost::signals2::signal<void(std::int64_t deck_id)> call_designer {};
+	boost::signals2::signal<void(md::model::deck::deck&)> call_lesson {};
+	boost::signals2::signal<void(md::model::deck::deck&)> call_designer {};
 
 	virtual ~lobby() = default;
 };
