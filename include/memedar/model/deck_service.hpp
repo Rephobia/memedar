@@ -22,7 +22,6 @@
 #ifndef MEMEDAR_MODEL_DECK_SERVICE_HPP
 #define MEMEDAR_MODEL_DECK_SERVICE_HPP
 
-
 namespace md::model::deck {
 	class deck;
 }
@@ -42,7 +41,7 @@ namespace md::model {
 }
 
 
-class md::model::deck_service : public md::utils::storage<md::model::deck::deck>
+class md::model::deck_service 
 {
 public:
 	deck_service(md::view::error_delegate& error_delegate,
@@ -51,6 +50,7 @@ public:
 	             md::model::dal::deck_mapper& deck_mapper);
 
 	void save_deck(md::model::deck::deck&& deck);
+	std::deque<md::model::deck::deck>& get_decks();
 protected:
 	void load_decks();
 protected:
@@ -58,6 +58,8 @@ protected:
 	md::model::dal::transaction& m_transaction;
 	md::model::dal::card_mapper& m_card_mapper;
 	md::model::dal::deck_mapper& m_deck_mapper;
+protected:
+	std::deque<md::model::deck::deck> m_decks {};
 };
 
 
