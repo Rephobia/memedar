@@ -47,8 +47,8 @@ public:
 	
 	void run() override;
 protected:
-	void run_lesson(std::int64_t id);
-	void run_designer(std::int64_t id);
+	// void run_lesson(std::int64_t id);
+	// void run_designer(std::int64_t id);
 protected:	
 	md::controller& m_controller;
 	md::model::deck_service& m_deck_service;

@@ -74,12 +74,11 @@ task_service::task_service(md::view::error_delegate& error_delegate,
 
 md::model::task::task_book& task_service::get_task_book(md::model::deck::deck& deck)
 {
-	md::utils::ref_wrapper deck_ref {deck};
-	decltype(auto) it {m_tasks.find(deck_ref)};
+	decltype(auto) it {m_tasks.find(deck.id())};
 	
 	if (it == m_tasks.end()) {
 
-		decltype(auto) pair = std::make_pair(deck_ref, make_task_book(deck_ref));
+		decltype(auto) pair = std::make_pair(deck.id(), make_task_book(deck));
 		return m_tasks.insert(std::move(pair)).first->second;
 		
 	}

@@ -20,6 +20,7 @@
 
 
 #include <ctime>
+#include <deque>
 
 #include <QString>
 #include <boost/signals2.hpp>

@@ -21,6 +21,7 @@
 
 #include <ctime>
 #include <memory>
+#include <deque>
 
 #include <boost/signals2.hpp>
 #include <QString>
@@ -38,17 +39,18 @@
 #include "memedar/view/qt/main_window.hpp"
 #include "memedar/view/qt/lobby.hpp"
 
+
 using md::view::qt::lobby;
 
 lobby::lobby(qt::main_window* main_window)
 	: m_main_window {main_window}
 { ;}
 
-void lobby::show(const utils::storage<model::deck::deck>& decks)
+void lobby::show(std::deque<md::model::deck::deck>& decks)
 {
 	auto box {new ui::box {QBoxLayout::TopToBottom}};
 
-	for (decltype(auto) e : decks) {
+	for (auto& e : decks) {
 
 		QString stat {e.name() +"\n" +
 		              QString::number(e.noob_cards()) + "\n" +
@@ -57,9 +59,9 @@ void lobby::show(const utils::storage<model::deck::deck>& decks)
 		              QString::number(e.total_cards())};
 
 		auto btn {new ui::button {stat, [this, &e]()
-		                                { call_lesson(e.id()); }}};
+		                                { call_lesson(e); }}};
 		auto designer {new ui::button {"add", [this, &e]()
-		                                      { call_designer(e.id()); }}};
+		                                      { call_designer(e); }}};
 
 		box->put_widget(QBoxLayout::LeftToRight, btn, designer);
 	}
