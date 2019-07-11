@@ -34,7 +34,7 @@ class md::view::qt::lobby : public md::view::lobby
 {
 public:
 	explicit lobby(md::view::qt::main_window* main_window);
-	void show(const md::utils::storage<md::model::deck::deck>& decks) override;
+	void show(std::deque<md::model::deck::deck>& decks) override;
 protected:
 	md::view::qt::main_window* m_main_window;
 };

@@ -26,10 +26,17 @@
 namespace md::utils {
 
 	template<class T>
+	T& ignore_pointer(std::shared_ptr<T> t) { return *t; }
+	template<class T>
+	T& ignore_pointer(T& t) { return t; }
+		
+	template<class T>
 	typename T::iterator find_by_id(std::int64_t id, T& storage)
 	{
 		auto find {[id](const typename T::value_type& obj)
-		           { return obj.id() == id; }};
+		           {
+			           return ignore_pointer(obj).id() == id;
+		           }};
 
 		return std::find_if(storage.begin(), storage.end(), find);
 	}

@@ -24,9 +24,8 @@
 
 #include <QString>
 
-#include "memedar/utils/find.hpp"
 #include "memedar/utils/storage.hpp"
-#include "memedar/utils/ref_wrapper.hpp"
+#include "memedar/utils/find.hpp"
 
 #include "memedar/model/side/side.hpp"
 #include "memedar/model/card/card.hpp"
@@ -46,21 +45,22 @@ task_book::task_book(deck::deck& deck)
 	, m_current_index {0}
 { ;}
 
-bool task_book::add_card(card::card& card)
+bool task_book::add_card(std::shared_ptr<md::model::card::card> card) 
 {
-	add_visitor visitor {*this, card, state::answering};
+	add_visitor visitor {*this, task {card, state::answering}};
 
-	if (utils::find_by_id(card.id(), *this) == storage::end()) {
-		card.take_visitor(visitor);
+	if (utils::find_by_id(card->id(), *this) == storage::end()) {
+		card->take_visitor(visitor);
 	}
 	return visitor.is_task();
 }
 
-void task_book::add_card(card::card& card, md::model::task::state state)
+void task_book::add_card(std::shared_ptr<md::model::card::card> card,
+                         md::model::task::state state)
 {
-	add_visitor visitor {*this, card, state};
+	add_visitor visitor {*this, task {card, state}};
 
-	card.take_visitor(visitor);
+	card->take_visitor(visitor);
 }
 
 std::int64_t task_book::noob_space() const

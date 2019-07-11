@@ -25,7 +25,6 @@
 #include <QLineEdit>
 
 #include "memedar/utils/storage.hpp"
-#include "memedar/utils/ref_wrapper.hpp"
 
 #include "memedar/model/side/side.hpp"
 #include "memedar/model/card/card.hpp"
@@ -73,7 +72,7 @@ void lesson_painter::answering_state(const model::card::card& card)
 
 void lesson_painter::marking_state(const model::task::task& task)
 {
-	const model::card::card& card {task.card.get()};
+	const model::card::card& card {*task.card};
 
 	auto question {new QLabel {card.question.text()}};
 	auto user_answer {new QLabel {task.user_answer}};
@@ -107,7 +106,7 @@ void lesson_painter::draw(const model::task::task& task)
 {
 	switch (task.state) {
 	case md::model::task::state::answering: {
-		answering_state(task.card);
+		answering_state(*task.card);
 		break;
 	}
 	case md::model::task::state::marking: {
@@ -115,7 +114,7 @@ void lesson_painter::draw(const model::task::task& task)
 		break;
 	}
 	case md::model::task::state::done: {
-		done_state(task.card);
+		done_state(*task.card);
 		break;
 	}
 	}

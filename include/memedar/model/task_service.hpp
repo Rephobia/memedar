@@ -71,9 +71,7 @@ protected:
 	md::model::dal::deck_mapper& m_deck_mapper;
 	md::model::dal::task_mapper& m_task_mapper;
 protected:
-	std::map<md::utils::ref_wrapper<md::model::deck::deck>,
-	         md::model::task::task_book,
-	         std::less<const md::model::deck::deck>> m_tasks {};
+	std::map<std::int64_t, md::model::task::task_book> m_tasks {};
 };
 
 

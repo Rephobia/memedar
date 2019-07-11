@@ -26,7 +26,6 @@
 #include <QMainWindow>
 
 #include "memedar/utils/storage.hpp"
-#include "memedar/utils/ref_wrapper.hpp"
 
 #include "memedar/model/side/side.hpp"
 #include "memedar/model/card/card.hpp"

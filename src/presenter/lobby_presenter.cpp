@@ -20,11 +20,11 @@
 
 
 #include <ctime>
+#include <deque>
 
 #include <QString>
 #include <boost/signals2.hpp>
 
-#include "memedar/utils/find.hpp"
 #include "memedar/utils/storage.hpp"
 
 #include "memedar/model/deck/deck.hpp"
@@ -46,26 +46,16 @@ lobby_presenter::lobby_presenter(md::controller& controller,
 	, m_deck_service {deck_service}
 	, m_lobby        {lobby}
 {
-	auto lesson   {[this](std::int64_t id) { run_lesson(id); }};
-	auto designer {[this](std::int64_t id) { run_designer(id); }};
+	auto lesson   {[this](md::model::deck::deck& deck) { m_controller.run_lesson(deck); }};
+	auto designer {[this](md::model::deck::deck& deck) { m_controller.run_designer(deck); }};
 	
 	add_connect(m_lobby.call_lesson.connect(lesson),
 	            m_lobby.call_designer.connect(designer));
 	
-	m_lobby.show(deck_service);
+	run();
 }
 
 void lobby_presenter::run()
 {
-	m_lobby.show(m_deck_service);
-}
-
-void lobby_presenter::run_lesson(std::int64_t id)
-{
-	m_controller.run_lesson(*utils::find_by_id(id, m_deck_service));	
-}
-
-void lobby_presenter::run_designer(std::int64_t id)
-{
-	m_controller.run_designer(*utils::find_by_id(id, m_deck_service));	
+	m_lobby.show(m_deck_service.get_decks());
 }

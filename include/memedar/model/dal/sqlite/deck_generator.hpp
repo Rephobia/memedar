@@ -19,29 +19,24 @@
  */
 
 
-#ifndef MEMEDAR_VIEW_LOBBY_HPP
-#define MEMEDAR_VIEW_LOBBY_HPP
+#ifndef MEMEDAR_MODEL_DAL_SQLITE_DECK_GENERATOR_HPP
+#define MEMEDAR_MODEL_DAL_SQLITE_DECK_GENERATOR_HPP
 
 
-namespace md::model::deck {
-	class deck;
-}
-
-namespace md::view {
-	class lobby;
+namespace md::model::dal::sqlite {
+	class deck_generator;
 }
 
 
-class md::view::lobby
+class md::model::dal::sqlite::deck_generator : public md::model::dal::deck_generator
 {
 public:
-	virtual void show(std::deque<md::model::deck::deck>& decks) = 0;
-
-	boost::signals2::signal<void(md::model::deck::deck&)> call_lesson {};
-	boost::signals2::signal<void(md::model::deck::deck&)> call_designer {};
-
-	virtual ~lobby() = default;
+	explicit deck_generator(md::model::dal::sqlite::adapter::connector& connector);
+	std::optional<md::model::deck::deck> get_deck() override;
+protected:
+	md::model::dal::sqlite::adapter::connector& m_conn;
+	md::model::dal::sqlite::deck_index m_ind;	
 };
 
 
-#endif // MEMEDAR_VIEW_LOBBY_HPP
+#endif // MEMEDAR_MODEL_DAL_SQLITE_DECK_GENERATOR_HPP

@@ -20,9 +20,9 @@
 
 
 #include <ctime>
+#include <deque>
 
 #include <boost/signals2.hpp>
-
 #include <QString>
 
 #include "memedar/utils/find.hpp"

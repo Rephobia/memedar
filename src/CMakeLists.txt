@@ -24,4 +24,5 @@ set_target_properties(memedar PROPERTIES
 cppcheck_targets(TARGETS ${PROJECT_NAME} memedar
                  PROPERTY memedar_cppcheck_property
                  INCLUDE ${MEMEDAR_INCLUDE_DIRECTORY}
-                 SUPPRESS uninitMemberVar)
+                 SUPPRESS uninitMemberVar functionConst)
+
