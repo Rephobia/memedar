@@ -27,7 +27,6 @@
 
 #include "memedar/utils/find.hpp"
 #include "memedar/utils/storage.hpp"
-#include "memedar/utils/ref_wrapper.hpp"
 
 #include "memedar/model/side/side.hpp"
 #include "memedar/model/card/card.hpp"
@@ -37,7 +36,7 @@
 #include "memedar/model/deck_service.hpp"
 #include "memedar/model/task_service.hpp"
 
-
+#include "memedar/view/error_delegate.hpp"
 #include "memedar/view/lesson.hpp"
 #include "memedar/presenter/controller.hpp"
 #include "memedar/presenter/presenter.hpp"
@@ -50,14 +49,16 @@ lesson_presenter::lesson_presenter(md::controller& controller,
                                    model::deck::deck& deck,
                                    model::deck_service& deck_service,
                                    model::task_service& task_service,
+                                   view::error_delegate& error_delegate,
                                    view::lesson& lesson)
 	: m_controller     {controller}
 	, m_deck_service   {deck_service}
 	, m_task_service   {task_service}
+	, m_error_delegate {error_delegate}
 	, m_lesson         {lesson}
+	, m_deck           {deck}
 	, m_task_book      {task_service.get_task_book(deck)}
 {
-
 	auto prev {[this]() { m_lesson.redraw(m_task_book.prev_task()); }};
 	auto next {[this]() { m_lesson.redraw(m_task_book.next_task()); }};
 	
@@ -65,7 +66,7 @@ lesson_presenter::lesson_presenter(md::controller& controller,
 	auto again_task  {[this]() { again(); }};
 	auto done_task   {[this](std::time_t gap) { done(gap); }};
 	
-	auto designer {[this]() { m_controller.run_designer(m_task_book.deck); }};
+	auto designer {[this]() { m_controller.run_designer(m_deck); }};
 	
 	add_connect(m_lesson.prev_task.connect(prev),
 	            m_lesson.next_task.connect(next),
@@ -77,33 +78,49 @@ lesson_presenter::lesson_presenter(md::controller& controller,
 }
 
 void lesson_presenter::run()
-{	
+{
 	m_task_book.empty()
 		? m_lesson.show()
-		: m_lesson.show(m_task_book.current_task(), m_task_book.deck);
+		: m_lesson.show(m_task_book.current_task(), m_deck);
+
 }
 
 void lesson_presenter::show_answer(const QString& answer)
 {
-	decltype(auto) current {m_task_book.current_task()};
-	current.state = model::task::state::marking;
-	current.user_answer = answer;
-	m_lesson.redraw(current);
+	try {
+		decltype(auto) current {m_task_book.current_task()};
+		current.state = model::task::state::marking;
+		current.user_answer = answer;
+		m_lesson.redraw(current);
+	}
+	catch (std::system_error& e) {
+		m_error_delegate.show_error(e);
+	}
 }
 
 void lesson_presenter::again()
 {
-	decltype(auto) current {m_task_book.current_task()};
-	m_task_service.again_card(current);
-	current.state = model::task::state::answering;
-	m_task_book.push_back_current();
-	m_lesson.redraw(current);
+	try {
+		decltype(auto) current {m_task_book.current_task()};
+		m_task_service.again_card(current);
+		current.state = model::task::state::answering;
+		m_task_book.push_back_current();
+		m_lesson.redraw(current);
+	}
+	catch (std::system_error& e) {
+		m_error_delegate.show_error(e);
+	}
 }
 
 void lesson_presenter::done(std::time_t gap)
 {
-	m_task_service.done_card(m_task_book.deck,
-	                         m_task_book.current_task(),
-	                         gap);
-	m_lesson.redraw(m_task_book.next_task());
+	try {
+		m_task_service.done_card(m_deck,
+		                         m_task_book.current_task(),
+		                         gap);
+		m_lesson.redraw(m_task_book.next_task());
+	}
+	catch (std::system_error& e) {
+		m_error_delegate.show_error(e);
+	}
 }
