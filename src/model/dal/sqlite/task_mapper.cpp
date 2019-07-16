@@ -68,19 +68,19 @@ void task_mapper::save_task(const deck::deck& deck,
 	               binder {ind.state(), static_cast<int>(task.state)});
 }
 
-void task_mapper::load_task_book(task::task_book& task_book)
+void task_mapper::load_task_book(deck::deck& deck, task::task_book& task_book)
 {
 	static connector conn {m_db, res::select_cmd()};
 	task_index ind {res::select_index()};
 
-	conn.bind(ind.deck_id(), task_book.deck.id());
+	conn.bind(ind.deck_id(), deck.id());
 
 	while (conn.step() == SQLITE_ROW and task_book.space()) {
 
 		auto card_it {utils::find_by_id(conn.read_int64t(ind.card_id()),
-		                                task_book.deck)};
+		                                deck)};
 
-		auto  state {static_cast<task::state>(conn.read_int64t(ind.state()))};
+		auto state {static_cast<task::state>(conn.read_int64t(ind.state()))};
 		task_book.add_card(*card_it, state);
 	}
 }

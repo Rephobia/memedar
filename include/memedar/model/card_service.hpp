@@ -32,31 +32,22 @@ namespace md::model::deck {
 }
 
 namespace md::model::dal {
-	class transaction;
-	class card_mapper;
+	class mapper;
 }
 
 namespace md::model {
 	class card_service;
 }
 
-namespace md::view {
-	class error_delegate;
-}
-
 
 class md::model::card_service
 {
 public:
-	card_service(md::view::error_delegate& error_delegate,
-	             md::model::dal::transaction& transaction,
-	             md::model::dal::card_mapper& card_mapper);
+	explicit card_service(md::model::dal::mapper& mapper);
 
 	void save_card(md::model::deck::deck& deck, md::model::card::card&& card);
 protected:
-	md::view::error_delegate& m_error_delegate;
-	md::model::dal::transaction& m_transaction;
-	md::model::dal::card_mapper& m_card_mapper;
+	md::model::dal::mapper& m_mapper;
 };
 
 

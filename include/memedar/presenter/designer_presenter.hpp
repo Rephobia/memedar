@@ -36,6 +36,7 @@ namespace md::model {
 }
 
 namespace md::view {
+	class error_delegate;
 	class designer;
 }
 
@@ -51,6 +52,7 @@ class md::card_designer_presenter : public md::presenter
 public:
 	card_designer_presenter(md::model::deck::deck& deck,
 	                        md::model::card_service& card_service,
+	                        md::view::error_delegate& error_delegate,
 	                        md::view::designer& designer);
 
 	void run() override;
@@ -59,6 +61,7 @@ protected:
 protected:
 	md::model::deck::deck& m_deck;
 	md::model::card_service& m_card_service;
+	md::view::error_delegate& m_error_delegate;
 	md::view::designer& m_designer;
 };
 
@@ -67,6 +70,7 @@ class md::deck_designer_presenter : public md::presenter
 {
 public:
 	deck_designer_presenter(md::model::deck_service& deck_service,
+	                        view::error_delegate& error_delegate,
 	                        md::view::designer& designer);
 
 	void run() override;
@@ -74,6 +78,7 @@ protected:
 	void add_deck(model::deck::deck&& deck);
 protected:
 	md::model::deck_service& m_deck_service;
+	md::view::error_delegate& m_error_delegate;
 	md::view::designer& m_designer;
 };
 

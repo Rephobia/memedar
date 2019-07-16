@@ -34,6 +34,7 @@
 #include "memedar/model/card_service.hpp"
 #include "memedar/model/deck_service.hpp"
 
+#include "memedar/view/error_delegate.hpp"
 #include "memedar/view/designer.hpp"
 
 #include "memedar/presenter/presenter.hpp"
@@ -43,11 +44,13 @@
 using md::card_designer_presenter;
 
 card_designer_presenter::card_designer_presenter(model::deck::deck& deck,
-                                       model::card_service& card_service,
-                                       view::designer& designer)
-	: m_deck         {deck}
-	, m_card_service {card_service}
-	, m_designer     {designer}
+                                                 model::card_service& card_service,
+                                                 view::error_delegate& error_delegate,
+                                                 view::designer& designer)
+	: m_deck           {deck}
+	, m_card_service   {card_service}
+	, m_error_delegate {error_delegate}
+	, m_designer       {designer}
 {
 	auto action {[this](model::card::card& card) { add_card(std::move(card)); }};
 	
@@ -63,15 +66,23 @@ void card_designer_presenter::run()
 
 void card_designer_presenter::add_card(model::card::card&& card)
 {
-	m_card_service.save_card(m_deck, std::move(card));
+	try {
+		m_card_service.save_card(m_deck, std::move(card));
+	}
+	catch (std::system_error& e) {
+		m_error_delegate.show_error(e);
+	}
 }
+
 
 using md::deck_designer_presenter;
 
 deck_designer_presenter::deck_designer_presenter(model::deck_service& deck_service,
+                                                 view::error_delegate& error_delegate,
                                                  view::designer& designer)
-	: m_deck_service {deck_service}
-	, m_designer     {designer}
+	: m_deck_service   {deck_service}
+	, m_error_delegate {error_delegate}
+	, m_designer       {designer}
 {
 	auto action {[this](model::deck::deck& deck) { add_deck(std::move(deck)); }};
 	add_connect(m_designer.add_deck.connect(action));
@@ -85,6 +96,11 @@ void deck_designer_presenter::run()
 
 void deck_designer_presenter::add_deck(model::deck::deck&& deck)
 {
-	m_deck_service.save_deck(std::move(deck));
-	m_designer.cancel();
+	try {
+		m_deck_service.save_deck(std::move(deck));
+		m_designer.cancel();
+	}
+	catch (std::system_error& e) {
+		m_error_delegate.show_error(e);
+	}
 }

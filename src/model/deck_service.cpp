@@ -32,65 +32,26 @@
 #include "memedar/model/card/card.hpp"
 #include "memedar/model/deck/deck.hpp"
 
-#include "memedar/model/dal/transaction.hpp"
-#include "memedar/model/dal/card_mapper.hpp"
-#include "memedar/model/dal/deck_mapper.hpp"
+#include "memedar/model/dal/mapper.hpp"
 
-#include "memedar/model/dal/transaction_guard.hpp"
-
-#include "memedar/view/error_delegate.hpp"
 #include "memedar/model/deck_service.hpp"
 
 
 using md::model::deck_service;
 
-deck_service::deck_service(md::view::error_delegate& error_delegate,
-                           dal::transaction& transaction,
-                           dal::card_mapper& card_mapper,
-                           dal::deck_mapper& deck_mapper)
-	: m_error_delegate {error_delegate}
-	, m_transaction    {transaction}
-	, m_card_mapper    {card_mapper}
-	, m_deck_mapper    {deck_mapper}
+deck_service::deck_service(dal::mapper& mapper)
+	: m_mapper {mapper}
 { ;}
 
 void deck_service::save_deck(deck::deck&& deck)
 {
-	try {
-		auto guard {dal::make_transaction(m_transaction)};
-
-		m_deck_mapper.save_deck(deck);
-		m_decks.push_back(std::move(deck));
-
-		guard.commit();
-	}
-	catch (std::system_error &e) {
-		m_error_delegate.show_error(e);
-	}
-}
-
-
-void deck_service::load_decks()
-{
-	try {
-		auto guard {dal::make_transaction(m_transaction)};
-
-		auto generator {m_deck_mapper.get_generator()};
-		while (auto deck = generator->get_deck()) {
-			m_decks.push_back(std::move(deck.value()));
-		}
-
-		guard.commit();
-	}
-	catch (std::system_error &e) {
-		m_error_delegate.show_error(e);
-	}
+	m_mapper.save_deck(m_decks, std::move(deck));
 }
 
 std::deque<md::model::deck::deck>& deck_service::get_decks()
 {
 	if (m_decks.empty()) {
-		load_decks();
+		m_decks = m_mapper.load_decks();
 	}
 	return m_decks;
 }

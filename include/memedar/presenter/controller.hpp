@@ -34,6 +34,7 @@ namespace md::model {
 }
 
 namespace md::view {
+	class error_delegate;
 	class menu;
 	class lobby;
 	class designer;
@@ -52,6 +53,7 @@ public:
 	controller(md::model::card_service& card_service,
 	           md::model::deck_service& deck_service,
 	           md::model::task_service& task_service,
+	           md::view::error_delegate& error_delegate,
 	           md::view::menu& menu,
 	           md::view::lobby& lobby,
 	           md::view::lesson& lesson,
@@ -67,6 +69,7 @@ protected:
 	md::model::deck_service& m_deck_service;
 	md::model::task_service& m_task_service;
 
+	md::view::error_delegate& m_error_delegate;
 	md::view::menu& m_menu;
 	md::view::lobby& m_lobby;
 	md::view::lesson& m_lesson;
