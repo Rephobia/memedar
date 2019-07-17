@@ -28,9 +28,7 @@ namespace md::model::deck {
 }
 
 namespace md::model {
-	class card_service;
-	class deck_service;
-	class task_service;
+	class service;
 }
 
 namespace md::view {
@@ -50,9 +48,7 @@ namespace md {
 class md::controller
 {
 public:
-	controller(md::model::card_service& card_service,
-	           md::model::deck_service& deck_service,
-	           md::model::task_service& task_service,
+	controller(md::model::service& service,
 	           md::view::error_delegate& error_delegate,
 	           md::view::menu& menu,
 	           md::view::lobby& lobby,
@@ -65,9 +61,7 @@ public:
 	void run_designer();	
 	~controller();
 protected:
-	md::model::card_service& m_card_service;
-	md::model::deck_service& m_deck_service;
-	md::model::task_service& m_task_service;
+	md::model::service& m_service;
 
 	md::view::error_delegate& m_error_delegate;
 	md::view::menu& m_menu;

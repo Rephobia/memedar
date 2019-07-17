@@ -28,10 +28,8 @@
 #include <QString>
 #include <QApplication>
 #include <QMainWindow>
-#include <QScopedPointer>
 
 #include "memedar/utils/storage.hpp"
-#include "memedar/utils/ref_wrapper.hpp"
 
 #include "memedar/model/side/side.hpp"
 #include "memedar/model/card/visitor.hpp"
@@ -39,26 +37,14 @@
 #include "memedar/model/deck/deck.hpp"
 #include "memedar/model/task/task.hpp"
 #include "memedar/model/task/task_book.hpp"
-
-#include "memedar/view/error_delegate.hpp"
-#include "memedar/model/dal/transaction.hpp"
-#include "memedar/model/dal/card_mapper.hpp"
-#include "memedar/model/dal/deck_mapper.hpp"
-#include "memedar/model/dal/task_mapper.hpp"
 #include "memedar/model/dal/mapper.hpp"
-#include "memedar/view/qt/ui/box.hpp"
+#include "memedar/model/service.hpp"
 
+#include "memedar/view/qt/ui/box.hpp"
+#include "memedar/view/error_delegate.hpp"
 #include "memedar/view/qt/error_delegate.hpp"
 #include "memedar/model/dal/sqlite/adapter.hpp"
-#include "memedar/model/dal/sqlite/transaction.hpp"
-#include "memedar/model/dal/sqlite/card_mapper.hpp"
-#include "memedar/model/dal/sqlite/deck_mapper.hpp"
-#include "memedar/model/dal/sqlite/task_mapper.hpp"
 #include "memedar/model/dal/sqlite/mapper.hpp"
-
-#include "memedar/model/card_service.hpp"
-#include "memedar/model/deck_service.hpp"
-#include "memedar/model/task_service.hpp"
 
 #include "memedar/view/lobby.hpp"
 #include "memedar/view/menu.hpp"
@@ -82,9 +68,7 @@ int main(int argc, char *argv[])
 	auto qt_error {std::make_unique<md::view::qt::error_delegate>()};
 	auto mapper {std::make_unique<md::model::dal::sqlite::mapper>(db)};
 	
-	md::model::card_service card_service {*mapper};
-	md::model::deck_service deck_service {*mapper};
-	md::model::task_service task_service {*mapper};
+	md::model::service service {*mapper};
 
 	auto main_window {new md::view::qt::main_window {}};
 	auto menu     {std::make_unique<md::view::qt::menu>(main_window)};
@@ -93,8 +77,7 @@ int main(int argc, char *argv[])
 	auto lesson   {std::make_unique<md::view::qt::lesson>(main_window)};
 	main_window->show();
 
-	md::controller controller {card_service, deck_service, task_service,
-	                           *qt_error,
+	md::controller controller {service, *qt_error,
 	                           *menu, *lobby, *lesson, *designer};
 
 	return app.exec();

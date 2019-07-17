@@ -53,6 +53,8 @@
 
 using md::model::dal::sqlite::mapper;
 
+mapper::~mapper() = default;
+
 mapper::mapper(md::model::dal::sqlite::adapter::handle& db)
 	: m_transaction    {std::make_unique<sqlite::transaction>(db)}
 	, m_card_mapper    {std::make_unique<sqlite::card_mapper>(db)}

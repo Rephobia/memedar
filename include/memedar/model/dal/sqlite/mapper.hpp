@@ -23,6 +23,13 @@
 #define MEMEDAR_MODEL_DAL_SQLITE_MAPPER_HPP
 
 
+namespace md::model::dal {
+	class transaction;
+	class card_mapper;
+	class deck_mapper;
+	class task_mapper;
+}
+
 namespace md::model::dal::sqlite {
 	class mapper;
 }
@@ -46,6 +53,7 @@ public:
 	               md::model::task::task& task, std::time_t gap) override;
 	void done_ready(md::model::deck::deck& deck,
 	                md::model::task::task& task, std::time_t gap) override;
+	~mapper() override;
 protected:
 	void fill_from_deck(md::model::deck::deck& deck, md::model::task::task_book& task_book);
 protected:
@@ -54,7 +62,6 @@ protected:
 	std::unique_ptr<md::model::dal::deck_mapper> m_deck_mapper;
 	std::unique_ptr<md::model::dal::task_mapper> m_task_mapper;
 };
-
 
 
 #endif // MEMEDAR_MODEL_DAL_SQLITE_MAPPER_HPP

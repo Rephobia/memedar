@@ -34,8 +34,7 @@ namespace md::model::task {
 }
 
 namespace md::model {
-	class deck_service;
-	class task_service;
+	class service;
 }
 
 namespace md::view {
@@ -54,11 +53,10 @@ class md::lesson_presenter : public md::presenter
 {
 public:
 	lesson_presenter(md::controller& controller,
-	                 md::model::deck::deck& deck,
-	                 md::model::deck_service& deck_service,
-	                 md::model::task_service& task_service,
+	                 md::model::service& service,
 	                 md::view::error_delegate& error_delegate,
-	                 md::view::lesson& lesson);
+	                 md::view::lesson& lesson,
+	                 md::model::deck::deck& deck);
 
 	void run() override;
 protected:
@@ -67,11 +65,11 @@ protected:
 	void done(std::time_t gap);
 protected:
 	md::controller& m_controller;
-	md::model::deck_service& m_deck_service;
-	md::model::task_service& m_task_service;
+	md::model::service& m_service;
 	md::view::error_delegate& m_error_delegate;
 	md::view::lesson& m_lesson;
-	md::model::deck::deck& m_deck;	
+protected:
+	md::model::deck::deck& m_deck;
 	md::model::task::task_book& m_task_book;
 };
 

@@ -31,8 +31,7 @@ namespace md::model::deck {
 	class deck;
 }
 namespace md::model {
-	class card_service;
-	class deck_service;
+	class service;
 }
 
 namespace md::view {
@@ -51,7 +50,7 @@ class md::card_designer_presenter : public md::presenter
 {
 public:
 	card_designer_presenter(md::model::deck::deck& deck,
-	                        md::model::card_service& card_service,
+	                        md::model::service& service,
 	                        md::view::error_delegate& error_delegate,
 	                        md::view::designer& designer);
 
@@ -60,7 +59,7 @@ protected:
 	void add_card(md::model::card::card&& card);
 protected:
 	md::model::deck::deck& m_deck;
-	md::model::card_service& m_card_service;
+	md::model::service& m_service;
 	md::view::error_delegate& m_error_delegate;
 	md::view::designer& m_designer;
 };
@@ -69,7 +68,7 @@ protected:
 class md::deck_designer_presenter : public md::presenter
 {
 public:
-	deck_designer_presenter(md::model::deck_service& deck_service,
+	deck_designer_presenter(md::model::service& service,
 	                        view::error_delegate& error_delegate,
 	                        md::view::designer& designer);
 
@@ -77,7 +76,7 @@ public:
 protected:
 	void add_deck(model::deck::deck&& deck);
 protected:
-	md::model::deck_service& m_deck_service;
+	md::model::service& m_service;
 	md::view::error_delegate& m_error_delegate;
 	md::view::designer& m_designer;
 };
