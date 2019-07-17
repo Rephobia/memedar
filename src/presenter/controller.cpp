@@ -47,17 +47,13 @@ using md::controller;
 
 controller::~controller() = default;
 
-controller::controller(md::model::card_service& card_service,
-                       md::model::deck_service& deck_service,
-                       md::model::task_service& task_service,
+controller::controller(md::model::service& service,
                        md::view::error_delegate& error_delegate,
                        md::view::menu& menu,
                        md::view::lobby& lobby,
                        md::view::lesson& lesson,
                        md::view::designer& designer)
-	: m_card_service       {card_service}
-	, m_deck_service       {deck_service}
-	, m_task_service       {task_service}
+	: m_service            {service}
 	, m_error_delegate     {error_delegate}
 	, m_menu               {menu}
 	, m_lobby              {lobby}
@@ -76,7 +72,7 @@ void controller::run_lobby()
 {
 	try {
 		m_presenter = std::make_unique<md::lobby_presenter>
-			(*this, m_deck_service, m_lobby);
+			(*this, m_service, m_lobby);
 	}
 	catch (std::system_error& e) {
 		m_error_delegate.show_error(e);
@@ -87,8 +83,7 @@ void controller::run_lesson(md::model::deck::deck& deck)
 {
 	try {
 		m_presenter = std::make_unique<md::lesson_presenter>
-			(*this, deck, m_deck_service, m_task_service,
-			 m_error_delegate, m_lesson);
+			(*this, m_service, m_error_delegate, m_lesson, deck);
 	}
 	catch (std::system_error& e) {
 		m_error_delegate.show_error(e);
@@ -99,7 +94,7 @@ void controller::run_designer(md::model::deck::deck& deck)
 {
 	try {
 		m_designer_presenter = std::make_unique<md::card_designer_presenter>
-			(deck, m_card_service, m_error_delegate, m_designer);
+			(deck, m_service, m_error_delegate, m_designer);
 	}
 	catch (std::system_error& e) {
 		m_error_delegate.show_error(e);
@@ -110,7 +105,7 @@ void controller::run_designer()
 {
 	try {
 		m_designer_presenter = std::make_unique<md::deck_designer_presenter>
-			(m_deck_service, m_error_delegate, m_designer);
+			(m_service, m_error_delegate, m_designer);
 	}
 	catch (std::system_error& e) {
 		m_error_delegate.show_error(e);

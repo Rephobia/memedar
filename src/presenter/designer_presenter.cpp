@@ -31,8 +31,7 @@
 #include "memedar/model/deck/deck.hpp"
 #include "memedar/model/task/task.hpp"
 #include "memedar/model/task/task_book.hpp"
-#include "memedar/model/card_service.hpp"
-#include "memedar/model/deck_service.hpp"
+#include "memedar/model/service.hpp"
 
 #include "memedar/view/error_delegate.hpp"
 #include "memedar/view/designer.hpp"
@@ -44,11 +43,11 @@
 using md::card_designer_presenter;
 
 card_designer_presenter::card_designer_presenter(model::deck::deck& deck,
-                                                 model::card_service& card_service,
+                                                 model::service& service,
                                                  view::error_delegate& error_delegate,
                                                  view::designer& designer)
 	: m_deck           {deck}
-	, m_card_service   {card_service}
+	, m_service        {service}
 	, m_error_delegate {error_delegate}
 	, m_designer       {designer}
 {
@@ -67,7 +66,7 @@ void card_designer_presenter::run()
 void card_designer_presenter::add_card(model::card::card&& card)
 {
 	try {
-		m_card_service.save_card(m_deck, std::move(card));
+		m_service.save_card(m_deck, std::move(card));
 	}
 	catch (std::system_error& e) {
 		m_error_delegate.show_error(e);
@@ -77,10 +76,10 @@ void card_designer_presenter::add_card(model::card::card&& card)
 
 using md::deck_designer_presenter;
 
-deck_designer_presenter::deck_designer_presenter(model::deck_service& deck_service,
+deck_designer_presenter::deck_designer_presenter(model::service& service,
                                                  view::error_delegate& error_delegate,
                                                  view::designer& designer)
-	: m_deck_service   {deck_service}
+	: m_service   {service}
 	, m_error_delegate {error_delegate}
 	, m_designer       {designer}
 {
@@ -97,7 +96,7 @@ void deck_designer_presenter::run()
 void deck_designer_presenter::add_deck(model::deck::deck&& deck)
 {
 	try {
-		m_deck_service.save_deck(std::move(deck));
+		m_service.save_deck(std::move(deck));
 		m_designer.cancel();
 	}
 	catch (std::system_error& e) {

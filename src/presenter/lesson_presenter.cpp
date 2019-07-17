@@ -33,11 +33,11 @@
 #include "memedar/model/deck/deck.hpp"
 #include "memedar/model/task/task.hpp"
 #include "memedar/model/task/task_book.hpp"
-#include "memedar/model/deck_service.hpp"
-#include "memedar/model/task_service.hpp"
+#include "memedar/model/service.hpp"
 
 #include "memedar/view/error_delegate.hpp"
 #include "memedar/view/lesson.hpp"
+
 #include "memedar/presenter/controller.hpp"
 #include "memedar/presenter/presenter.hpp"
 #include "memedar/presenter/lesson_presenter.hpp"
@@ -46,18 +46,16 @@
 using md::lesson_presenter;
 
 lesson_presenter::lesson_presenter(md::controller& controller,
-                                   model::deck::deck& deck,
-                                   model::deck_service& deck_service,
-                                   model::task_service& task_service,
+                                   model::service& service,
                                    view::error_delegate& error_delegate,
-                                   view::lesson& lesson)
+                                   view::lesson& lesson,
+                                   model::deck::deck& deck)
 	: m_controller     {controller}
-	, m_deck_service   {deck_service}
-	, m_task_service   {task_service}
+	, m_service   {service}
 	, m_error_delegate {error_delegate}
 	, m_lesson         {lesson}
 	, m_deck           {deck}
-	, m_task_book      {task_service.get_task_book(deck)}
+	, m_task_book      {service.get_task_book(deck)}
 {
 	auto prev {[this]() { m_lesson.redraw(m_task_book.prev_task()); }};
 	auto next {[this]() { m_lesson.redraw(m_task_book.next_task()); }};
@@ -102,7 +100,7 @@ void lesson_presenter::again()
 {
 	try {
 		decltype(auto) current {m_task_book.current_task()};
-		m_task_service.again_card(current);
+		m_service.again_card(current);
 		current.state = model::task::state::answering;
 		m_task_book.push_back_current();
 		m_lesson.redraw(current);
@@ -115,9 +113,9 @@ void lesson_presenter::again()
 void lesson_presenter::done(std::time_t gap)
 {
 	try {
-		m_task_service.done_card(m_deck,
-		                         m_task_book.current_task(),
-		                         gap);
+		m_service.done_card(m_deck,
+		                    m_task_book.current_task(),
+		                    gap);
 		m_lesson.redraw(m_task_book.next_task());
 	}
 	catch (std::system_error& e) {

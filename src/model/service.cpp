@@ -18,36 +18,52 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 #include <ctime>
 #include <memory>
-#include <map>
 #include <deque>
+#include <map>
 
 #include <QString>
 
-#include "memedar/utils/time.hpp"
 #include "memedar/utils/storage.hpp"
 
 #include "memedar/model/side/side.hpp"
-#include "memedar/model/card/visitor.hpp"
 #include "memedar/model/card/card.hpp"
+#include "memedar/model/card/visitor.hpp"
 #include "memedar/model/deck/deck.hpp"
 #include "memedar/model/task/task.hpp"
 #include "memedar/model/task/task_book.hpp"
 
-#include "memedar/model/dal/transaction.hpp"
 #include "memedar/model/dal/mapper.hpp"
+#include "memedar/model/service.hpp"
 
-#include "memedar/model/task_service.hpp"
 
+using md::model::service;
 
-using md::model::task_service;
-
-task_service::task_service(dal::mapper& mapper)
-	: m_mapper {mapper}
+service::service(dal::mapper& mapper)
+	: m_mapper    {mapper}
 { ;}
 
-md::model::task::task_book& task_service::get_task_book(md::model::deck::deck& deck)
+void service::save_card(deck::deck& deck, card::card&& card)
+{
+	m_mapper.save_card(deck, std::move(card));
+}
+
+void service::save_deck(deck::deck&& deck)
+{
+	m_mapper.save_deck(m_decks, std::move(deck));
+}
+
+std::deque<md::model::deck::deck>& service::get_decks()
+{
+	if (m_decks.empty()) {
+		m_decks = m_mapper.load_decks();
+	}
+	return m_decks;
+}
+
+md::model::task::task_book& service::get_task_book(md::model::deck::deck& deck)
 {
 	decltype(auto) it {m_tasks.find(deck.id())};
 	
@@ -61,13 +77,12 @@ md::model::task::task_book& task_service::get_task_book(md::model::deck::deck& d
 	}
 }
 
-void task_service::again_card(task::task& task)
+void service::again_card(task::task& task)
 {
 	m_mapper.reset_combo(*task.card);
 }
 
-
-class task_service::done_visitor : public card::visitor
+class service::done_visitor : public card::visitor
 {
 public:
 	done_visitor(dal::mapper& mapper,
@@ -97,8 +112,7 @@ protected:
 	std::time_t m_gap;
 };
 
-
-void task_service::done_card(deck::deck& deck, task::task& task, std::time_t gap)
+void service::done_card(deck::deck& deck, task::task& task, std::time_t gap)
 {
 	done_visitor visitor {m_mapper, deck, task, gap};
 	task.card->take_visitor(visitor);
