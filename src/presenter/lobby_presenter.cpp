@@ -28,7 +28,9 @@
 #include "memedar/utils/storage.hpp"
 
 #include "memedar/model/deck/deck.hpp"
-#include "memedar/model/deck_service.hpp"
+#include "memedar/model/task/task.hpp"
+#include "memedar/model/task/task_book.hpp"
+#include "memedar/model/service.hpp"
 
 #include "memedar/view/lobby.hpp"
 
@@ -40,14 +42,14 @@
 using md::lobby_presenter;
 
 lobby_presenter::lobby_presenter(md::controller& controller,
-                                 md::model::deck_service& deck_service,
+                                 md::model::service& service,
                                  md::view::lobby& lobby)
-	: m_controller   {controller}
-	, m_deck_service {deck_service}
-	, m_lobby        {lobby}
+	: m_controller {controller}
+	, m_service    {service}
+	, m_lobby      {lobby}
 {
-	auto lesson   {[this](md::model::deck::deck& deck) { m_controller.run_lesson(deck); }};
-	auto designer {[this](md::model::deck::deck& deck) { m_controller.run_designer(deck); }};
+	auto lesson   {[this](model::deck::deck& deck) { m_controller.run_lesson(deck); }};
+	auto designer {[this](model::deck::deck& deck) { m_controller.run_designer(deck); }};
 	
 	add_connect(m_lobby.call_lesson.connect(lesson),
 	            m_lobby.call_designer.connect(designer));
@@ -57,5 +59,5 @@ lobby_presenter::lobby_presenter(md::controller& controller,
 
 void lobby_presenter::run()
 {
-	m_lobby.show(m_deck_service.get_decks());
+	m_lobby.show(m_service.get_decks());
 }
