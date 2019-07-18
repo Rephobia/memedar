@@ -25,6 +25,10 @@
 
 #include "memedar/model/identity.hpp"
 
+namespace md::model::card {
+	class card;
+}
+
 namespace md::model::task {
 	class task;
 	enum class state : int { answering = 0, marking, done };

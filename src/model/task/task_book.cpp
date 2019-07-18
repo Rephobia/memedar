@@ -39,8 +39,7 @@
 using md::model::task::task_book;
 
 task_book::task_book(deck::deck& deck)
-	: deck            {deck}
-	, m_noob_space    {deck.daily_noob_cards()}
+	: m_noob_space    {deck.daily_noob_cards()}
 	, m_ready_space   {deck.daily_ready_cards()}
 	, m_current_index {0}
 { ;}

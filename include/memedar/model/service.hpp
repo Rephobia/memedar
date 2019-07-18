@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
+ * Copyright (C) 2019 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@
  */
 
 
-#ifndef MEMEDAR_MODEL_CARD_SERVICE_HPP
-#define MEMEDAR_MODEL_CARD_SERVICE_HPP
+#ifndef MEMEDAR_MODEL_SERVICE_HPP
+#define MEMEDAR_MODEL_SERVICE_HPP
 
 
 namespace md::model::card {
@@ -31,33 +31,41 @@ namespace md::model::deck {
 	class deck;
 }
 
+namespace md::model::task {
+	class task;
+	class task_book;
+}
+
 namespace md::model::dal {
-	class transaction;
-	class card_mapper;
+	class mapper;
 }
 
 namespace md::model {
-	class card_service;
-}
-
-namespace md::view {
-	class error_delegate;
+	class service;
 }
 
 
-class md::model::card_service
+class md::model::service
 {
 public:
-	card_service(md::view::error_delegate& error_delegate,
-	             md::model::dal::transaction& transaction,
-	             md::model::dal::card_mapper& card_mapper);
+	explicit service(md::model::dal::mapper& mapper);
 
 	void save_card(md::model::deck::deck& deck, md::model::card::card&& card);
+	
+	void save_deck(md::model::deck::deck&& deck);
+	std::deque<md::model::deck::deck>& get_decks();
+	
+	md::model::task::task_book& get_task_book(md::model::deck::deck& deck);
+	void again_card(md::model::task::task& task);
+	void done_card(md::model::deck::deck& deck, md::model::task::task& task, std::time_t gap);
 protected:
-	md::view::error_delegate& m_error_delegate;
-	md::model::dal::transaction& m_transaction;
-	md::model::dal::card_mapper& m_card_mapper;
+	md::model::dal::mapper& m_mapper;
+protected:
+	std::deque<md::model::deck::deck> m_decks {};
+	std::map<std::int64_t, md::model::task::task_book> m_tasks {};
+	class done_visitor;
+
 };
 
 
-#endif // MEMEDAR_MODEL_CARD_SERVICE_HPP
+#endif // MEMEDAR_MODEL_SERVICE_HPP

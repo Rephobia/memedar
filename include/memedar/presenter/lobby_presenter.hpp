@@ -24,7 +24,7 @@
 
 
 namespace md::model {
-	class deck_service;
+	class service;
 }
 
 namespace md::view {
@@ -42,16 +42,13 @@ class md::lobby_presenter : public md::presenter
 {
 public:
 	lobby_presenter(md::controller& controller,
-	                md::model::deck_service& deck_service,
+	                md::model::service& service,
 	                md::view::lobby& lobby);
 	
 	void run() override;
-protected:
-	// void run_lesson(std::int64_t id);
-	// void run_designer(std::int64_t id);
 protected:	
 	md::controller& m_controller;
-	md::model::deck_service& m_deck_service;
+	md::model::service& m_service;
 	md::view::lobby& m_lobby;
 };
 

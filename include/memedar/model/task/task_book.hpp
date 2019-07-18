@@ -62,8 +62,6 @@ public:
 	md::model::task::task& next_task();
 
 	void push_back_current();
-
-	md::model::deck::deck& deck;
 private:
 	friend class md::model::task::add_visitor;
 	using storage::add;

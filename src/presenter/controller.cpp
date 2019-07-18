@@ -21,14 +21,20 @@
 
 #include <ctime>
 #include <deque>
+#include <optional>
 
 #include <QString>
 #include <boost/signals2.hpp>
 
-#include "memedar/view/lobby.hpp"
+#include "memedar/utils/storage.hpp"
+#include "memedar/view/error_delegate.hpp"
 #include "memedar/view/menu.hpp"
+#include "memedar/view/lobby.hpp"
 #include "memedar/view/designer.hpp"
 #include "memedar/view/lesson.hpp"
+
+#include "memedar/model/task/task.hpp"
+#include "memedar/model/task/task_book.hpp"
 
 #include "memedar/presenter/presenter.hpp"
 #include "memedar/presenter/lobby_presenter.hpp"
@@ -41,16 +47,14 @@ using md::controller;
 
 controller::~controller() = default;
 
-controller::controller(md::model::card_service& card_service,
-                       md::model::deck_service& deck_service,
-                       md::model::task_service& task_service,
+controller::controller(md::model::service& service,
+                       md::view::error_delegate& error_delegate,
                        md::view::menu& menu,
                        md::view::lobby& lobby,
                        md::view::lesson& lesson,
                        md::view::designer& designer)
-	: m_card_service       {card_service}
-	, m_deck_service       {deck_service}
-	, m_task_service       {task_service}
+	: m_service            {service}
+	, m_error_delegate     {error_delegate}
 	, m_menu               {menu}
 	, m_lobby              {lobby}
 	, m_lesson             {lesson}
@@ -66,25 +70,44 @@ controller::controller(md::model::card_service& card_service,
 
 void controller::run_lobby()
 {
-	m_presenter = std::make_unique<md::lobby_presenter>(*this, m_deck_service, m_lobby);
+	try {
+		m_presenter = std::make_unique<md::lobby_presenter>
+			(*this, m_service, m_lobby);
+	}
+	catch (std::system_error& e) {
+		m_error_delegate.show_error(e);
+	}
 }
 
 void controller::run_lesson(md::model::deck::deck& deck)
 {
-	m_presenter = std::make_unique<md::lesson_presenter>(*this, deck, m_deck_service,
-	                                                     m_task_service,
-	                                                     m_lesson);	
+	try {
+		m_presenter = std::make_unique<md::lesson_presenter>
+			(*this, m_service, m_error_delegate, m_lesson, deck);
+	}
+	catch (std::system_error& e) {
+		m_error_delegate.show_error(e);
+	}
 }
 
 void controller::run_designer(md::model::deck::deck& deck)
 {
-	m_designer_presenter = std::make_unique<md::card_designer_presenter>(deck, 
-	                                                                     m_card_service,
-	                                                                     m_designer);	
+	try {
+		m_designer_presenter = std::make_unique<md::card_designer_presenter>
+			(deck, m_service, m_error_delegate, m_designer);
+	}
+	catch (std::system_error& e) {
+		m_error_delegate.show_error(e);
+	}
 }
 
 void controller::run_designer()
 {
-	m_designer_presenter = std::make_unique<md::deck_designer_presenter>(m_deck_service,
-	                                                                     m_designer);	
+	try {
+		m_designer_presenter = std::make_unique<md::deck_designer_presenter>
+			(m_service, m_error_delegate, m_designer);
+	}
+	catch (std::system_error& e) {
+		m_error_delegate.show_error(e);
+	}
 }
