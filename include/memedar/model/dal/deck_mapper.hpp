@@ -29,23 +29,14 @@ namespace md::model::deck {
 
 namespace md::model::dal {
 	class deck_mapper;
-	class deck_generator;
 }
-
-class md::model::dal::deck_generator
-{
-public:
-	virtual std::optional<md::model::deck::deck> get_deck() = 0;
-	virtual ~deck_generator() = default;
-};
-
 
 class md::model::dal::deck_mapper
 {
 public:
 	virtual void create_table() = 0;
 
-	virtual std::unique_ptr<md::model::dal::deck_generator> get_generator() = 0;
+	virtual std::deque<md::model::deck::deck> load_decks() = 0;
 	virtual void save_deck(md::model::deck::deck& deck) = 0;
 
 	virtual	void decrement_daily_noob(md::model::deck::deck& deck) = 0;

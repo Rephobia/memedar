@@ -101,13 +101,7 @@ std::deque<md::model::deck::deck> mapper::load_decks()
 {
 	auto guard {dal::make_transaction(*m_transaction)};
 		
-	std::deque<md::model::deck::deck> decks {};
-
-	auto generator {m_deck_mapper->get_generator()};
-		
-	while (auto deck = generator->get_deck()) {
-		decks.push_back(std::move(deck.value()));
-	}
+	std::deque<deck::deck> decks {m_deck_mapper->load_decks()};
 
 	guard.commit();
 		
