@@ -22,6 +22,7 @@
 #include <ctime>
 #include <memory>
 #include <filesystem>
+#include <deque>
 
 #include <sqlite3.h>
 #include <QString>
@@ -36,7 +37,6 @@
 #include "memedar/model/dal/sqlite/adapter.hpp"
 #include "memedar/model/dal/sqlite/deck_mapper.hpp"
 #include "memedar/model/dal/sqlite/deck_mapper_resources.hpp"
-#include "memedar/model/dal/sqlite/deck_generator.hpp"
 
 
 using md::model::dal::sqlite::deck_index;
@@ -78,11 +78,48 @@ void deck_mapper::save_deck(deck::deck& deck)
 	deck.identity::operator=(id);
 }
 
-std::unique_ptr<md::model::dal::deck_generator> deck_mapper::get_generator()
+std::deque<md::model::deck::deck> deck_mapper::load_decks()
 {
 	static connector conn {m_db, res::select_cmd()};
+	deck_index ind {res::select_index()};
 
-	return std::make_unique<sqlite::deck_generator>(conn);
+	conn.bind(ind.timestamp(), std::time(nullptr));
+
+	std::deque<md::model::deck::deck> decks {};
+	while (conn.step() == SQLITE_ROW) {
+
+		identity id {conn.read_int64t(ind.id())};
+
+		auto added        {conn.read_int64t(ind.added())};
+		auto last_opening {conn.read_int64t(ind.last_opening())};
+		auto name         {conn.read_string(ind.name())};
+		deck::info info {std::move(name), added, last_opening};
+
+		auto max_noob    {conn.read_int64t(ind.max_noob_cards())};
+		auto max_ready   {conn.read_int64t(ind.max_ready_cards())};
+		auto daily_noob  {conn.read_int64t(ind.daily_noob_cards())};
+		auto daily_ready {conn.read_int64t(ind.daily_ready_cards())};
+		deck::limit limit {max_noob, max_ready, daily_noob, daily_ready};
+
+		auto g_gap_value {conn.read_int64t(ind.good_gap())};
+		auto g_gap_ratio {static_cast<int>(conn.read_int64t(ind.good_ratio()))};
+		deck::gap g_gap {g_gap_value, g_gap_ratio};
+
+		auto e_gap_value {conn.read_int64t(ind.easy_gap())};
+		auto e_gap_ratio {static_cast<int>(conn.read_int64t(ind.easy_ratio()))};
+		deck::gap e_gap {e_gap_value, e_gap_ratio};
+
+		deck::gaps gaps {g_gap, e_gap};
+
+		auto noob    {conn.read_int64t(ind.noob_cards())};
+		auto ready   {conn.read_int64t(ind.ready_cards())};
+		auto delayed {conn.read_int64t(ind.delayed_cards())};
+		deck::accountant acc {noob, ready, delayed};
+		
+		decks.push_back(deck::deck {id, std::move(info), limit, gaps, std::move(acc)});
+	}
+	
+	return decks;
 }
 
 void deck_mapper::decrement_daily_noob(deck::deck& deck)

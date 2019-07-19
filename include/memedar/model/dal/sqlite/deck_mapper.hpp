@@ -28,7 +28,6 @@ namespace md::model::deck {
 }
 
 namespace md::model::dal::sqlite {
-	class deck_generator;
 	class deck_mapper;
 }
 
@@ -40,7 +39,7 @@ public:
 
 	void create_table() override;
 
-	std::unique_ptr<md::model::dal::deck_generator> get_generator() override;
+	std::deque<md::model::deck::deck> load_decks() override;
 	void save_deck(md::model::deck::deck& deck) override;
 
 	void decrement_daily_noob(md::model::deck::deck& deck) override;
