@@ -21,13 +21,14 @@
 
 #include <ctime>
 #include <memory>
+#include <functional>
 
 #include <QString>
 
 #include "memedar/model/side/side.hpp"
-#include "memedar/model/card/card.hpp"
 #include "memedar/model/card/visitor.hpp"
 #include "memedar/model/card/type.hpp"
+#include "memedar/model/card/card.hpp"
 
 
 using md::model::card::card;
@@ -69,7 +70,12 @@ void card::set_type(std::shared_ptr<md::model::card::type> type)
 	m_type = type;
 }
 
-void card::take_visitor(md::model::card::visitor& visitor)
+void card::visit(std::function<void(noob_t&)>&& noob,
+                 std::function<void(ready_t&)>&& ready,
+                 std::function<void(delayed_t&)>&& delayed)
 {
+	md::model::card::visitor visitor {std::move(noob),
+	                                  std::move(ready),
+	                                  std::move(delayed)};
 	m_type->accept(visitor);
 }
