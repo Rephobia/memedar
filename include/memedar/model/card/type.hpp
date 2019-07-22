@@ -24,41 +24,35 @@
 
 
 namespace md::model::card {
-	class visitor;
-	class type;
+	struct visitor;
+	struct type;
 
-	class noob_t;
-	class ready_t;
-	class delayed_t;
+	struct noob_t;
+	struct ready_t;
+	struct delayed_t;
 }
 
 
-class md::model::card::type
+struct md::model::card::type
 {
 public:
-	virtual void accept(md::model::card::visitor &v) = 0;
+	virtual void accept(md::model::card::visitor& v) = 0;
 	virtual ~type() = default;
 };
 
-
-class md::model::card::noob_t : public md::model::card::type
+struct md::model::card::noob_t : public md::model::card::type
 {
-public:
-	void accept(md::model::card::visitor &v) override;
+	void accept(md::model::card::visitor& v) override;
 };
 
-
-class md::model::card::ready_t : public md::model::card::type
+struct md::model::card::ready_t : public md::model::card::type
 {
-public:
-	void accept(md::model::card::visitor &v) override;
+	void accept(md::model::card::visitor& v) override;
 };
 
-
-class md::model::card::delayed_t : public md::model::card::type
+struct md::model::card::delayed_t : public md::model::card::type
 {
-public:
-	void accept(md::model::card::visitor &v) override;
+	void accept(md::model::card::visitor& v) override;
 };
 
 
