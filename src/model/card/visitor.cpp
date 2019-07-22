@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
+ * Copyright (C) 2019 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -19,30 +19,32 @@
  */
 
 
-#ifndef MEMEDAR_MODEL_TASK_ADD_VISITOR_HPP
-#define MEMEDAR_MODEL_TASK_ADD_VISITOR_HPP
+#include <functional>
+
+#include "memedar/model/card/visitor.hpp"
 
 
-namespace md::model::task {
-	class add_visitor;
+using namespace  md::model::card;
+
+visitor::visitor(std::function<void(noob_t&)>&& noob,
+                 std::function<void(ready_t&)>&& ready,
+                 std::function<void(delayed_t&)>&& delayed)
+	: m_noob    {std::move(noob)}
+	, m_ready   {std::move(ready)}
+	, m_delayed {std::move(delayed)}
+{ ;}
+
+void visitor::visit(md::model::card::noob_t& ref)
+{
+	m_noob(ref);
 }
 
-class md::model::task::add_visitor : public md::model::card::visitor
+void visitor::visit(md::model::card::ready_t& ref)
 {
-public:
-	add_visitor(md::model::task::task_book& task_book,
-	            md::model::task::task task);
+	m_ready(ref);
+}
 
-	void visit(md::model::card::noob_t& ref) override;
-	void visit(md::model::card::ready_t& ref) override;
-	void visit(md::model::card::delayed_t& ref) override;
-
-	bool is_task() const;
-protected:
-	md::model::task::task_book& m_task_book;
-	md::model::task::task m_task;
-	bool m_task_status;
-};
-
-
-#endif // MEMEDAR_MODEL_TASK_ADD_VISITOR_HPP
+void visitor::visit(md::model::card::delayed_t& ref)
+{
+	m_delayed(ref);
+}

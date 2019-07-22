@@ -32,11 +32,12 @@
 #include "memedar/model/deck/deck.hpp"
 #include "memedar/model/task/task.hpp"
 #include "memedar/model/task/task_book.hpp"
-#include "memedar/model/card/visitor.hpp"
-#include "memedar/model/task/add_visitor.hpp"
 
 
+using md::model::task::task;
+using md::model::task::state;
 using md::model::task::task_book;
+
 
 task_book::task_book(deck::deck& deck)
 	: m_noob_space    {deck.daily_noob_cards()}
@@ -44,22 +45,35 @@ task_book::task_book(deck::deck& deck)
 	, m_current_index {0}
 { ;}
 
-bool task_book::add_card(std::shared_ptr<md::model::card::card> card) 
+std::optional<task>
+task_book::check_card(std::shared_ptr<card::card>& card, state state)
 {
-	add_visitor visitor {*this, task {card, state::answering}};
-
-	if (utils::find_by_id(card->id(), *this) == storage::end()) {
-		card->take_visitor(visitor);
+	std::optional<task> opt_task {std::nullopt};
+	
+	if (md::utils::find_by_id(card->id(), *this) == storage::end()) {
+		card->visit(
+		            [this, &card, &opt_task, state](card::noob_t&)
+		            {
+			            if (m_noob_space) {
+				            opt_task = task {card, state};
+			            }
+		            },
+		            [this, &card, &opt_task, state](card::ready_t&)
+		            {
+			            if (m_ready_space) {
+				            opt_task = task {card, state};
+			            }
+		            });
 	}
-	return visitor.is_task();
+
+	return opt_task;
 }
 
-void task_book::add_card(std::shared_ptr<md::model::card::card> card,
-                         md::model::task::state state)
+void task_book::add_task(task&& task)
 {
-	add_visitor visitor {*this, task {card, state}};
-
-	card->take_visitor(visitor);
+	task.card->visit([this](card::noob_t&) { m_noob_space--; },
+	                 [this](card::ready_t&) { m_ready_space--; });
+	storage::add(std::move(task));
 }
 
 std::int64_t task_book::noob_space() const

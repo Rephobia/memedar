@@ -77,11 +77,14 @@ void task_mapper::load_task_book(deck::deck& deck, task::task_book& task_book)
 
 	while (conn.step() == SQLITE_ROW and task_book.space()) {
 
-		auto card_it {utils::find_by_id(conn.read_int64t(ind.card_id()),
-		                                deck)};
-
+		auto card {*utils::find_by_id(conn.read_int64t(ind.card_id()),
+		                               deck)};
+		
 		auto state {static_cast<task::state>(conn.read_int64t(ind.state()))};
-		task_book.add_card(*card_it, state);
+
+		if (decltype(auto) task {task_book.check_card(card, state)}) {
+			task_book.add_task(std::move(task.value()));
+		}
 	}
 }
 

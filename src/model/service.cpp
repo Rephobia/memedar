@@ -82,38 +82,15 @@ void service::again_card(task::task& task)
 	m_mapper.reset_combo(*task.card);
 }
 
-class service::done_visitor : public card::visitor
-{
-public:
-	done_visitor(dal::mapper& mapper,
-	             deck::deck& deck, task::task& task, std::time_t gap)
-		: m_mapper {mapper}
-		, m_deck   {deck}
-		, m_task   {task}
-		, m_gap    {gap}
-	{ ;}
-
-	void visit([[maybe_unused]] card::noob_t& ref) override
-	{
-		m_mapper.done_noob(m_deck, m_task, m_gap);
-	}
-
-	void visit([[maybe_unused]] card::ready_t& ref) override
-	{
-		m_mapper.done_ready(m_deck, m_task, m_gap);
-	}
-
-	void visit([[maybe_unused]] card::delayed_t& ref) override
-	{ ;}
-protected:
-	dal::mapper& m_mapper;
-	deck::deck& m_deck;
-	task::task& m_task;
-	std::time_t m_gap;
-};
-
 void service::done_card(deck::deck& deck, task::task& task, std::time_t gap)
 {
-	done_visitor visitor {m_mapper, deck, task, gap};
-	task.card->take_visitor(visitor);
+	task.card->visit(
+	                 [this, &deck, &task, &gap](card::noob_t&)
+	                 {
+		                 m_mapper.done_noob(deck, task, gap);
+	                 },
+	                 [this, &deck, &task, &gap](card::ready_t&)
+	                 {
+		                 m_mapper.done_ready(deck, task, gap);
+	                 });	
 }
