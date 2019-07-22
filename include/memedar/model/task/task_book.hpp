@@ -49,9 +49,11 @@ class md::model::task::task_book : public md::utils::storage<md::model::task::ta
 {
 public:
 	explicit task_book(md::model::deck::deck& deck);
-	bool add_card(std::shared_ptr<md::model::card::card> card);
-	void add_card(std::shared_ptr<md::model::card::card> card,
-	              md::model::task::state state);
+
+	std::optional<md::model::task::task>
+	check_card(std::shared_ptr<md::model::card::card>& card,
+	           md::model::task::state state = md::model::task::state::answering);
+	void add_task(md::model::task::task&& task);
 
 	std::int64_t noob_space() const;
 	std::int64_t ready_space() const;
@@ -63,7 +65,6 @@ public:
 
 	void push_back_current();
 private:
-	friend class md::model::task::add_visitor;
 	using storage::add;
 protected:
 	std::int64_t m_noob_space;

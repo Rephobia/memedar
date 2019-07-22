@@ -24,9 +24,11 @@
 #include <filesystem>
 #include <deque>
 
+
 #include <sqlite3.h>
 #include <QString>
 
+#include "memedar/utils/find.hpp"
 #include "memedar/utils/time.hpp"
 #include "memedar/utils/storage.hpp"
 
@@ -136,8 +138,9 @@ void mapper::fill_from_deck(md::model::deck::deck& deck,
 {
 	for (auto it = deck.begin(); task_book.space() and it != deck.end(); it++) {
 
-		if (task_book.add_card(*it)) {
-			m_task_mapper->save_task(deck, task_book.back());
+		if (decltype(auto) task {task_book.check_card(*it)}) {
+			m_task_mapper->save_task(deck, task.value());
+			task_book.add_task(std::move(task.value()));
 		}
 	}
 }

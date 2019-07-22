@@ -32,6 +32,9 @@ namespace md::model::card {
 	class type;
 	class visitor;
 
+	struct noob_t;
+	struct ready_t;
+	struct delayed_t;
 	class card;
 }
 
@@ -59,7 +62,10 @@ public:
 
 	void set_type(std::shared_ptr<md::model::card::type> type);
 
-	void take_visitor(md::model::card::visitor& visitor);
+	void visit(std::function<void(md::model::card::noob_t&)>&& noob,
+	           std::function<void(md::model::card::ready_t&)>&& ready,
+	           std::function<void(md::model::card::delayed_t&)>&& delayed
+	           = [](md::model::card::delayed_t&){});
 protected:
 	bool m_typing;
 	std::shared_ptr<md::model::card::type> m_type;
