@@ -23,6 +23,9 @@
 #define MEMEDAR_MODEL_CARD_CARD_HPP
 
 
+#include <functional>
+#include <memory>
+
 #include "memedar/model/identity.hpp"
 #include "memedar/model/card/schedule.hpp"
 #include "memedar/model/card/combo.hpp"
@@ -30,7 +33,6 @@
 
 namespace md::model::card {
 	class type;
-	class visitor;
 
 	struct noob_t;
 	struct ready_t;

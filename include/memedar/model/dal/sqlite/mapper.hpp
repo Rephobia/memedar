@@ -40,6 +40,7 @@ class md::model::dal::sqlite::mapper : public md::model::dal::mapper
 public:
 	explicit mapper(md::model::dal::sqlite::adapter::handle& db);
 	
+	md::model::dal::transaction_guard make_transaction() override;	
 	void save_card(md::model::deck::deck& deck,
 	               md::model::card::card&& card) override;
 	void reset_combo(md::model::card::card& card) override;
