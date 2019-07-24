@@ -35,6 +35,7 @@
 #include "memedar/model/task/task.hpp"
 #include "memedar/model/task/task_book.hpp"
 
+#include "memedar/model/dal/transaction_guard.hpp"
 #include "memedar/model/dal/mapper.hpp"
 #include "memedar/model/service.hpp"
 
@@ -47,43 +48,66 @@ service::service(dal::mapper& mapper)
 
 void service::save_card(deck::deck& deck, card::card&& card)
 {
+	decltype(auto) transaction {m_mapper.make_transaction()};
+	
 	m_mapper.save_card(deck, std::move(card));
+
+	transaction.commit();
 }
 
 void service::save_deck(deck::deck&& deck)
 {
+	decltype(auto) transaction {m_mapper.make_transaction()};
+	
 	m_mapper.save_deck(m_decks, std::move(deck));
+	
+	transaction.commit();
 }
 
 std::deque<md::model::deck::deck>& service::get_decks()
 {
+	decltype(auto) transaction {m_mapper.make_transaction()};
+
 	if (m_decks.empty()) {
 		m_decks = m_mapper.load_decks();
 	}
+	
+	transaction.commit();
+	
 	return m_decks;
 }
 
 md::model::task::task_book& service::get_task_book(md::model::deck::deck& deck)
 {
-	decltype(auto) it {m_tasks.find(deck.id())};
-	
+	decltype(auto) transaction {m_mapper.make_transaction()};
+
+	decltype(auto) it {m_tasks.find(deck.id())};	
 	if (it == m_tasks.end()) {
 		decltype(auto) book {m_mapper.make_task_book(deck)};
 		decltype(auto) pair = std::make_pair(deck.id(), std::move(book));
 		return m_tasks.insert(std::move(pair)).first->second;
 	}
-	else {
-		return it->second;
-	}
+	
+	transaction.commit();
+
+	return it->second;
+
+	
 }
 
 void service::again_card(task::task& task)
 {
+	decltype(auto) transaction {m_mapper.make_transaction()};
+
 	m_mapper.reset_combo(*task.card);
+	
+	transaction.commit();
 }
 
 void service::done_card(deck::deck& deck, task::task& task, std::time_t gap)
 {
+	decltype(auto) transaction {m_mapper.make_transaction()};
+
 	task.card->visit(
 	                 [this, &deck, &task, &gap](card::noob_t&)
 	                 {
@@ -92,5 +116,7 @@ void service::done_card(deck::deck& deck, task::task& task, std::time_t gap)
 	                 [this, &deck, &task, &gap](card::ready_t&)
 	                 {
 		                 m_mapper.done_ready(deck, task, gap);
-	                 });	
+	                 });
+	
+	transaction.commit();
 }

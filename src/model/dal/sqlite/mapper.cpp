@@ -72,48 +72,36 @@ mapper::mapper(md::model::dal::sqlite::adapter::handle& db)
 	guard.commit();
 }
 
+md::model::dal::transaction_guard mapper::make_transaction()
+{
+	return dal::make_transaction(*m_transaction);
+}
 
 void mapper::save_card(md::model::deck::deck& deck,
                        md::model::card::card&& card)
 {
-	auto guard {dal::make_transaction(*m_transaction)};
-		
 	if (deck.empty()) {
 		m_card_mapper->load_cards(deck);
 	}
 		
 	m_card_mapper->save_card(deck, std::move(card));
-		
-	guard.commit();
 }
 
 
 void mapper::save_deck(std::deque<md::model::deck::deck>& decks,
                        md::model::deck::deck&& deck)
 {
-	auto guard {dal::make_transaction(*m_transaction)};
-
 	m_deck_mapper->save_deck(deck);
 	decks.push_back(std::move(deck));
-		
-	guard.commit();
 }
 
 std::deque<md::model::deck::deck> mapper::load_decks()
 {
-	auto guard {dal::make_transaction(*m_transaction)};
-		
-	std::deque<deck::deck> decks {m_deck_mapper->load_decks()};
-
-	guard.commit();
-		
-	return decks;
+	return m_deck_mapper->load_decks();
 }
 
 md::model::task::task_book mapper::make_task_book(md::model::deck::deck& deck)
 {
-	auto guard {dal::make_transaction(*m_transaction)};
-		
 	md::model::task::task_book task_book {deck};
 	
 	if (deck.empty()) {
@@ -128,7 +116,6 @@ md::model::task::task_book mapper::make_task_book(md::model::deck::deck& deck)
 	m_task_mapper->load_task_book(deck, task_book);
 	fill_from_deck(deck, task_book);
 	m_deck_mapper->update_last_opening(deck);
-	guard.commit();
 		
 	return task_book;
 }
@@ -147,39 +134,27 @@ void mapper::fill_from_deck(md::model::deck::deck& deck,
 
 void mapper::reset_combo(md::model::card::card& card)
 {
-	auto guard {dal::make_transaction(*m_transaction)};
-
 	m_card_mapper->reset_combo(card);
-
-	guard.commit();
 }
 
 void mapper::done_noob(md::model::deck::deck& deck, md::model::task::task& task,
                        std::time_t gap)
-{
-	auto guard {dal::make_transaction(*m_transaction)};
-		
+{		
 	m_deck_mapper->decrement_daily_noob(deck);
 	m_card_mapper->update_repeat(*task.card, gap + std::time(nullptr));
 	
 	m_task_mapper->change_state(task, task::state::done);
 	task.card->increment_combo();
 	deck.process_card(*task.card);
-	
-	guard.commit();
 }
 
 void mapper::done_ready(md::model::deck::deck& deck, md::model::task::task& task,
                         std::time_t gap)
 {
-	auto guard {dal::make_transaction(*m_transaction)};
-		
 	m_deck_mapper->decrement_daily_ready(deck);
 	m_card_mapper->update_repeat(*task.card, gap + task.card->repeat());
 	
 	m_task_mapper->change_state(task, task::state::done);
 	task.card->increment_combo();
 	deck.process_card(*task.card);
-	
-	guard.commit();
 }
