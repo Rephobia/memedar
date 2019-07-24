@@ -33,6 +33,7 @@ namespace md::model::deck {
 
 namespace md::model::dal {
 	class mapper;
+	class transaction_guard;
 }
 
 namespace md::model::task {
@@ -44,6 +45,7 @@ namespace md::model::task {
 class md::model::dal::mapper
 {
 public:
+	virtual md::model::dal::transaction_guard make_transaction() = 0;
 	virtual	void save_card(md::model::deck::deck& deck,
 		               md::model::card::card&& card) = 0;
 	virtual	void reset_combo(md::model::card::card& card) = 0;
