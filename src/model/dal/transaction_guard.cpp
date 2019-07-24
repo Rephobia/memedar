@@ -19,7 +19,6 @@
  */
 
 
-#include <memory>
 #include <iostream>
 
 #include "memedar/model/dal/transaction.hpp"
@@ -28,6 +27,8 @@
 
 using md::model::dal::transaction;
 using md::model::dal::transaction_guard;
+
+static int active_transaction {0};
 
 transaction_guard md::model::dal::make_transaction(transaction& transaction)
 {
@@ -38,12 +39,17 @@ transaction_guard::transaction_guard(transaction& transaction)
 	: m_commited    {false}
 	, m_transaction {transaction}
 {
-	m_transaction.begin();
+	if (not active_transaction) {
+		m_transaction.begin();
+	}
+	active_transaction++;
 }
 
 void transaction_guard::commit()
 {
-	m_transaction.commit();
+	if (not --active_transaction) {
+		m_transaction.commit();
+	}
 	m_commited = true;
 }
 
@@ -52,6 +58,7 @@ transaction_guard::~transaction_guard()
 	try {
 		if (not m_commited) {
 			m_transaction.rollback();
+			active_transaction = 0;
 		}
 	}
 	catch (std::runtime_error &e) {
