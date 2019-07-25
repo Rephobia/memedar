@@ -107,6 +107,11 @@ public:
 		return m_storage.empty();
 	}
 
+	void add(const T& value)
+	{
+		m_storage.push_back(value);
+	}
+	
 	void add(T&& value)
 	{
 		m_storage.push_back(std::forward<T>(value));

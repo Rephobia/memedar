@@ -50,7 +50,9 @@ void service::save_card(deck::deck& deck, card::card&& card)
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};
 	
-	m_mapper.save_card(deck, std::move(card));
+	m_mapper.save_card(deck,
+	                   get_task_book(deck),
+	                   std::move(card));
 
 	transaction.commit();
 }
@@ -77,7 +79,7 @@ std::deque<md::model::deck::deck>& service::get_decks()
 	return m_decks;
 }
 
-md::model::task::task_book& service::get_task_book(md::model::deck::deck& deck)
+md::model::task::task_book& service::get_task_book(deck::deck& deck)
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};
 

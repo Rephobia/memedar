@@ -77,19 +77,27 @@ md::model::dal::transaction_guard mapper::make_transaction()
 	return dal::make_transaction(*m_transaction);
 }
 
-void mapper::save_card(md::model::deck::deck& deck,
-                       md::model::card::card&& card)
+void mapper::save_card(deck::deck& deck,
+                       task::task_book& task_book,
+                       card::card&& card)
 {
 	if (deck.empty()) {
 		m_card_mapper->load_cards(deck);
 	}
 		
-	m_card_mapper->save_card(deck, std::move(card));
+	m_card_mapper->save_card(deck, card);
+
+	decltype(auto) shared_card {deck.add_card(std::move(card))};
+	
+	std::optional<task::task> task {task_book.check_card(shared_card)};
+	if (task) {
+		m_task_mapper->save_task(deck, task.value());
+		task_book.add_task(std::move(task.value()));
+	}
 }
 
 
-void mapper::save_deck(std::deque<md::model::deck::deck>& decks,
-                       md::model::deck::deck&& deck)
+void mapper::save_deck(std::deque<deck::deck>& decks, deck::deck&& deck)
 {
 	m_deck_mapper->save_deck(deck);
 	decks.push_back(std::move(deck));
@@ -100,9 +108,9 @@ std::deque<md::model::deck::deck> mapper::load_decks()
 	return m_deck_mapper->load_decks();
 }
 
-md::model::task::task_book mapper::make_task_book(md::model::deck::deck& deck)
+md::model::task::task_book mapper::make_task_book(deck::deck& deck)
 {
-	md::model::task::task_book task_book {deck};
+	task::task_book task_book {deck};
 	
 	if (deck.empty()) {
 		m_card_mapper->load_cards(deck);
@@ -120,8 +128,7 @@ md::model::task::task_book mapper::make_task_book(md::model::deck::deck& deck)
 	return task_book;
 }
 
-void mapper::fill_from_deck(md::model::deck::deck& deck,
-                            md::model::task::task_book& task_book)
+void mapper::fill_from_deck(deck::deck& deck, task::task_book& task_book)
 {
 	for (auto it = deck.begin(); task_book.space() and it != deck.end(); it++) {
 
@@ -132,13 +139,12 @@ void mapper::fill_from_deck(md::model::deck::deck& deck,
 	}
 }
 
-void mapper::reset_combo(md::model::card::card& card)
+void mapper::reset_combo(card::card& card)
 {
 	m_card_mapper->reset_combo(card);
 }
 
-void mapper::done_noob(md::model::deck::deck& deck, md::model::task::task& task,
-                       std::time_t gap)
+void mapper::done_noob(deck::deck& deck, task::task& task, std::time_t gap)
 {		
 	m_deck_mapper->decrement_daily_noob(deck);
 	m_card_mapper->update_repeat(*task.card, gap + std::time(nullptr));
@@ -148,8 +154,7 @@ void mapper::done_noob(md::model::deck::deck& deck, md::model::task::task& task,
 	deck.process_card(*task.card);
 }
 
-void mapper::done_ready(md::model::deck::deck& deck, md::model::task::task& task,
-                        std::time_t gap)
+void mapper::done_ready(deck::deck& deck, task::task& task, std::time_t gap)
 {
 	m_deck_mapper->decrement_daily_ready(deck);
 	m_card_mapper->update_repeat(*task.card, gap + task.card->repeat());
