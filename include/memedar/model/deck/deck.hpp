@@ -67,7 +67,7 @@ public:
 	std::int64_t total_cards() const;
 
 	void process_card(md::model::card::card& card);
-	void add_card(md::model::card::card&& card);
+	std::shared_ptr<md::model::card::card> add_card(md::model::card::card&& card);
 protected:
 	md::model::deck::accountant m_accountant;
 private:

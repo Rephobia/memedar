@@ -46,19 +46,19 @@ task_book::task_book(deck::deck& deck)
 { ;}
 
 std::optional<task>
-task_book::check_card(std::shared_ptr<card::card>& card, state state)
+task_book::check_card(std::shared_ptr<card::card> card, state state)
 {
 	std::optional<task> opt_task {std::nullopt};
-	
 	if (md::utils::find_by_id(card->id(), *this) == storage::end()) {
+
 		card->visit(
-		            [this, &card, &opt_task, state](card::noob_t&)
+		            [this, card, &opt_task, state](card::noob_t&)
 		            {
 			            if (m_noob_space) {
 				            opt_task = task {card, state};
 			            }
 		            },
-		            [this, &card, &opt_task, state](card::ready_t&)
+		            [this, card, &opt_task, state](card::ready_t&)
 		            {
 			            if (m_ready_space) {
 				            opt_task = task {card, state};
