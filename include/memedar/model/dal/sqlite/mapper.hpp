@@ -42,6 +42,7 @@ public:
 	
 	md::model::dal::transaction_guard make_transaction() override;	
 	void save_card(md::model::deck::deck& deck,
+	               md::model::task::task_book& task_book,
 	               md::model::card::card&& card) override;
 	void reset_combo(md::model::card::card& card) override;
 	

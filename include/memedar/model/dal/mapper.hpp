@@ -47,6 +47,7 @@ class md::model::dal::mapper
 public:
 	virtual md::model::dal::transaction_guard make_transaction() = 0;
 	virtual	void save_card(md::model::deck::deck& deck,
+		               md::model::task::task_book& task_book,
 		               md::model::card::card&& card) = 0;
 	virtual	void reset_combo(md::model::card::card& card) = 0;
 	

@@ -48,8 +48,8 @@ public:
 
 	void create_table() override;
 
-	void save_card(md::model::deck::deck& deck,
-	               md::model::card::card&& card) override;
+	void save_card(const md::model::deck::deck& deck,
+	               md::model::card::card& card) override;
 	void load_cards(md::model::deck::deck& deck) override;
 
 	void update_repeat(md::model::card::card& card, std::time_t repeat) override;

@@ -56,7 +56,7 @@ void card_mapper::create_table()
 	adapter::step(m_db, adapter::prepare_sqlite(m_db, res::create_cmd()));
 }
 
-void card_mapper::save_card(deck::deck& deck, card::card&& card)
+void card_mapper::save_card(const deck::deck& deck, card::card& card)
 {
 	save_side(card.question);
 	save_side(card.answer);
@@ -74,8 +74,6 @@ void card_mapper::save_card(deck::deck& deck, card::card&& card)
 
 	identity id {::sqlite3_last_insert_rowid(m_db.get())};
 	card.identity::operator=(id);
-
-	deck.add_card(std::move(card));
 }
 
 void card_mapper::load_cards(deck::deck& deck)
