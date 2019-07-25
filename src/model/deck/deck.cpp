@@ -62,10 +62,12 @@ void deck::process_card(card::card& card)
 	m_accountant.process_card(card);
 }
 
-void deck::add_card(card::card&& card)
+std::shared_ptr<md::model::card::card> deck::add_card(card::card&& card)
 {
 	m_accountant.process_card(card);
-	storage::add(std::make_shared<card::card>(std::move(card)));
+	decltype(auto) shared_card {std::make_shared<card::card>(std::move(card))};
+	storage::add(shared_card);
+	return shared_card;
 }
 
 std::int64_t deck::noob_cards() const

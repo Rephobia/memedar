@@ -41,8 +41,8 @@ class md::model::dal::card_mapper
 public:
 	virtual void create_table() = 0;
 
-	virtual	void save_card(md::model::deck::deck& deck,
-		               md::model::card::card&& card) = 0;
+	virtual	void save_card(const md::model::deck::deck& deck,
+		               md::model::card::card& card) = 0;
 	virtual void load_cards(md::model::deck::deck& deck) = 0;
 
 	virtual void update_repeat(md::model::card::card& card, std::time_t repeat) = 0;

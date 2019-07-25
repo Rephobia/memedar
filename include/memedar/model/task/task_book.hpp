@@ -51,7 +51,7 @@ public:
 	explicit task_book(md::model::deck::deck& deck);
 
 	std::optional<md::model::task::task>
-	check_card(std::shared_ptr<md::model::card::card>& card,
+	check_card(std::shared_ptr<md::model::card::card> card,
 	           md::model::task::state state = md::model::task::state::answering);
 	void add_task(md::model::task::task&& task);
 
