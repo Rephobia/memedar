@@ -63,8 +63,6 @@ protected:
 protected:
 	std::deque<md::model::deck::deck> m_decks {};
 	std::map<std::int64_t, md::model::task::task_book> m_tasks {};
-	class done_visitor;
-
 };
 
 

@@ -49,7 +49,7 @@ lesson::lesson(md::view::qt::main_window* main_window)
 void lesson::show()
 {
 	auto label {new QLabel {"the deck doesn't have tasks"}};
-	auto designer {new ui::button {"add_card",
+	auto designer {new ui::button {"add card",
 	                               [this]() { call_designer(); }}};
 	auto box {new ui::box {QBoxLayout::TopToBottom, label, designer}};
 	m_main_window->set_widget(box);

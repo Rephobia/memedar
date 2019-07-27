@@ -79,12 +79,14 @@ using md::deck_designer_presenter;
 deck_designer_presenter::deck_designer_presenter(model::service& service,
                                                  view::error_delegate& error_delegate,
                                                  view::designer& designer)
-	: m_service   {service}
+	: m_service        {service}
 	, m_error_delegate {error_delegate}
 	, m_designer       {designer}
 {
 	auto action {[this](model::deck::deck& deck) { add_deck(std::move(deck)); }};
+	
 	add_connect(m_designer.add_deck.connect(action));
+	
 	run();
 }
 
