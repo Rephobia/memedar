@@ -80,7 +80,6 @@ void lesson_presenter::run()
 	m_task_book.empty()
 		? m_lesson.show()
 		: m_lesson.show(m_task_book.current_task(), m_deck);
-
 }
 
 void lesson_presenter::show_answer(const QString& answer)
