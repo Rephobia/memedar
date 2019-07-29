@@ -123,6 +123,15 @@ void card_mapper::save_side(side::side& side)
 	side.identity::operator=(id);
 }
 
+void card_mapper::update_side(md::model::identity identity, const QString& text)
+{
+	static adapter::connector conn {m_db, res::update_side_cmd()};
+	side_index ind {res::update_side_index()};
+
+	conn.exec_bind(binder {ind.id(), identity.id()},
+	               binder {ind.text(), text});
+}
+
 void card_mapper::update_repeat(card::card& card, std::time_t repeat)
 {
 	static connector conn {m_db, res::update_repeat_cmd()};

@@ -55,6 +55,8 @@ public:
 		               md::model::deck::deck&& deck) = 0;
 	virtual	std::deque<md::model::deck::deck> load_decks() = 0;
 	
+	virtual void update_side(md::model::side::side& side, QString&& text) = 0;
+	
 	virtual md::model::task::task_book make_task_book(md::model::deck::deck& deck) = 0;
 	virtual void done_noob(md::model::deck::deck& deck,
 	                       md::model::task::task& task, std::time_t gap) = 0;
