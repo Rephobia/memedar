@@ -28,6 +28,8 @@
 #include "memedar/utils/find.hpp"
 #include "memedar/utils/storage.hpp"
 
+#include "memedar/model/side/side.hpp"
+#include "memedar/model/card/card.hpp"
 #include "memedar/model/deck/deck.hpp"
 #include "memedar/model/task/task.hpp"
 #include "memedar/model/task/task_book.hpp"
@@ -67,6 +69,45 @@ void card_designer_presenter::add_card(model::card::card&& card)
 {
 	try {
 		m_service.save_card(m_deck, std::move(card));
+	}
+	catch (std::system_error& e) {
+		m_error_delegate.show_error(e);
+	}
+}
+
+using md::update_designer_presenter;
+
+update_designer_presenter::update_designer_presenter(model::deck::deck& deck,
+                                                     model::task::task& task,
+                                                     model::service& service,
+                                                     view::error_delegate& error_delegate,
+                                                     view::designer& designer)
+	: m_deck           {deck}
+	, m_task           {task}
+	, m_service        {service}
+	, m_error_delegate {error_delegate}
+	, m_designer       {designer}
+{
+	auto action {[this](model::card::card& new_card) { update_card(std::move(new_card)); }};
+	
+	add_connect(m_designer.add_card.connect(action));
+	
+	run();
+}
+
+
+void update_designer_presenter::run()
+{
+	m_designer.show(m_deck,
+	                m_task.card->question.text(), m_task.card->answer.text());
+}
+
+void update_designer_presenter::update_card(model::card::card&& new_card)
+{
+	try {
+		m_service.update_card(*m_task.card,
+		                      std::move(new_card.question),
+		                      std::move(new_card.answer));
 	}
 	catch (std::system_error& e) {
 		m_error_delegate.show_error(e);

@@ -57,6 +57,27 @@ void service::save_card(deck::deck& deck, card::card&& card)
 	transaction.commit();
 }
 
+void service::update_card(card::card& card,
+                          side::side&& question,
+                          side::side&& answer)
+{
+	decltype(auto) transaction {m_mapper.make_transaction()};
+	
+	if (card.question.text() != question.text()
+	    and card.answer.text() != answer.text()) {
+		m_mapper.update_side(card.question, std::move(question.text()));
+		m_mapper.update_side(card.answer, std::move(answer.text()));
+	}
+	else if (card.question.text() != question.text()) {
+		m_mapper.update_side(card.question, std::move(question.text()));
+
+	}
+	else if (card.answer.text() != answer.text()) {
+		m_mapper.update_side(card.answer, std::move(answer.text()));
+	}
+	
+	transaction.commit();
+}
 void service::save_deck(deck::deck&& deck)
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};
@@ -83,7 +104,8 @@ md::model::task::task_book& service::get_task_book(deck::deck& deck)
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};
 
-	decltype(auto) it {m_tasks.find(deck.id())};	
+	decltype(auto) it {m_tasks.find(deck.id())};
+	
 	if (it == m_tasks.end()) {
 		decltype(auto) book {m_mapper.make_task_book(deck)};
 		decltype(auto) pair = std::make_pair(deck.id(), std::move(book));

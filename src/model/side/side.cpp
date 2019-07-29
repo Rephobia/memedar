@@ -54,3 +54,11 @@ const QString& side::text() const
 {
 	return m_text;
 }
+QString& side::text()
+{
+	return m_text;
+}
+void side::change_text(QString&& text)
+{
+	m_text = std::move(text);
+}

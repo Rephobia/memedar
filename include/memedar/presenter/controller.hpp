@@ -58,6 +58,7 @@ public:
 	void run_lobby();
 	void run_lesson(md::model::deck::deck& deck);
 	void run_designer(md::model::deck::deck& deck);
+	void run_designer(md::model::deck::deck& deck, md::model::task::task& task);
 	void run_designer();	
 	~controller();
 protected:

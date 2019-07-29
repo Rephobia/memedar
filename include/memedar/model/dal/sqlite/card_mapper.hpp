@@ -52,6 +52,8 @@ public:
 	               md::model::card::card& card) override;
 	void load_cards(md::model::deck::deck& deck) override;
 
+	void update_side(md::model::identity identity, const QString& text) override;
+
 	void update_repeat(md::model::card::card& card, std::time_t repeat) override;
 	void reset_combo(md::model::card::card& card) override;
 protected:
