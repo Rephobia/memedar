@@ -51,7 +51,7 @@ lesson_presenter::lesson_presenter(md::controller& controller,
                                    view::lesson& lesson,
                                    model::deck::deck& deck)
 	: m_controller     {controller}
-	, m_service   {service}
+	, m_service        {service}
 	, m_error_delegate {error_delegate}
 	, m_lesson         {lesson}
 	, m_deck           {deck}

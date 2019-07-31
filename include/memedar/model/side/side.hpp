@@ -23,29 +23,40 @@
 #define MEMEDAR_MODEL_SIDE_SIDE_HPP
 
 
+#include <QString>
+
 #include "memedar/model/identity.hpp"
+
 
 namespace md::model::side {
 	class side;
+	class side_value;
 }
 
 
-class md::model::side::side : public md::model::identity
+class md::model::side::side_value
 {
 public:
-	explicit side(QString&& text);
-	side(md::model::identity id, QString&& text);
-	side(md::model::side::side&& other);
-	side(const md::model::side::side& other) = delete;
+	explicit side_value(QString&& text);
+	explicit side_value(md::model::side::side_value&& other);
+	side_value(const md::model::side::side_value& other) = delete;
 
-	md::model::side::side& operator=(md::model::side::side&& other);
-	md::model::side::side& operator=(const md::model::side::side& other) = delete;
-
+	md::model::side::side_value& operator=(md::model::side::side_value&& other);
+	md::model::side::side_value& operator=(const md::model::side::side_value& other) = delete;
+	
 	const QString& text() const;
-	QString& text();
-	void change_text(QString&& text);
 protected:
 	QString m_text;
+};
+
+
+class md::model::side::side : public md::model::identity
+                            , public md::model::side::side_value
+{
+public:
+	side(md::model::identity id, md::model::side::side_value&& value);
+	
+	md::model::side::side& operator=(md::model::side::side_value&& value);
 };
 
 
