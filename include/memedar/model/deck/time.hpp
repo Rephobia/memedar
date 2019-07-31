@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
+ * Copyright (C) 2019 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -19,31 +19,33 @@
  */
 
 
-#ifndef MEMEDAR_MODEL_DECK_INFO_HPP
-#define MEMEDAR_MODEL_DECK_INFO_HPP
+#ifndef MEMEDAR_MODEL_DECK_TIME_HPP
+#define MEMEDAR_MODEL_DECK_TIME_HPP
+
+
+#include <ctime>
 
 
 namespace md::model::deck {
-	class info;
+	class time;
 }
 
 
-class md::model::deck::info
+class md::model::deck::time
 {
 public:
-	explicit info(QString&& name);
+	time() = default;
+	time(std::time_t added, std::time_t last_opening);
+	
+	std::time_t added() const;
 
-	info(md::model::deck::info&& other);
-	info(const md::model::deck::info& other) = delete;
-
-	md::model::deck::info& operator=(md::model::deck::info&& other);
-	md::model::deck::info& operator=(const md::model::deck::info& other) = delete;
-
-	const QString& name() const;
+	std::time_t last_opening() const;
+	void change_last_opening(std::time_t timestamp);
 protected:
-	QString m_name;
-
+	std::time_t m_added = 0;
+	std::time_t m_last_opening = 0;
+	
 };
 
 
-#endif // MEMEDAR_MODEL_DECK_INFO_HPP
+#endif // MEMEDAR_MODEL_DECK_TIME_HPP

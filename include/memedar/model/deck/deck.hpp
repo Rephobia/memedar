@@ -25,6 +25,7 @@
 
 #include "memedar/model/identity.hpp"
 #include "memedar/model/deck/info.hpp"
+#include "memedar/model/deck/time.hpp"
 #include "memedar/model/deck/gap.hpp"
 #include "memedar/model/deck/accountant.hpp"
 #include "memedar/model/deck/limit.hpp"
@@ -46,6 +47,7 @@ namespace md::model::deck {
 
 class md::model::deck::deck : public md::model::identity
                             , public md::model::deck::info
+                            , public md::model::deck::time
                             , public md::model::deck::limit
                             , public md::model::deck::gaps
                             , public md::utils::storage<std::shared_ptr<md::model::card::card>>
@@ -55,6 +57,7 @@ public:
 
 	deck(md::model::identity id,
 	     md::model::deck::info&& info,
+	     md::model::deck::time time,
 	     md::model::deck::limit limit,
 	     md::model::deck::gaps gaps,
 	     md::model::deck::accountant&& accountant);

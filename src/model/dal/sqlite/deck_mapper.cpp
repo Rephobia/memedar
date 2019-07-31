@@ -92,8 +92,11 @@ std::deque<md::model::deck::deck> deck_mapper::load_decks()
 
 		auto added        {conn.read_int64t(ind.added())};
 		auto last_opening {conn.read_int64t(ind.last_opening())};
-		auto name         {conn.read_string(ind.name())};
-		deck::info info {std::move(name), added, last_opening};
+
+		deck::time time {added, last_opening};
+		
+		auto name {conn.read_string(ind.name())};
+		deck::info info {std::move(name)};
 
 		auto max_noob    {conn.read_int64t(ind.max_noob_cards())};
 		auto max_ready   {conn.read_int64t(ind.max_ready_cards())};
@@ -116,7 +119,8 @@ std::deque<md::model::deck::deck> deck_mapper::load_decks()
 		auto delayed {conn.read_int64t(ind.delayed_cards())};
 		deck::accountant acc {noob, ready, delayed};
 		
-		decks.push_back(deck::deck {id, std::move(info), limit, gaps, std::move(acc)});
+		decks.push_back(deck::deck {id, std::move(info), time,
+			                            limit, gaps, std::move(acc)});
 	}
 	
 	return decks;

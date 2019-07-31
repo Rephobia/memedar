@@ -19,31 +19,28 @@
  */
 
 
-#ifndef MEMEDAR_MODEL_DECK_INFO_HPP
-#define MEMEDAR_MODEL_DECK_INFO_HPP
+#include "memedar/model/deck/time.hpp"
 
 
-namespace md::model::deck {
-	class info;
+using md::model::deck::time;
+
+
+time::time(std::time_t added, std::time_t last_opening)
+	: m_added        {added}
+	, m_last_opening {last_opening}
+{ ;}
+
+std::time_t time::added() const
+{
+	return m_added;
 }
 
-
-class md::model::deck::info
+std::time_t time::last_opening() const
 {
-public:
-	explicit info(QString&& name);
+	return m_last_opening;
+}
 
-	info(md::model::deck::info&& other);
-	info(const md::model::deck::info& other) = delete;
-
-	md::model::deck::info& operator=(md::model::deck::info&& other);
-	md::model::deck::info& operator=(const md::model::deck::info& other) = delete;
-
-	const QString& name() const;
-protected:
-	QString m_name;
-
-};
-
-
-#endif // MEMEDAR_MODEL_DECK_INFO_HPP
+void time::change_last_opening(std::time_t timestamp)
+{
+	m_last_opening = timestamp;
+}
