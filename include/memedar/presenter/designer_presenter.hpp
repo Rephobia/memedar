@@ -30,6 +30,11 @@ namespace md::model::card {
 namespace md::model::deck {
 	class deck;
 }
+
+namespace md::model::task {
+	class task;
+}
+
 namespace md::model {
 	class service;
 }
@@ -43,6 +48,7 @@ namespace md {
 	class presenter;
 	class card_designer_presenter;
 	class deck_designer_presenter;
+	class update_designer_presenter;
 }
 
 
@@ -59,6 +65,26 @@ protected:
 	void add_card(md::model::card::card&& card);
 protected:
 	md::model::deck::deck& m_deck;
+	md::model::service& m_service;
+	md::view::error_delegate& m_error_delegate;
+	md::view::designer& m_designer;
+};
+
+class md::update_designer_presenter : public md::presenter
+{
+public:
+	update_designer_presenter(md::model::deck::deck& deck,
+	                          md::model::task::task& task,
+	                          md::model::service& service,
+	                          md::view::error_delegate& error_delegate,
+	                          md::view::designer& designer);
+
+	void run() override;
+protected:
+	void update_card(md::model::card::card&& new_card);
+protected:
+	md::model::deck::deck& m_deck;
+	md::model::task::task& m_task;
 	md::model::service& m_service;
 	md::view::error_delegate& m_error_delegate;
 	md::view::designer& m_designer;

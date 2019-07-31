@@ -39,9 +39,11 @@ namespace md::model::dal::sqlite {
 		side_index insert_side_index();
 
 		std::string select_cmd();
-
 		card_index select_index();
-
+		
+		std::string update_side_cmd();
+		side_index update_side_index();
+	
 		std::string update_repeat_cmd();
 		card_index update_repeat_index();
 

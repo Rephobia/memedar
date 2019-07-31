@@ -49,7 +49,9 @@ public:
 	void save_deck(std::deque<md::model::deck::deck>& decks,
                        md::model::deck::deck&& deck) override;
 	std::deque<md::model::deck::deck> load_decks() override;
-	
+
+	void update_side(md::model::side::side& side, QString&& text) override;
+		
 	md::model::task::task_book make_task_book(md::model::deck::deck& deck) override;	
 	void done_noob(md::model::deck::deck& deck,
 	               md::model::task::task& task, std::time_t gap) override;

@@ -101,6 +101,17 @@ void controller::run_designer(md::model::deck::deck& deck)
 	}
 }
 
+void controller::run_designer(md::model::deck::deck& deck, md::model::task::task& task)
+{
+	try {
+		m_designer_presenter = std::make_unique<md::update_designer_presenter>
+			(deck, task, m_service, m_error_delegate, m_designer);
+	}
+	catch (std::system_error& e) {
+		m_error_delegate.show_error(e);
+	}	
+}
+
 void controller::run_designer()
 {
 	try {

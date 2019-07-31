@@ -138,6 +138,11 @@ void mapper::fill_from_deck(deck::deck& deck, task::task_book& task_book)
 		}
 	}
 }
+void mapper::update_side(side::side& side, QString&& text)
+{
+	m_card_mapper->update_side(side, text);
+	side.change_text(std::move(text));
+}
 
 void mapper::reset_combo(card::card& card)
 {
