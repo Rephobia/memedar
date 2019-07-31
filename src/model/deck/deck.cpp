@@ -19,7 +19,6 @@
  */
 
 
-#include <ctime>
 #include <memory>
 
 #include <QString>
@@ -35,6 +34,7 @@ using md::model::deck::deck;
 deck::deck(deck::info&& info)
 	: deck::identity {identity {}}
 	, deck::info     {std::move(info)}
+	, deck::time     {time {}}
 	, deck::limit    {limit {}}
 	, deck::gaps     {gaps {}}
 	, m_accountant   {md::model::deck::accountant {}}
@@ -42,11 +42,13 @@ deck::deck(deck::info&& info)
 
 deck::deck(deck::identity id,
            deck::info&& info,
+           deck::time time,
            deck::limit limit,
            deck::gaps gaps,
            md::model::deck::accountant&& accountant)
 	: deck::identity {id}
 	, deck::info     {std::move(info)}
+	, deck::time     {time}
 	, deck::limit    {limit}
 	, deck::gaps     {gaps}
 	, m_accountant   {std::move(accountant)}

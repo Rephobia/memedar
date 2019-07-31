@@ -19,32 +19,28 @@
  */
 
 
-#ifndef MEMEDAR_MODEL_CARD_SCHEDULE_HPP
-#define MEMEDAR_MODEL_CARD_SCHEDULE_HPP
+#include "memedar/model/deck/time.hpp"
 
 
-#include <ctime>
+using md::model::deck::time;
 
 
-namespace md::model::card {
-	class schedule;
+time::time(std::time_t added, std::time_t last_opening)
+	: m_added        {added}
+	, m_last_opening {last_opening}
+{ ;}
+
+std::time_t time::added() const
+{
+	return m_added;
 }
 
-class md::model::card::schedule
+std::time_t time::last_opening() const
 {
-public:
-	schedule();
-	schedule(std::time_t added, std::time_t repeat);
+	return m_last_opening;
+}
 
-	std::time_t added() const;
-
-	std::time_t repeat() const;
-	void change_repeat(std::time_t val);
-protected:
-	std::time_t m_added;
-	std::time_t m_repeat;
-
-};
-
-
-#endif // MEMEDAR_MODEL_CARD_SCHEDULE_HPP
+void time::change_last_opening(std::time_t timestamp)
+{
+	m_last_opening = timestamp;
+}
