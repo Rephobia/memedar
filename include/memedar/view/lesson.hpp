@@ -52,6 +52,7 @@ public:
 	boost::signals2::signal<void()> again {};
 	boost::signals2::signal<void(std::time_t gap)> done {};
 
+	boost::signals2::signal<void()> call_update_designer {};
 	boost::signals2::signal<void()> call_designer {};
 	virtual ~lesson() = default;
 };

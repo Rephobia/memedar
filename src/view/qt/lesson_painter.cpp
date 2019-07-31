@@ -47,6 +47,11 @@ lesson_painter::lesson_painter(const md::model::deck::deck& deck,
 	, m_lesson  {lesson}
 { ;}
 
+md::view::qt::ui::button* lesson_painter::get_designer()
+{
+	return new ui::button {"designer", [this]()
+	                                   { m_lesson.call_update_designer(); }};
+}
 
 void lesson_painter::answering_state(const model::card::card& card)
 {
@@ -58,15 +63,14 @@ void lesson_painter::answering_state(const model::card::card& card)
 		auto edit {new QLineEdit {}};
 		auto signal {[this, edit]() { m_lesson.answer(edit->text()); }};
 		show->attach(signal);
-		box::set_widget(question, edit, show);
-		
+		box::set_widget(question, edit);
+		box::put_widget(QBoxLayout::LeftToRight, get_designer(), show);
 	}
 	else {
-		
 		auto signal {[this]() { m_lesson.answer(QString {}); }};
 		show->attach(signal);
-		box::set_widget(question, show);
-		
+		box::set_widget(question);
+		box::put_widget(QBoxLayout::LeftToRight, get_designer(), show);
 	}
 }
 
@@ -92,14 +96,14 @@ void lesson_painter::marking_state(const model::task::task& task)
 	                           { m_lesson.done(easy_intvl); }}};
 
 	box::set_widget(question, user_answer, answer);
-	box::put_widget(QBoxLayout::LeftToRight, again, good, easy);
+	box::put_widget(QBoxLayout::LeftToRight, get_designer(), again, good, easy);
 }
 
 void lesson_painter::done_state(const model::card::card& card)
 {
 	auto question {new QLabel {card.question.text()}};
 	auto answer {new QLabel {card.answer.text()}};
-	box::set_widget(question, answer);
+	box::set_widget(question, answer, get_designer());
 }
 
 void lesson_painter::draw(const model::task::task& task)

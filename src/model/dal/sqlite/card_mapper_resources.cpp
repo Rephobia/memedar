@@ -120,6 +120,20 @@ side_index res::insert_side_index()
 	return ind;
 }
 
+std::string res::update_side_cmd()
+{
+	std::string cmd {"update sides set text = ?1 where id = ?2;"};
+	return cmd;
+}
+
+side_index res::update_side_index()
+{
+	side_index ind {};
+	ind.set_text(1);
+	ind.set_id(2);
+	return ind;
+}
+
 std::string res::update_repeat_cmd()
 {
 	std::string cmd {"update cards set repeat = ?1, combo = combo + 1 "

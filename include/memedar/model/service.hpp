@@ -23,6 +23,10 @@
 #define MEMEDAR_MODEL_SERVICE_HPP
 
 
+namespace md::model::side {
+	class side;
+}
+
 namespace md::model::card {
 	class card;
 }
@@ -51,6 +55,9 @@ public:
 	explicit service(md::model::dal::mapper& mapper);
 
 	void save_card(md::model::deck::deck& deck, md::model::card::card&& card);
+	void update_card(md::model::card::card& card,
+	                 md::model::side::side&& question,
+	                 md::model::side::side&& answer);
 	
 	void save_deck(md::model::deck::deck&& deck);
 	std::deque<md::model::deck::deck>& get_decks();
@@ -63,8 +70,6 @@ protected:
 protected:
 	std::deque<md::model::deck::deck> m_decks {};
 	std::map<std::int64_t, md::model::task::task_book> m_tasks {};
-	class done_visitor;
-
 };
 
 

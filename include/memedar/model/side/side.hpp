@@ -42,6 +42,8 @@ public:
 	md::model::side::side& operator=(const md::model::side::side& other) = delete;
 
 	const QString& text() const;
+	QString& text();
+	void change_text(QString&& text);
 protected:
 	QString m_text;
 };

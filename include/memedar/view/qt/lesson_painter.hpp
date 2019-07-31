@@ -36,6 +36,7 @@ public:
 	               md::view::qt::lesson& lesson);
 	void draw(const md::model::task::task& task);
 protected:
+	md::view::qt::ui::button* get_designer();
 	void answering_state(const md::model::card::card& card);
 	void marking_state(const md::model::task::task& task);
 	void done_state(const md::model::card::card& card);

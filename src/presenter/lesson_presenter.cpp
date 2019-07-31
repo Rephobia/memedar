@@ -65,13 +65,16 @@ lesson_presenter::lesson_presenter(md::controller& controller,
 	auto done_task   {[this](std::time_t gap) { done(gap); }};
 	
 	auto designer {[this]() { m_controller.run_designer(m_deck); }};
-	
+	auto update_designer {[this]() { m_controller.run_designer(m_deck,
+	                                                           m_task_book.current_task()); }};
+		
 	add_connect(m_lesson.prev_task.connect(prev),
 	            m_lesson.next_task.connect(next),
 	            m_lesson.answer.connect(answer_task),
 	            m_lesson.again.connect(again_task),
 	            m_lesson.done.connect(done_task),
-	            m_lesson.call_designer.connect(designer));
+	            m_lesson.call_designer.connect(designer),
+	            m_lesson.call_update_designer.connect(update_designer));
 	run();
 }
 
@@ -80,7 +83,6 @@ void lesson_presenter::run()
 	m_task_book.empty()
 		? m_lesson.show()
 		: m_lesson.show(m_task_book.current_task(), m_deck);
-
 }
 
 void lesson_presenter::show_answer(const QString& answer)
