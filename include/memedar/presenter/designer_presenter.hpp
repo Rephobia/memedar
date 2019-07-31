@@ -25,6 +25,7 @@
 
 namespace md::model::card {
 	class card;
+	class card_dto;
 }
 
 namespace md::model::deck {
@@ -62,7 +63,7 @@ public:
 
 	void run() override;
 protected:
-	void add_card(md::model::card::card&& card);
+	void add_card(md::model::card::card_dto&& new_card);
 protected:
 	md::model::deck::deck& m_deck;
 	md::model::service& m_service;
@@ -81,7 +82,7 @@ public:
 
 	void run() override;
 protected:
-	void update_card(md::model::card::card&& new_card);
+	void update_card(md::model::card::card_dto&& new_card);
 protected:
 	md::model::deck::deck& m_deck;
 	md::model::task::task& m_task;
@@ -100,7 +101,7 @@ public:
 
 	void run() override;
 protected:
-	void add_deck(model::deck::deck&& deck);
+	void add_deck(md::model::deck::deck&& deck);
 protected:
 	md::model::service& m_service;
 	md::view::error_delegate& m_error_delegate;

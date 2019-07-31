@@ -29,8 +29,11 @@
 #include "memedar/model/deck/accountant.hpp"
 
 using namespace md::utils;
+using md::model::identity;
 using md::model::deck::accountant;
+using md::model::side::side_value;
 using md::model::side::side;
+using md::model::card::card_value;
 using md::model::card::card;
 
 TEST_CASE("result of accountant counts if db didn't load", "[deck][accountant]")
@@ -53,8 +56,17 @@ TEST_CASE("result of accountant counts if db didn't load", "[deck][accountant]")
 
 TEST_CASE("accountant processes card", "[deck][accountant]")
 {
+
+	side_value question_value {"q"};
+	side_value answer_value {"a"};
+	
+	side question {identity {1}, std::move(question_value)};
+	side answer {identity {2}, std::move(answer_value)};
+
 	bool typing {false};
-	card card {side {"q"}, side {"a"}, typing};
+	card_value card_value {typing};
+	
+	card card {identity {1}, card_value, std::move(question), std::move(answer)};
 	
 	accountant accountant {};
 	bool loaded {true};

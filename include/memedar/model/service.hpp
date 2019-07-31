@@ -24,10 +24,12 @@
 
 
 namespace md::model::side {
+	class side_value;
 	class side;
 }
 
 namespace md::model::card {
+	class card_dto;
 	class card;
 }
 
@@ -54,10 +56,10 @@ class md::model::service
 public:
 	explicit service(md::model::dal::mapper& mapper);
 
-	void save_card(md::model::deck::deck& deck, md::model::card::card&& card);
+	void save_card(md::model::deck::deck& deck,
+	               md::model::card::card_dto&& new_card);
 	void update_card(md::model::card::card& card,
-	                 md::model::side::side&& question,
-	                 md::model::side::side&& answer);
+	                 md::model::card::card_dto&& new_card);
 	
 	void save_deck(md::model::deck::deck&& deck);
 	std::deque<md::model::deck::deck>& get_decks();

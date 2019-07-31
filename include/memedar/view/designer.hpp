@@ -23,8 +23,14 @@
 #define MEMEDAR_VIEW_DESIGNER_HPP
 
 
+namespace md::model::side {
+	class side_value;
+}
+
 namespace md::model::card {
+	class card_value;
 	class card;
+	class card_dto;
 }
 
 namespace md::model::deck {
@@ -44,7 +50,7 @@ public:
 	                  QString answer = QString {}) = 0;
 	virtual void show() = 0;
 
-	boost::signals2::signal<void(md::model::card::card& card)> add_card {};
+	boost::signals2::signal<void(md::model::card::card_dto& dto)> add_card {};
 	boost::signals2::signal<void(md::model::deck::deck& deck)> add_deck {};
 	boost::signals2::signal<void()> cancel {};
 
