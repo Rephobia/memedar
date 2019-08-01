@@ -48,14 +48,15 @@ public:
 	virtual md::model::dal::transaction_guard make_transaction() = 0;
 	virtual	void save_card(md::model::deck::deck& deck,
 		               md::model::task::task_book& task_book,
-		               md::model::card::card&& card) = 0;
+		               md::model::card::card_dto&& new_card) = 0;
 	virtual	void reset_combo(md::model::card::card& card) = 0;
 	
 	virtual	void save_deck(std::deque<md::model::deck::deck>& decks,
-		               md::model::deck::deck&& deck) = 0;
+		               md::model::deck::deck_value&& deck_value) = 0;
 	virtual	std::deque<md::model::deck::deck> load_decks() = 0;
 	
-	virtual void update_side(md::model::side::side& side, QString&& text) = 0;
+	virtual void update_side(md::model::side::side& old_side,
+	                         md::model::side::side_value&& new_side) = 0;
 	
 	virtual md::model::task::task_book make_task_book(md::model::deck::deck& deck) = 0;
 	virtual void done_noob(md::model::deck::deck& deck,

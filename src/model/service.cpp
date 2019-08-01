@@ -46,43 +46,42 @@ service::service(dal::mapper& mapper)
 	: m_mapper    {mapper}
 { ;}
 
-void service::save_card(deck::deck& deck, card::card&& card)
+void service::save_card(deck::deck& deck, card::card_dto&& new_card)
+
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};
 	
 	m_mapper.save_card(deck,
 	                   get_task_book(deck),
-	                   std::move(card));
+	                   std::move(new_card));
 
 	transaction.commit();
 }
 
-void service::update_card(card::card& card,
-                          side::side&& question,
-                          side::side&& answer)
+void service::update_card(card::card& card, card::card_dto&& new_card)
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};
 	
-	if (card.question.text() != question.text()
-	    and card.answer.text() != answer.text()) {
-		m_mapper.update_side(card.question, std::move(question.text()));
-		m_mapper.update_side(card.answer, std::move(answer.text()));
+	if (card.question.text() != new_card.question.text()
+	    and card.answer.text() != new_card.answer.text()) {
+		m_mapper.update_side(card.question, std::move(new_card.question));
+		m_mapper.update_side(card.answer, std::move(new_card.answer));
 	}
-	else if (card.question.text() != question.text()) {
-		m_mapper.update_side(card.question, std::move(question.text()));
+	else if (card.question.text() != new_card.question.text()) {
+		m_mapper.update_side(card.question, std::move(new_card.question));
 
 	}
-	else if (card.answer.text() != answer.text()) {
-		m_mapper.update_side(card.answer, std::move(answer.text()));
+	else if (card.answer.text() != new_card.answer.text()) {
+		m_mapper.update_side(card.answer, std::move(new_card.answer));
 	}
 	
 	transaction.commit();
 }
-void service::save_deck(deck::deck&& deck)
+void service::save_deck(deck::deck_value&& deck_value)
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};
 	
-	m_mapper.save_deck(m_decks, std::move(deck));
+	m_mapper.save_deck(m_decks, std::move(deck_value));
 	
 	transaction.commit();
 }

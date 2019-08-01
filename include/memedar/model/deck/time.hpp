@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
+ * Copyright (C) 2019 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -19,33 +19,33 @@
  */
 
 
-#ifndef MEMEDAR_MODEL_DAL_DECK_MAPPER_HPP
-#define MEMEDAR_MODEL_DAL_DECK_MAPPER_HPP
+#ifndef MEMEDAR_MODEL_DECK_TIME_HPP
+#define MEMEDAR_MODEL_DECK_TIME_HPP
+
+
+#include <ctime>
 
 
 namespace md::model::deck {
-	class deck;
+	class time;
 }
 
-namespace md::model::dal {
-	class deck_mapper;
-}
 
-class md::model::dal::deck_mapper
+class md::model::deck::time
 {
 public:
-	virtual void create_table() = 0;
+	time() = default;
+	time(std::time_t added, std::time_t last_opening);
+	
+	std::time_t added() const;
 
-	virtual std::deque<md::model::deck::deck> load_decks() = 0;
-	virtual md::model::deck::deck save_deck(md::model::deck::deck_value&& deck_value) = 0;
-
-	virtual	void decrement_daily_noob(md::model::deck::deck& deck) = 0;
-	virtual	void decrement_daily_ready(md::model::deck::deck& deck) = 0;
-	virtual void update_last_opening(md::model::deck::deck& deck) = 0;
-	virtual void reset_daily_limits(md::model::deck::deck& deck) = 0;
-
-	virtual ~deck_mapper() = default;
+	std::time_t last_opening() const;
+	void change_last_opening(std::time_t timestamp);
+protected:
+	std::time_t m_added = 0;
+	std::time_t m_last_opening = 0;
+	
 };
 
 
-#endif // MEMEDAR_MODEL_DAL_DECK_MAPPER_HPP
+#endif // MEMEDAR_MODEL_DECK_TIME_HPP

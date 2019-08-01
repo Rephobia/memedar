@@ -19,44 +19,28 @@
  */
 
 
-#include <cstdint>
+#include "memedar/model/deck/time.hpp"
 
-#include <QString>
 
-#include "memedar/model/side/side.hpp"
+using md::model::deck::time;
 
-using md::model::side::side_value;
 
-side_value::side_value(QString&& text)
-	: m_text   {std::move(text)}
+time::time(std::time_t added, std::time_t last_opening)
+	: m_added        {added}
+	, m_last_opening {last_opening}
 { ;}
 
-side_value::side_value(side_value&& other)
-	: m_text   {std::move(other.m_text)}
-{ ;}
-
-side_value& side_value::operator=(side_value&& other)
+std::time_t time::added() const
 {
-	if (this != &other) {
-		m_text = std::move(other.m_text);
-	}
-	return *this;
+	return m_added;
 }
 
-const QString& side_value::text() const
+std::time_t time::last_opening() const
 {
-	return m_text;
+	return m_last_opening;
 }
 
-using md::model::side::side;
-
-side::side(identity id, side::side_value&& value)
-	: identity   {id}
-	, side_value {std::move(value)}
-{ ;}
-
-md::model::side::side& side::operator=(md::model::side::side_value&& value)
+void time::change_last_opening(std::time_t timestamp)
 {
-	side_value::operator=(std::move(value));
-	return *this;
+	m_last_opening = timestamp;
 }

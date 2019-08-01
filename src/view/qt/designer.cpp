@@ -56,12 +56,11 @@ void designer::show(const model::deck::deck& deck,
 
 	auto add_action {[this, q_edit, a_edit, typing]()
 	                 {
-		                 model::side::side q {q_edit->toPlainText()};
-		                 model::side::side a {a_edit->toPlainText()};
-		                 model::card::card card {std::move(q),
-		                                         std::move(a),
-		                                         typing->isChecked()};
-		                 add_card(card);
+		                 model::side::side_value q {q_edit->toPlainText()};
+		                 model::side::side_value a {a_edit->toPlainText()};
+		                 model::card::card_value card {typing->isChecked()};
+		                 model::card::card_dto dto {card, std::move(q), std::move(a)};
+		                 add_card(dto);
 	                 }};
 
 	auto ok {new ui::button {"ok", add_action}};
@@ -78,9 +77,8 @@ void designer::show()
 
 	auto add_action {[this, edit]()
 	                 {
-		                 model::deck::info info {edit->text()};
-		                 model::deck::deck deck {std::move(info)};
-		                 add_deck(deck);
+		                 model::deck::deck_value value {edit->text()};
+		                 add_deck(value);
 	                 }};
 
 	auto ok {new ui::button {"ok", add_action}};

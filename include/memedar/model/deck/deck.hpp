@@ -23,11 +23,14 @@
 #define MEMEDAR_MODEL_DECK_DECK_HPP
 
 
+#include <memory>
+#include <QString>
+
 #include "memedar/model/identity.hpp"
-#include "memedar/model/deck/info.hpp"
+#include "memedar/model/deck/time.hpp"
 #include "memedar/model/deck/gap.hpp"
-#include "memedar/model/deck/accountant.hpp"
 #include "memedar/model/deck/limit.hpp"
+#include "memedar/model/deck/accountant.hpp"
 
 
 namespace md::utils {
@@ -40,23 +43,45 @@ namespace md::model::card {
 }
 
 namespace md::model::deck {
+	class deck_value;
 	class deck;
 }
 
 
+class md::model::deck::deck_value : public md::model::deck::time
+                                  , public md::model::deck::limit
+                                  , public md::model::deck::gaps
+{
+public:
+	explicit deck_value(QString&& name);
+	
+	deck_value(QString&& name,
+	           md::model::deck::time time,
+	           md::model::deck::limit limit,
+	           md::model::deck::gaps gaps);
+	
+	deck_value(md::model::deck::deck_value&& other);
+	deck_value(const md::model::deck::deck_value& other) = delete;
+
+	md::model::deck::deck_value& operator=(md::model::deck::deck_value&& other);
+	md::model::deck::deck_value& operator=(const md::model::deck::deck_value& other) = delete;
+
+	const QString& name() const;
+protected:
+	QString m_name;
+};
+
+
 class md::model::deck::deck : public md::model::identity
-                            , public md::model::deck::info
-                            , public md::model::deck::limit
-                            , public md::model::deck::gaps
+                            , public md::model::deck::deck_value
                             , public md::utils::storage<std::shared_ptr<md::model::card::card>>
 {
 public:
-	explicit deck(md::model::deck::info&& info);
-
 	deck(md::model::identity id,
-	     md::model::deck::info&& info,
-	     md::model::deck::limit limit,
-	     md::model::deck::gaps gaps,
+	     md::model::deck::deck_value&& deck_value);
+	
+	deck(md::model::identity id,
+	     md::model::deck::deck_value&& deck_value,
 	     md::model::deck::accountant&& accountant);
 
 	bool operator<(const md::model::deck::deck& other) const;

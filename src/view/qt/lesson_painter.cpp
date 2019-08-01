@@ -58,7 +58,7 @@ void lesson_painter::answering_state(const model::card::card& card)
 	auto question {new QLabel {card.question.text()}};
 	auto show {new ui::button {"show"}};
 	
-	if (card.has_typing()) {
+	if (card.has_typing) {
 		
 		auto edit {new QLineEdit {}};
 		auto signal {[this, edit]() { m_lesson.answer(edit->text()); }};

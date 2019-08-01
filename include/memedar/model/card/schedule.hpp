@@ -23,6 +23,9 @@
 #define MEMEDAR_MODEL_CARD_SCHEDULE_HPP
 
 
+#include <ctime>
+
+
 namespace md::model::card {
 	class schedule;
 }

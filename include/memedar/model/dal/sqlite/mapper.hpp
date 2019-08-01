@@ -43,14 +43,15 @@ public:
 	md::model::dal::transaction_guard make_transaction() override;	
 	void save_card(md::model::deck::deck& deck,
 	               md::model::task::task_book& task_book,
-	               md::model::card::card&& card) override;
+	               md::model::card::card_dto&& new_card) override;
 	void reset_combo(md::model::card::card& card) override;
 	
 	void save_deck(std::deque<md::model::deck::deck>& decks,
-                       md::model::deck::deck&& deck) override;
+                       md::model::deck::deck_value&& deck_value) override;
 	std::deque<md::model::deck::deck> load_decks() override;
 
-	void update_side(md::model::side::side& side, QString&& text) override;
+	void update_side(md::model::side::side& old_side,
+	                 md::model::side::side_value&& new_side) override;
 		
 	md::model::task::task_book make_task_book(md::model::deck::deck& deck) override;	
 	void done_noob(md::model::deck::deck& deck,

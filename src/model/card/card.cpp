@@ -25,45 +25,39 @@
 
 #include <QString>
 
-#include "memedar/model/side/side.hpp"
 #include "memedar/model/card/visitor.hpp"
 #include "memedar/model/card/type.hpp"
 #include "memedar/model/card/card.hpp"
 
 
+using md::model::card::card_value;
+
+card_value::card_value(bool typing)
+	: card::schedule {schedule {}}
+	, card::combo    {combo {}}
+	, has_typing     {typing}
+{ ;}
+
+card_value::card_value(card::schedule schedule,
+                       card::combo combo,
+                       bool typing)
+	: card::schedule {schedule}
+	, card::combo    {combo}
+	, has_typing     {typing}
+{ ;}
+
 using md::model::card::card;
 
-card::card(side::side&& question_side,
-           side::side&& answer_side,
-           bool typing)
-	: identity       {identity {}}
-	, card::schedule {card::schedule {}}
-	, card::combo    {card::combo {}}
-	, question       {std::move(question_side)}
-	, answer         {std::move(answer_side)}
-	, m_typing       {typing}
-	, m_type         {nullptr}
-{ ;}
-
 card::card(identity id,
-           card::schedule schedule,
-           card::combo combo,
+           card::card_value card_value,
            side::side&& question_side,
-           side::side&& answer_side,
-           bool typing)
-	: identity       {id}
-	, card::schedule {schedule}
-	, card::combo    {combo}
-	, question       {std::move(question_side)}
-	, answer         {std::move(answer_side)}
-	, m_typing       {typing}
-	, m_type         {nullptr}
+           side::side&& answer_side)
+	: identity         {id}
+	, card::card_value {card_value}
+	, question         {std::move(question_side)}
+	, answer           {std::move(answer_side)}
+	, m_type           {nullptr}
 { ;}
-
-bool card::has_typing() const
-{
-	return m_typing;
-}
 
 void card::set_type(std::shared_ptr<md::model::card::type> type)
 {
