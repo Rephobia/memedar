@@ -77,9 +77,8 @@ void designer::show()
 
 	auto add_action {[this, edit]()
 	                 {
-		                 model::deck::info info {edit->text()};
-		                 model::deck::deck deck {std::move(info)};
-		                 add_deck(deck);
+		                 model::deck::deck_value value {edit->text()};
+		                 add_deck(value);
 	                 }};
 
 	auto ok {new ui::button {"ok", add_action}};

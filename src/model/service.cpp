@@ -77,11 +77,11 @@ void service::update_card(card::card& card, card::card_dto&& new_card)
 	
 	transaction.commit();
 }
-void service::save_deck(deck::deck&& deck)
+void service::save_deck(deck::deck_value&& deck_value)
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};
 	
-	m_mapper.save_deck(m_decks, std::move(deck));
+	m_mapper.save_deck(m_decks, std::move(deck_value));
 	
 	transaction.commit();
 }

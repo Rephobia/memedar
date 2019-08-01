@@ -61,7 +61,7 @@ public:
 	void update_card(md::model::card::card& card,
 	                 md::model::card::card_dto&& new_card);
 	
-	void save_deck(md::model::deck::deck&& deck);
+	void save_deck(md::model::deck::deck_value&& deck_value);
 	std::deque<md::model::deck::deck>& get_decks();
 	
 	md::model::task::task_book& get_task_book(md::model::deck::deck& deck);

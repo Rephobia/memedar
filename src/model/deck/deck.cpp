@@ -19,39 +19,72 @@
  */
 
 
-#include <memory>
-
-#include <QString>
-
 #include "memedar/utils/storage.hpp"
 
 #include "memedar/model/side/side.hpp"
 #include "memedar/model/card/card.hpp"
 #include "memedar/model/deck/deck.hpp"
 
+
+using md::model::deck::deck_value;
+
+deck_value::deck_value(QString&& name)
+	: deck::time  {time {}}
+	, deck::limit {limit {}}
+	, deck::gaps  {gaps {}}
+	, m_name      {std::move(name)}
+{ ;}
+
+deck_value::deck_value(QString&& name,
+                       deck::time time,
+                       deck::limit limit,
+                       deck::gaps gaps)
+	: deck::time  {time}
+	, deck::limit {limit}
+	, deck::gaps  {gaps}
+	, m_name      {std::move(name)}
+{ ;}
+
+deck_value::deck_value(deck_value&& other)
+	: deck::time  {static_cast<deck::time>(other)}
+	, deck::limit {static_cast<deck::limit>(other)}
+	, deck::gaps  {static_cast<deck::gaps>(other)}
+	, m_name      {std::move(other.m_name)}
+{ ;}
+
+deck_value& deck_value::operator=(deck_value&& other)
+{
+	if (this != &other) {
+		time::operator=(static_cast<deck::time>(other));
+		limit::operator=(static_cast<deck::limit>(other));
+		gaps::operator=(static_cast<deck::gaps>(other));
+		m_name = std::move(other.m_name);
+	}
+
+	return *this;
+}
+
+const QString& deck_value::name() const
+{
+	return m_name;
+}
+
+
 using md::model::deck::deck;
 
-deck::deck(deck::info&& info)
-	: deck::identity {identity {}}
-	, deck::info     {std::move(info)}
-	, deck::time     {time {}}
-	, deck::limit    {limit {}}
-	, deck::gaps     {gaps {}}
-	, m_accountant   {md::model::deck::accountant {}}
+deck::deck(deck::identity id,
+           deck::deck_value&& value)
+	: deck::identity   {id}
+	, deck::deck_value {std::move(value)}
+	, m_accountant     {md::model::deck::accountant {}}
 { ;}
 
 deck::deck(deck::identity id,
-           deck::info&& info,
-           deck::time time,
-           deck::limit limit,
-           deck::gaps gaps,
+           deck::deck_value&& value,
            md::model::deck::accountant&& accountant)
-	: deck::identity {id}
-	, deck::info     {std::move(info)}
-	, deck::time     {time}
-	, deck::limit    {limit}
-	, deck::gaps     {gaps}
-	, m_accountant   {std::move(accountant)}
+	: deck::identity   {id}
+	, deck::deck_value {std::move(value)}
+	, m_accountant     {std::move(accountant)}
 { ;}
 
 bool deck::operator<(const md::model::deck::deck& other) const
