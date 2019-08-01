@@ -97,9 +97,10 @@ void mapper::save_card(deck::deck& deck,
 }
 
 
-void mapper::save_deck(std::deque<deck::deck>& decks, deck::deck&& deck)
+void mapper::save_deck(std::deque<deck::deck>& decks,
+                       deck::deck_value&& deck_value)
 {
-	m_deck_mapper->save_deck(deck);
+	decltype(auto) deck {m_deck_mapper->save_deck(std::move(deck_value))};
 	decks.push_back(std::move(deck));
 }
 

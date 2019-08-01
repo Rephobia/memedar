@@ -52,7 +52,7 @@ public:
 	virtual	void reset_combo(md::model::card::card& card) = 0;
 	
 	virtual	void save_deck(std::deque<md::model::deck::deck>& decks,
-		               md::model::deck::deck&& deck) = 0;
+		               md::model::deck::deck_value&& deck_value) = 0;
 	virtual	std::deque<md::model::deck::deck> load_decks() = 0;
 	
 	virtual void update_side(md::model::side::side& old_side,

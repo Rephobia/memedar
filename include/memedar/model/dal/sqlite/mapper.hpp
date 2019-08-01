@@ -47,7 +47,7 @@ public:
 	void reset_combo(md::model::card::card& card) override;
 	
 	void save_deck(std::deque<md::model::deck::deck>& decks,
-                       md::model::deck::deck&& deck) override;
+                       md::model::deck::deck_value&& deck_value) override;
 	std::deque<md::model::deck::deck> load_decks() override;
 
 	void update_side(md::model::side::side& old_side,

@@ -124,7 +124,8 @@ deck_designer_presenter::deck_designer_presenter(model::service& service,
 	, m_error_delegate {error_delegate}
 	, m_designer       {designer}
 {
-	auto action {[this](model::deck::deck& deck) { add_deck(std::move(deck)); }};
+	auto action {[this](model::deck::deck_value& deck_value)
+	             { add_deck(std::move(deck_value)); }};
 	
 	add_connect(m_designer.add_deck.connect(action));
 	
@@ -136,10 +137,10 @@ void deck_designer_presenter::run()
 	m_designer.show();	
 }
 
-void deck_designer_presenter::add_deck(model::deck::deck&& deck)
+void deck_designer_presenter::add_deck(model::deck::deck_value&& deck_value)
 {
 	try {
-		m_service.save_deck(std::move(deck));
+		m_service.save_deck(std::move(deck_value));
 		m_designer.cancel();
 	}
 	catch (std::system_error& e) {

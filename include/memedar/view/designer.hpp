@@ -34,6 +34,7 @@ namespace md::model::card {
 }
 
 namespace md::model::deck {
+	class deck_value;
 	class deck;
 }
 
@@ -51,7 +52,7 @@ public:
 	virtual void show() = 0;
 
 	boost::signals2::signal<void(md::model::card::card_dto& dto)> add_card {};
-	boost::signals2::signal<void(md::model::deck::deck& deck)> add_deck {};
+	boost::signals2::signal<void(md::model::deck::deck_value& deck)> add_deck {};
 	boost::signals2::signal<void()> cancel {};
 
 	virtual ~designer() = default;

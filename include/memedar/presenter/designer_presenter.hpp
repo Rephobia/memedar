@@ -101,7 +101,7 @@ public:
 
 	void run() override;
 protected:
-	void add_deck(md::model::deck::deck&& deck);
+	void add_deck(md::model::deck::deck_value&& deck_value);
 protected:
 	md::model::service& m_service;
 	md::view::error_delegate& m_error_delegate;
