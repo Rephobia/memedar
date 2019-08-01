@@ -48,16 +48,17 @@ public:
 
 	void create_table() override;
 
-	void save_card(const md::model::deck::deck& deck,
-	               md::model::card::card& card) override;
+	md::model::card::card save_card(const md::model::deck::deck& deck,
+	                                md::model::card::card_dto&& new_card) override;
 	void load_cards(md::model::deck::deck& deck) override;
 
-	void update_side(md::model::identity identity, const QString& text) override;
+	void update_side(const md::model::side::side& old_side,
+	                 const md::model::side::side_value& new_side) override;
 
 	void update_repeat(md::model::card::card& card, std::time_t repeat) override;
 	void reset_combo(md::model::card::card& card) override;
 protected:
-	void save_side(md::model::side::side& side);
+	md::model::side::side save_side(md::model::side::side_value&& side_value);
 	md::model::side::side read_side(md::model::dal::sqlite::adapter::connector& conn,
 	                                md::model::dal::sqlite::side_index ind);
 protected:

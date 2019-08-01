@@ -56,24 +56,25 @@ void card_mapper::create_table()
 	adapter::step(m_db, adapter::prepare_sqlite(m_db, res::create_cmd()));
 }
 
-void card_mapper::save_card(const deck::deck& deck, card::card& card)
+md::model::card::card card_mapper::save_card(const deck::deck& deck,
+                                             card::card_dto&& new_card)
 {
-	save_side(card.question);
-	save_side(card.answer);
+	decltype(auto) question {save_side(std::move(new_card.question))};
+	decltype(auto) answer {save_side(std::move(new_card.answer))};
 
 	static connector conn {m_db, res::insert_cmd()};
 	card_index ind {res::insert_index()};
 
 	conn.exec_bind(binder {ind.deck_id(), deck.id()},
-	               binder {ind.question_id(), card.question.id()},
-	               binder {ind.answer_id(), card.answer.id()},
-	               binder {ind.added(), card.added()},
-	               binder {ind.repeat(), card.repeat()},
-	               binder {ind.combo(), card.get_combo()},
-	               binder {ind.typing(), card.has_typing()});
+	               binder {ind.question_id(), question.id()},
+	               binder {ind.answer_id(), answer.id()},
+	               binder {ind.added(), new_card.value.added()},
+	               binder {ind.repeat(), new_card.value.repeat()},
+	               binder {ind.combo(), new_card.value.get_combo()},
+	               binder {ind.typing(), new_card.value.has_typing});
 
 	identity id {::sqlite3_last_insert_rowid(m_db.get())};
-	card.identity::operator=(id);
+	return card::card {id, new_card.value, std::move(question), std::move(answer)};
 }
 
 void card_mapper::load_cards(deck::deck& deck)
@@ -95,11 +96,10 @@ void card_mapper::load_cards(deck::deck& deck)
 
 		auto q {read_side(conn, ind.question)};
 		auto a {read_side(conn, ind.answer)};
-
 		bool typing {static_cast<bool>(conn.read_int64t(ind.typing()))};
 
-		deck.add_card(card::card
-		              {id, schedule, combo, std::move(q), std::move(a), typing});
+		card::card_value card_value {schedule, combo, typing};
+		deck.add_card(card::card {id, card_value, std::move(q), std::move(a)});
 	}
 }
 
@@ -107,29 +107,30 @@ md::model::side::side card_mapper::read_side(adapter::connector& conn,
                                              sqlite::side_index ind)
 {
 	identity id {conn.read_int64t(ind.id())};
-	QString text {conn.read_string(ind.text())};
+	side::side_value value {conn.read_string(ind.text())};
 
-	return side::side {id, std::move(text)};
+	return side::side {id, std::move(value)};
 }
 
-void card_mapper::save_side(side::side& side)
+md::model::side::side card_mapper::save_side(side::side_value&& side_value)
 {
 	static adapter::connector conn {m_db, res::insert_side_cmd()};
 	side_index ind {res::insert_side_index()};
 
-	conn.exec_bind(binder {ind.text(), side.text()});
+	conn.exec_bind(binder {ind.text(), side_value.text()});
 
 	identity id {::sqlite3_last_insert_rowid(m_db.get())};
-	side.identity::operator=(id);
+	return side::side {id, std::move(side_value)};
 }
 
-void card_mapper::update_side(md::model::identity identity, const QString& text)
+void card_mapper::update_side(const side::side& old_side,
+                              const side::side_value& new_side)
 {
 	static adapter::connector conn {m_db, res::update_side_cmd()};
 	side_index ind {res::update_side_index()};
 
-	conn.exec_bind(binder {ind.id(), identity.id()},
-	               binder {ind.text(), text});
+	conn.exec_bind(binder {ind.id(), old_side.id()},
+	               binder {ind.text(), new_side.text()});
 }
 
 void card_mapper::update_repeat(card::card& card, std::time_t repeat)

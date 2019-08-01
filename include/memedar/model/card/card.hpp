@@ -27,6 +27,7 @@
 #include <memory>
 
 #include "memedar/model/identity.hpp"
+#include "memedar/model/side/side.hpp"
 #include "memedar/model/card/schedule.hpp"
 #include "memedar/model/card/combo.hpp"
 
@@ -37,31 +38,54 @@ namespace md::model::card {
 	struct noob_t;
 	struct ready_t;
 	struct delayed_t;
+	
+	class card_value;
+	class card_dto;
 	class card;
 }
 
 
-class md::model::card::card : public md::model::identity
-                            , public md::model::card::schedule
-                            , public md::model::card::combo
+class md::model::card::card_value : public md::model::card::schedule
+                                  , public md::model::card::combo
 {
 public:
-	card(md::model::side::side&& question,
-	     md::model::side::side&& answer,
-	     bool typing);
+	explicit card_value(bool typing);
+	card_value(md::model::card::schedule schedule,
+	           md::model::card::combo combo,
+	           bool typing);
 
+	bool has_typing;
+};
+
+
+class md::model::card::card_dto
+{
+public:
+	card_dto(md::model::card::card_value card_value,
+	         md::model::side::side_value&& question_value,
+	         md::model::side::side_value&& answer_value)
+		: value    {card_value}
+		, question {std::move(question_value)}
+		, answer   {std::move(answer_value)}
+	{ ;}
+	md::model::card::card_value value;
+	md::model::side::side_value question;
+	md::model::side::side_value answer;
+};
+
+
+class md::model::card::card : public md::model::identity
+                            , public md::model::card::card_value
+{
+public:
 	card(md::model::identity id,
-	     md::model::card::schedule schedule,
-	     md::model::card::combo combo,
+	     md::model::card::card_value card_value,
 	     md::model::side::side&& question,
-	     md::model::side::side&& answer,
-	     bool typing);
-
+	     md::model::side::side&& answer);
+	
 	md::model::side::side question;
 	md::model::side::side answer;
-
-	bool has_typing() const;
-
+		
 	void set_type(std::shared_ptr<md::model::card::type> type);
 
 	void visit(std::function<void(md::model::card::noob_t&)>&& noob,
@@ -69,7 +93,6 @@ public:
 	           std::function<void(md::model::card::delayed_t&)>&& delayed
 	           = [](md::model::card::delayed_t&){});
 protected:
-	bool m_typing;
 	std::shared_ptr<md::model::card::type> m_type;
 };
 

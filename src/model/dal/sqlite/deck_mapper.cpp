@@ -54,20 +54,20 @@ void deck_mapper::create_table()
 	adapter::step(m_db, adapter::prepare_sqlite(m_db, res::create_cmd()));
 }
 
-void deck_mapper::save_deck(deck::deck& deck)
+md::model::deck::deck deck_mapper::save_deck(deck::deck_value&& deck_value)
 {
 	static connector conn {m_db, res::insert_cmd()};
 	deck_index ind {res::insert_index()};
 
-	auto good_gap {deck.good_gap()};
-	auto easy_gap {deck.easy_gap()};
-	conn.exec_bind(binder {ind.name(), deck.name()},
-	               binder {ind.added(), deck.added()},
-	               binder {ind.last_opening(), deck.last_opening()},
-	               binder {ind.max_noob_cards(), deck.max_noob_cards()},
-	               binder {ind.max_ready_cards(), deck.max_ready_cards()},
-	               binder {ind.daily_noob_cards(), deck.daily_noob_cards()},
-	               binder {ind.daily_ready_cards(), deck.daily_ready_cards()},
+	auto good_gap {deck_value.good_gap()};
+	auto easy_gap {deck_value.easy_gap()};
+	conn.exec_bind(binder {ind.name(), deck_value.name()},
+	               binder {ind.added(), deck_value.added()},
+	               binder {ind.last_opening(), deck_value.last_opening()},
+	               binder {ind.max_noob_cards(), deck_value.max_noob_cards()},
+	               binder {ind.max_ready_cards(), deck_value.max_ready_cards()},
+	               binder {ind.daily_noob_cards(), deck_value.daily_noob_cards()},
+	               binder {ind.daily_ready_cards(), deck_value.daily_ready_cards()},
 	               binder {ind.good_gap(), good_gap.netto_value()},
 	               binder {ind.good_ratio(), good_gap.ratio()},
 	               binder {ind.easy_gap(), easy_gap.netto_value()},
@@ -75,7 +75,7 @@ void deck_mapper::save_deck(deck::deck& deck)
 	               );
 
 	identity id {::sqlite3_last_insert_rowid(m_db.get())};
-	deck.identity::operator=(id);
+	return deck::deck {id, std::move(deck_value)};
 }
 
 std::deque<md::model::deck::deck> deck_mapper::load_decks()
@@ -92,9 +92,9 @@ std::deque<md::model::deck::deck> deck_mapper::load_decks()
 
 		auto added        {conn.read_int64t(ind.added())};
 		auto last_opening {conn.read_int64t(ind.last_opening())};
-		auto name         {conn.read_string(ind.name())};
-		deck::info info {std::move(name), added, last_opening};
 
+		deck::time time {added, last_opening};
+		
 		auto max_noob    {conn.read_int64t(ind.max_noob_cards())};
 		auto max_ready   {conn.read_int64t(ind.max_ready_cards())};
 		auto daily_noob  {conn.read_int64t(ind.daily_noob_cards())};
@@ -110,13 +110,16 @@ std::deque<md::model::deck::deck> deck_mapper::load_decks()
 		deck::gap e_gap {e_gap_value, e_gap_ratio};
 
 		deck::gaps gaps {g_gap, e_gap};
-
+		
+		auto name {conn.read_string(ind.name())};
+		deck::deck_value value {std::move(name), time, limit, gaps};
+		
 		auto noob    {conn.read_int64t(ind.noob_cards())};
 		auto ready   {conn.read_int64t(ind.ready_cards())};
 		auto delayed {conn.read_int64t(ind.delayed_cards())};
 		deck::accountant acc {noob, ready, delayed};
 		
-		decks.push_back(deck::deck {id, std::move(info), limit, gaps, std::move(acc)});
+		decks.push_back(deck::deck {id, std::move(value), std::move(acc)});
 	}
 	
 	return decks;

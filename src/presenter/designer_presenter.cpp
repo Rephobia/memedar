@@ -53,7 +53,8 @@ card_designer_presenter::card_designer_presenter(model::deck::deck& deck,
 	, m_error_delegate {error_delegate}
 	, m_designer       {designer}
 {
-	auto action {[this](model::card::card& card) { add_card(std::move(card)); }};
+	auto action {[this](model::card::card_dto& new_card)
+	             { add_card(std::move(new_card)); }};
 	
 	add_connect(m_designer.add_card.connect(action));
 	
@@ -65,10 +66,10 @@ void card_designer_presenter::run()
 	m_designer.show(m_deck);	
 }
 
-void card_designer_presenter::add_card(model::card::card&& card)
+void card_designer_presenter::add_card(md::model::card::card_dto&& new_card)
 {
 	try {
-		m_service.save_card(m_deck, std::move(card));
+		m_service.save_card(m_deck, std::move(new_card));
 	}
 	catch (std::system_error& e) {
 		m_error_delegate.show_error(e);
@@ -88,7 +89,8 @@ update_designer_presenter::update_designer_presenter(model::deck::deck& deck,
 	, m_error_delegate {error_delegate}
 	, m_designer       {designer}
 {
-	auto action {[this](model::card::card& new_card) { update_card(std::move(new_card)); }};
+	auto action {[this](md::model::card::card_dto& new_card)
+	             { update_card(std::move(new_card)); }};
 	
 	add_connect(m_designer.add_card.connect(action));
 	
@@ -102,12 +104,10 @@ void update_designer_presenter::run()
 	                m_task.card->question.text(), m_task.card->answer.text());
 }
 
-void update_designer_presenter::update_card(model::card::card&& new_card)
+void update_designer_presenter::update_card(md::model::card::card_dto&& new_card)
 {
 	try {
-		m_service.update_card(*m_task.card,
-		                      std::move(new_card.question),
-		                      std::move(new_card.answer));
+		m_service.update_card(*m_task.card, std::move(new_card));
 	}
 	catch (std::system_error& e) {
 		m_error_delegate.show_error(e);
@@ -124,7 +124,8 @@ deck_designer_presenter::deck_designer_presenter(model::service& service,
 	, m_error_delegate {error_delegate}
 	, m_designer       {designer}
 {
-	auto action {[this](model::deck::deck& deck) { add_deck(std::move(deck)); }};
+	auto action {[this](model::deck::deck_value& deck_value)
+	             { add_deck(std::move(deck_value)); }};
 	
 	add_connect(m_designer.add_deck.connect(action));
 	
@@ -136,10 +137,10 @@ void deck_designer_presenter::run()
 	m_designer.show();	
 }
 
-void deck_designer_presenter::add_deck(model::deck::deck&& deck)
+void deck_designer_presenter::add_deck(model::deck::deck_value&& deck_value)
 {
 	try {
-		m_service.save_deck(std::move(deck));
+		m_service.save_deck(std::move(deck_value));
 		m_designer.cancel();
 	}
 	catch (std::system_error& e) {

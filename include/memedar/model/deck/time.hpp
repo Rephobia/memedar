@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov
+ * Copyright (C) 2019 Roman Erdyakov
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -19,32 +19,33 @@
  */
 
 
-#ifndef MEMEDAR_MODEL_CARD_SCHEDULE_HPP
-#define MEMEDAR_MODEL_CARD_SCHEDULE_HPP
+#ifndef MEMEDAR_MODEL_DECK_TIME_HPP
+#define MEMEDAR_MODEL_DECK_TIME_HPP
 
 
 #include <ctime>
 
 
-namespace md::model::card {
-	class schedule;
+namespace md::model::deck {
+	class time;
 }
 
-class md::model::card::schedule
+
+class md::model::deck::time
 {
 public:
-	schedule();
-	schedule(std::time_t added, std::time_t repeat);
-
+	time() = default;
+	time(std::time_t added, std::time_t last_opening);
+	
 	std::time_t added() const;
 
-	std::time_t repeat() const;
-	void change_repeat(std::time_t val);
+	std::time_t last_opening() const;
+	void change_last_opening(std::time_t timestamp);
 protected:
-	std::time_t m_added;
-	std::time_t m_repeat;
-
+	std::time_t m_added = 0;
+	std::time_t m_last_opening = 0;
+	
 };
 
 
-#endif // MEMEDAR_MODEL_CARD_SCHEDULE_HPP
+#endif // MEMEDAR_MODEL_DECK_TIME_HPP

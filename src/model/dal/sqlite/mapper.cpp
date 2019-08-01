@@ -79,13 +79,13 @@ md::model::dal::transaction_guard mapper::make_transaction()
 
 void mapper::save_card(deck::deck& deck,
                        task::task_book& task_book,
-                       card::card&& card)
+                       card::card_dto&& new_card)
 {
 	if (deck.empty()) {
 		m_card_mapper->load_cards(deck);
 	}
 		
-	m_card_mapper->save_card(deck, card);
+	decltype(auto) card {m_card_mapper->save_card(deck, std::move(new_card))};
 
 	decltype(auto) shared_card {deck.add_card(std::move(card))};
 	
@@ -97,9 +97,10 @@ void mapper::save_card(deck::deck& deck,
 }
 
 
-void mapper::save_deck(std::deque<deck::deck>& decks, deck::deck&& deck)
+void mapper::save_deck(std::deque<deck::deck>& decks,
+                       deck::deck_value&& deck_value)
 {
-	m_deck_mapper->save_deck(deck);
+	decltype(auto) deck {m_deck_mapper->save_deck(std::move(deck_value))};
 	decks.push_back(std::move(deck));
 }
 
@@ -138,10 +139,10 @@ void mapper::fill_from_deck(deck::deck& deck, task::task_book& task_book)
 		}
 	}
 }
-void mapper::update_side(side::side& side, QString&& text)
+void mapper::update_side(side::side& old_side, side::side_value&& new_side)
 {
-	m_card_mapper->update_side(side, text);
-	side.change_text(std::move(text));
+	m_card_mapper->update_side(old_side, new_side);
+	old_side = std::move(new_side);
 }
 
 void mapper::reset_combo(card::card& card)
