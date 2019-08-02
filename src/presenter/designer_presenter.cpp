@@ -100,8 +100,7 @@ update_designer_presenter::update_designer_presenter(model::deck::deck& deck,
 
 void update_designer_presenter::run()
 {
-	m_designer.show(m_deck,
-	                m_task.card->question.text(), m_task.card->answer.text());
+	m_designer.show(m_deck, *m_task.card);
 }
 
 void update_designer_presenter::update_card(md::model::card::card_dto&& new_card)
