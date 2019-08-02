@@ -74,6 +74,11 @@ void service::update_card(card::card& card, card::card_dto&& new_card)
 	else if (card.answer.text() != new_card.answer.text()) {
 		m_mapper.update_side(card.answer, std::move(new_card.answer));
 	}
+
+
+	if (card.has_typing != new_card.value.has_typing) {
+		m_mapper.update_card(card, new_card.value.has_typing);
+	}
 	
 	transaction.commit();
 }

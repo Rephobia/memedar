@@ -48,6 +48,8 @@ public:
 	virtual void update_side(const md::model::side::side& old_side,
 	                         const md::model::side::side_value& new_side) = 0;
 	
+	virtual void update_card(const md::model::card::card& card, bool typing) = 0;
+	
 	virtual void update_repeat(md::model::card::card& card, std::time_t repeat) = 0;
 	virtual void reset_combo(md::model::card::card& card) = 0;
 

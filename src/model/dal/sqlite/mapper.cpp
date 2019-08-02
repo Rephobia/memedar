@@ -145,6 +145,12 @@ void mapper::update_side(side::side& old_side, side::side_value&& new_side)
 	old_side = std::move(new_side);
 }
 
+void mapper::update_card(md::model::card::card& card, bool typing)
+{
+	m_card_mapper->update_card(card, typing);
+	card.has_typing = typing;
+}
+
 void mapper::reset_combo(card::card& card)
 {
 	m_card_mapper->reset_combo(card);

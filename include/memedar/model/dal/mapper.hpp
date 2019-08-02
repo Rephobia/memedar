@@ -58,6 +58,8 @@ public:
 	virtual void update_side(md::model::side::side& old_side,
 	                         md::model::side::side_value&& new_side) = 0;
 	
+	virtual void update_card(md::model::card::card& card, bool typing) = 0;
+	
 	virtual md::model::task::task_book make_task_book(md::model::deck::deck& deck) = 0;
 	virtual void done_noob(md::model::deck::deck& deck,
 	                       md::model::task::task& task, std::time_t gap) = 0;
