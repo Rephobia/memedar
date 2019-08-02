@@ -133,6 +133,15 @@ void card_mapper::update_side(const side::side& old_side,
 	               binder {ind.text(), new_side.text()});
 }
 
+void card_mapper::update_card(const md::model::card::card& card, bool typing)
+{
+	static adapter::connector conn {m_db, res::update_typing_cmd()};
+	card_index ind {res::update_typing_index()};
+
+	conn.exec_bind(binder {ind.id(), card.id()},
+	               binder {ind.typing(), typing});
+}
+
 void card_mapper::update_repeat(card::card& card, std::time_t repeat)
 {
 	static connector conn {m_db, res::update_repeat_cmd()};
@@ -143,7 +152,6 @@ void card_mapper::update_repeat(card::card& card, std::time_t repeat)
 	               binder {ind.repeat(), repeat});
 	card.change_repeat(repeat);
 }
-
 void card_mapper::reset_combo(card::card& card)
 {
 	static connector conn {m_db, res::reset_combo_cmd()};
