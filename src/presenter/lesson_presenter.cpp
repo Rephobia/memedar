@@ -102,7 +102,7 @@ void lesson_presenter::again()
 {
 	try {
 		decltype(auto) current {m_task_book.current_task()};
-		m_service.again_card(current);
+		m_service.again_task(current);
 		current.state = model::task::state::answering;
 		m_task_book.push_back_current();
 		m_lesson.redraw(current);
@@ -115,7 +115,7 @@ void lesson_presenter::again()
 void lesson_presenter::done(std::time_t gap)
 {
 	try {
-		m_service.done_card(m_deck,
+		m_service.done_task(m_deck,
 		                    m_task_book.current_task(),
 		                    gap);
 		m_lesson.redraw(m_task_book.next_task());

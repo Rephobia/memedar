@@ -54,7 +54,9 @@ public:
 
 	void update_side(const md::model::side::side& old_side,
 	                 const md::model::side::side_value& new_side) override;
-
+	
+	void update_card(const md::model::card::card& card, bool typing) override;
+	
 	void update_repeat(md::model::card::card& card, std::time_t repeat) override;
 	void reset_combo(md::model::card::card& card) override;
 protected:
