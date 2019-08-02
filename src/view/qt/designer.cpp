@@ -46,29 +46,51 @@ designer::designer(qt::main_window* main_window)
 	: m_main_window {main_window}
 { ;}
 
-void designer::show(const model::deck::deck& deck,
-                    QString question, QString answer)
+void designer::show(const model::deck::deck& deck)
 {
-	auto label {new QLabel {deck.name()}};
-	auto q_edit {new QTextEdit {question}};
-	auto a_edit {new QTextEdit {answer}};
+	auto deck_name {new QLabel {deck.name()}};
+	auto question {new QTextEdit {}};
+	auto answer {new QTextEdit {}};
 	auto typing {new QCheckBox {"typing"}};
+	
+	make_card_box(deck_name, question, answer, typing);
+}
 
-	auto add_action {[this, q_edit, a_edit, typing]()
+void designer::show(const model::deck::deck& deck,
+                    const model::card::card& card)
+{
+	auto deck_name {new QLabel {deck.name()}};
+	auto question {new QTextEdit {card.question.text()}};
+	auto answer {new QTextEdit {card.answer.text()}};
+	auto typing {new QCheckBox {"typing"}};
+	typing->setChecked(card.has_typing);
+
+	make_card_box(deck_name, question, answer, typing);
+	
+}
+
+void designer::make_card_box(QLabel* deck_name,
+                             QTextEdit* question,
+                             QTextEdit* answer,
+                             QCheckBox* typing)
+{
+	auto add_action {[this, question, answer, typing]()
 	                 {
-		                 model::side::side_value q {q_edit->toPlainText()};
-		                 model::side::side_value a {a_edit->toPlainText()};
+		                 model::side::side_value q {question->toPlainText()};
+		                 model::side::side_value a {answer->toPlainText()};
 		                 model::card::card_value card {typing->isChecked()};
 		                 model::card::card_dto dto {card, std::move(q), std::move(a)};
 		                 add_card(dto);
 	                 }};
-
+	
 	auto ok {new ui::button {"ok", add_action}};
 	auto close {new ui::button {"close", [this]() { cancel(); }}};
+
 	auto box {new ui::box {QBoxLayout::TopToBottom,
-	                       label, typing, q_edit, a_edit}};
+	                       deck_name, typing, question, answer}};
 	box->put_widget(QBoxLayout::LeftToRight, ok, close);
-	m_main_window->set_widget(box);
+	
+	m_main_window->set_widget(box);	
 }
 
 void designer::show()
