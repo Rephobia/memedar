@@ -58,26 +58,47 @@ void service::save_card(deck::deck& deck, card::card_dto&& new_card)
 	transaction.commit();
 }
 
-void service::update_card(card::card& card, card::card_dto&& new_card)
+bool service::update_card(card::card& card, card::card_dto&& new_card)
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};
+
+	bool updated = false;
 	
 	if (card.question.text() != new_card.question.text()
 	    and card.answer.text() != new_card.answer.text()) {
 		m_mapper.update_side(card.question, std::move(new_card.question));
 		m_mapper.update_side(card.answer, std::move(new_card.answer));
+		updated = true;
 	}
 	else if (card.question.text() != new_card.question.text()) {
 		m_mapper.update_side(card.question, std::move(new_card.question));
+		updated = true;
 
 	}
 	else if (card.answer.text() != new_card.answer.text()) {
 		m_mapper.update_side(card.answer, std::move(new_card.answer));
+		updated = true;
 	}
 
 
 	if (card.has_typing != new_card.value.has_typing) {
 		m_mapper.update_card(card, new_card.value.has_typing);
+		updated = true;
+	}
+
+	transaction.commit();
+	
+	return updated;
+}
+
+void service::update_task(task::task& task, card::card_dto&& new_card)
+{
+	decltype(auto) transaction {m_mapper.make_transaction()};
+
+	bool is_card_updated {update_card(*task.card, std::move(new_card))};
+
+	if (is_card_updated) {
+		m_mapper.reset_task(task);
 	}
 	
 	transaction.commit();
@@ -119,20 +140,18 @@ md::model::task::task_book& service::get_task_book(deck::deck& deck)
 	transaction.commit();
 
 	return it->second;
-
-	
 }
 
-void service::again_card(task::task& task)
+void service::again_task(task::task& task)
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};
 
-	m_mapper.reset_combo(*task.card);
+	m_mapper.reset_task(task);
 	
 	transaction.commit();
 }
 
-void service::done_card(deck::deck& deck, task::task& task, std::time_t gap)
+void service::done_task(deck::deck& deck, task::task& task, std::time_t gap)
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};
 
