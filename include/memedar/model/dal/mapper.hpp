@@ -23,12 +23,19 @@
 #define MEMEDAR_MODEL_DAL_MAPPER_HPP
 
 
+namespace md::model::side {
+	class side;
+	class side_value;
+}
+
 namespace md::model::card {
 	class card;
+	class card_dto;
 }
 
 namespace md::model::deck {
 	class deck;
+	class deck_value;
 }
 
 namespace md::model::dal {
@@ -49,7 +56,7 @@ public:
 	virtual	void save_card(md::model::deck::deck& deck,
 		               md::model::task::task_book& task_book,
 		               md::model::card::card_dto&& new_card) = 0;
-	virtual	void reset_combo(md::model::card::card& card) = 0;
+	virtual	void reset_task(md::model::task::task& task) = 0;
 	
 	virtual	void save_deck(std::deque<md::model::deck::deck>& decks,
 		               md::model::deck::deck_value&& deck_value) = 0;
