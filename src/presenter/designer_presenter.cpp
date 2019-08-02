@@ -107,7 +107,7 @@ void update_designer_presenter::run()
 void update_designer_presenter::update_card(md::model::card::card_dto&& new_card)
 {
 	try {
-		m_service.update_card(*m_task.card, std::move(new_card));
+		m_service.update_task(m_task, std::move(new_card));
 	}
 	catch (std::system_error& e) {
 		m_error_delegate.show_error(e);

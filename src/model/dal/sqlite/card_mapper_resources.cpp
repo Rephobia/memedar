@@ -134,6 +134,20 @@ side_index res::update_side_index()
 	return ind;
 }
 
+std::string res::update_typing_cmd()
+{
+	std::string cmd {"update cards set typing = ?1 where id = ?2"};
+	return cmd;
+}
+
+card_index res::update_typing_index()
+{
+	card_index ind {};
+	ind.set_typing(1);
+	ind.set_id(2);
+	return ind;
+}
+
 std::string res::update_repeat_cmd()
 {
 	std::string cmd {"update cards set repeat = ?1, combo = combo + 1 "
