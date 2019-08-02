@@ -46,9 +46,11 @@ namespace md::view {
 class md::view::designer
 {
 public:
+	virtual void show(const md::model::deck::deck& deck) = 0;
+	
 	virtual void show(const md::model::deck::deck& deck,
-	                  QString question = QString {},
-	                  QString answer = QString {}) = 0;
+	                  const md::model::card::card& card) = 0;
+		
 	virtual void show() = 0;
 
 	boost::signals2::signal<void(md::model::card::card_dto& dto)> add_card {};
