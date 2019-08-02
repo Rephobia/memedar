@@ -23,6 +23,11 @@
 #define MEMEDAR_VIEW_QT_DESIGNER_HPP
 
 
+class QLabel;
+class QTextEdit;
+class QCheckBox;
+
+
 namespace md::model::deck {
 	class deck;
 }
@@ -39,11 +44,17 @@ class md::view::qt::designer : public md::view::designer
 public:
 	explicit designer(md::view::qt::main_window* main_window);
 
+	void show(const md::model::deck::deck& deck) override;
+	
 	void show(const md::model::deck::deck& deck,
-	          QString question = QString {},
-	          QString answer = QString {}) override;
+	          const md::model::card::card& card) override;
 
 	void show() override;
+protected:
+	void make_card_box(QLabel* deck_name,
+	                   QTextEdit* question,
+	                   QTextEdit* answer,
+	                   QCheckBox* typing);
 protected:
 	md::view::qt::main_window* m_main_window;
 };
