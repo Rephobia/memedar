@@ -39,6 +39,8 @@ public:
 	virtual std::deque<md::model::deck::deck> load_decks() = 0;
 	virtual md::model::deck::deck save_deck(md::model::deck::deck_value&& deck_value) = 0;
 
+	virtual void update_deck(const md::model::deck::deck& deck,
+	                         const md::model::deck::deck_value& new_deck) = 0;
 	virtual	void decrement_daily_noob(md::model::deck::deck& deck) = 0;
 	virtual	void decrement_daily_ready(md::model::deck::deck& deck) = 0;
 	virtual void update_last_opening(md::model::deck::deck& deck) = 0;

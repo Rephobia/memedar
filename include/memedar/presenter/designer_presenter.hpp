@@ -45,21 +45,24 @@ namespace md::view {
 	class designer;
 }
 
-namespace md {
+namespace md::designer_presenter {
 	class presenter;
-	class card_designer_presenter;
-	class deck_designer_presenter;
-	class update_designer_presenter;
+	
+	class card_adder;
+	class task_updater;
+	
+	class deck_adder;
+	class deck_updater;
 }
 
 
-class md::card_designer_presenter : public md::presenter
+class md::designer_presenter::card_adder : public md::presenter
 {
 public:
-	card_designer_presenter(md::model::deck::deck& deck,
-	                        md::model::service& service,
-	                        md::view::error_delegate& error_delegate,
-	                        md::view::designer& designer);
+	card_adder(md::model::deck::deck& deck,
+	           md::model::service& service,
+	           md::view::error_delegate& error_delegate,
+	           md::view::designer& designer);
 
 	void run() override;
 protected:
@@ -71,18 +74,19 @@ protected:
 	md::view::designer& m_designer;
 };
 
-class md::update_designer_presenter : public md::presenter
+
+class md::designer_presenter::task_updater : public md::presenter
 {
 public:
-	update_designer_presenter(md::model::deck::deck& deck,
-	                          md::model::task::task& task,
-	                          md::model::service& service,
-	                          md::view::error_delegate& error_delegate,
-	                          md::view::designer& designer);
+	task_updater(md::model::deck::deck& deck,
+	             md::model::task::task& task,
+	             md::model::service& service,
+	             md::view::error_delegate& error_delegate,
+	             md::view::designer& designer);
 
 	void run() override;
 protected:
-	void update_card(md::model::card::card_dto&& new_card);
+	void update_task(md::model::card::card_dto&& new_card);
 protected:
 	md::model::deck::deck& m_deck;
 	md::model::task::task& m_task;
@@ -92,17 +96,36 @@ protected:
 };
 
 
-class md::deck_designer_presenter : public md::presenter
+class md::designer_presenter::deck_adder : public md::presenter
 {
 public:
-	deck_designer_presenter(md::model::service& service,
-	                        view::error_delegate& error_delegate,
-	                        md::view::designer& designer);
+	deck_adder(md::model::service& service,
+	           md::view::error_delegate& error_delegate,
+	           md::view::designer& designer);
 
 	void run() override;
 protected:
 	void add_deck(md::model::deck::deck_value&& deck_value);
 protected:
+	md::model::service& m_service;
+	md::view::error_delegate& m_error_delegate;
+	md::view::designer& m_designer;
+};
+
+
+class md::designer_presenter::deck_updater : public md::presenter
+{
+public:
+	deck_updater(md::model::deck::deck& deck,
+	             md::model::service& service,
+	             md::view::error_delegate& error_delegate,
+	             md::view::designer& designer);
+
+	void run() override;
+protected:
+	void update_deck(md::model::deck::deck_value&& deck_value);
+protected:
+	md::model::deck::deck& m_deck;
 	md::model::service& m_service;
 	md::view::error_delegate& m_error_delegate;
 	md::view::designer& m_designer;

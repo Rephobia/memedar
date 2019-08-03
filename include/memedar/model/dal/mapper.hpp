@@ -61,6 +61,8 @@ public:
 	virtual	void save_deck(std::deque<md::model::deck::deck>& decks,
 		               md::model::deck::deck_value&& deck_value) = 0;
 	virtual	std::deque<md::model::deck::deck> load_decks() = 0;
+	virtual void update_deck(md::model::deck::deck& deck,
+	                         md::model::deck::deck_value&& new_deck) = 0;
 	
 	virtual void update_side(md::model::side::side& old_side,
 	                         md::model::side::side_value&& new_side) = 0;

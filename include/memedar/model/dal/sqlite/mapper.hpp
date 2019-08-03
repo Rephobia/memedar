@@ -49,7 +49,9 @@ public:
 	void save_deck(std::deque<md::model::deck::deck>& decks,
                        md::model::deck::deck_value&& deck_value) override;
 	std::deque<md::model::deck::deck> load_decks() override;
-
+	void update_deck(md::model::deck::deck& deck,
+	                 md::model::deck::deck_value&& new_deck) override;
+	
 	void update_side(md::model::side::side& old_side,
 	                 md::model::side::side_value&& new_side) override;
 	

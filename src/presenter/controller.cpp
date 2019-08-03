@@ -63,7 +63,7 @@ controller::controller(md::model::service& service,
 	, m_designer_presenter {nullptr}
 {
 	m_menu.call_lobby.connect([this]() { run_lobby(); });
-	m_menu.call_designer.connect([this]() { run_designer(); });
+	m_menu.call_designer.connect([this]() { add_deck(); });
 	m_designer.cancel.connect([this]() { m_presenter->run(); });
 	run_lobby();
 }
@@ -90,10 +90,10 @@ void controller::run_lesson(md::model::deck::deck& deck)
 	}
 }
 
-void controller::run_designer(md::model::deck::deck& deck)
+void controller::add_card(md::model::deck::deck& deck)
 {
 	try {
-		m_designer_presenter = std::make_unique<md::card_designer_presenter>
+		m_designer_presenter = std::make_unique<designer_presenter::card_adder>
 			(deck, m_service, m_error_delegate, m_designer);
 	}
 	catch (std::system_error& e) {
@@ -101,10 +101,10 @@ void controller::run_designer(md::model::deck::deck& deck)
 	}
 }
 
-void controller::run_designer(md::model::deck::deck& deck, md::model::task::task& task)
+void controller::update_task(md::model::deck::deck& deck, md::model::task::task& task)
 {
 	try {
-		m_designer_presenter = std::make_unique<md::update_designer_presenter>
+		m_designer_presenter = std::make_unique<designer_presenter::task_updater>
 			(deck, task, m_service, m_error_delegate, m_designer);
 	}
 	catch (std::system_error& e) {
@@ -112,11 +112,22 @@ void controller::run_designer(md::model::deck::deck& deck, md::model::task::task
 	}	
 }
 
-void controller::run_designer()
+void controller::add_deck()
 {
 	try {
-		m_designer_presenter = std::make_unique<md::deck_designer_presenter>
+		m_designer_presenter = std::make_unique<designer_presenter::deck_adder>
 			(m_service, m_error_delegate, m_designer);
+	}
+	catch (std::system_error& e) {
+		m_error_delegate.show_error(e);
+	}
+}
+
+void controller::update_deck(model::deck::deck& deck)
+{
+	try {
+		m_designer_presenter = std::make_unique<designer_presenter::deck_updater>
+			(deck, m_service, m_error_delegate, m_designer);
 	}
 	catch (std::system_error& e) {
 		m_error_delegate.show_error(e);
