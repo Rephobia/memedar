@@ -57,9 +57,12 @@ public:
        
 	void run_lobby();
 	void run_lesson(md::model::deck::deck& deck);
-	void run_designer(md::model::deck::deck& deck);
-	void run_designer(md::model::deck::deck& deck, md::model::task::task& task);
-	void run_designer();	
+	
+	void add_card(md::model::deck::deck& deck);
+	void update_task(md::model::deck::deck& deck, md::model::task::task& task);
+	void add_deck();
+	void update_deck(md::model::deck::deck& deck);
+	
 	~controller();
 protected:
 	md::model::service& m_service;
