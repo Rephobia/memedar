@@ -146,10 +146,23 @@ deck_index res::decrement_daily_index()
 	return ind;
 }
 
+std::string res::update_name_cmd()
+{
+	std::string cmd {"update decks set deck_name = ?1 where id = ?2;"};
+	return cmd;
+}
+
+deck_index res::update_name_index()
+{
+	deck_index ind {};
+	ind.set_name(1);
+	ind.set_id(2);
+	return ind;
+}
+
 std::string res::update_opening_cmd()
 {
 	std::string cmd {"update decks set last_opening = ?1 where id = ?2;"};
-
 	return cmd;
 }
 

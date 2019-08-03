@@ -67,6 +67,8 @@ public:
 	md::model::deck::deck_value& operator=(const md::model::deck::deck_value& other) = delete;
 
 	const QString& name() const;
+	QString& name();
+	void change_name(QString&& name);
 protected:
 	QString m_name;
 };

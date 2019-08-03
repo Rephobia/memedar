@@ -54,8 +54,8 @@ public:
 	virtual void show_deck() = 0;
 	virtual void show_deck(const md::model::deck::deck& deck) = 0;
 
-	boost::signals2::signal<void(md::model::card::card_dto& dto)> add_card {};
-	boost::signals2::signal<void(md::model::deck::deck_value& deck)> add_deck {};
+	boost::signals2::signal<void(md::model::card::card_dto& dto)> get_card {};
+	boost::signals2::signal<void(md::model::deck::deck_value& deck)> get_deck {};
 	boost::signals2::signal<void()> cancel {};
 
 	virtual ~designer() = default;

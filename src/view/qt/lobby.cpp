@@ -58,12 +58,17 @@ void lobby::show(std::deque<md::model::deck::deck>& decks)
 		              QString::number(e.delayed_cards()) + "\n" +
 		              QString::number(e.total_cards())};
 
-		auto btn {new ui::button {stat, [this, &e]()
-		                                { call_lesson(e); }}};
-		auto designer {new ui::button {"add", [this, &e]()
-		                                      { call_designer(e); }}};
+		auto lesson {new ui::button {stat, [this, &e]()
+		                                   { call_lesson(e); }}};
+		
+		auto update {new ui::button {"rename", [this, &e]()
+		                                       { update_deck(e); }}};
+		
+		auto add {new ui::button {"add", [this, &e]()
+		                                 { add_card(e); }}};
 
-		box->put_widget(QBoxLayout::LeftToRight, btn, designer);
+
+		box->put_widget(QBoxLayout::LeftToRight, lesson, update, add);
 	}
 
 	m_main_window->set_widget(box);
