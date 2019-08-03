@@ -52,6 +52,7 @@ namespace md::designer_presenter {
 	class task_updater;
 	
 	class deck_adder;
+	class deck_updater;
 }
 
 
@@ -99,13 +100,32 @@ class md::designer_presenter::deck_adder : public md::presenter
 {
 public:
 	deck_adder(md::model::service& service,
-	           view::error_delegate& error_delegate,
+	           md::view::error_delegate& error_delegate,
 	           md::view::designer& designer);
 
 	void run() override;
 protected:
 	void add_deck(md::model::deck::deck_value&& deck_value);
 protected:
+	md::model::service& m_service;
+	md::view::error_delegate& m_error_delegate;
+	md::view::designer& m_designer;
+};
+
+
+class md::designer_presenter::deck_updater : public md::presenter
+{
+public:
+	deck_updater(md::model::deck::deck& deck,
+	             md::model::service& service,
+	             md::view::error_delegate& error_delegate,
+	             md::view::designer& designer);
+
+	void run() override;
+protected:
+	void update_deck(md::model::deck::deck_value&& deck_value);
+protected:
+	md::model::deck::deck& m_deck;
 	md::model::service& m_service;
 	md::view::error_delegate& m_error_delegate;
 	md::view::designer& m_designer;

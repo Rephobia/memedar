@@ -69,6 +69,16 @@ const QString& deck_value::name() const
 	return m_name;
 }
 
+QString& deck_value::name()
+{
+	return m_name;
+}
+
+void deck_value::change_name(QString&& name)
+{
+	m_name = name;
+}
+
 
 using md::model::deck::deck;
 

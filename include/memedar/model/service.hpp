@@ -65,6 +65,8 @@ public:
 	
 	void save_deck(md::model::deck::deck_value&& deck_value);
 	std::deque<md::model::deck::deck>& get_decks();
+	void update_deck(md::model::deck::deck& deck,
+	                 md::model::deck::deck_value&& new_deck);
 	
 	md::model::task::task_book& get_task_book(md::model::deck::deck& deck);
 	void again_task(md::model::task::task& task);

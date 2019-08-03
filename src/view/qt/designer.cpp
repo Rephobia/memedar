@@ -80,7 +80,7 @@ void designer::make_card_box(QLabel* deck_name,
 		                 model::side::side_value a {answer->toPlainText()};
 		                 model::card::card_value card {typing->isChecked()};
 		                 model::card::card_dto dto {card, std::move(q), std::move(a)};
-		                 add_card(dto);
+		                 get_card(dto);
 	                 }};
 	
 	auto ok {new ui::button {"ok", add_action}};
@@ -110,7 +110,7 @@ void designer::make_deck_box(QLineEdit* edit_line)
 	auto add_action {[this, edit_line]()
 	                 {
 		                 model::deck::deck_value value {edit_line->text()};
-		                 add_deck(value);
+		                 get_deck(value);
 	                 }};
 
 	auto ok {new ui::button {"ok", add_action}};

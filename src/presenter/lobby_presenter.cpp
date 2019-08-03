@@ -49,10 +49,12 @@ lobby_presenter::lobby_presenter(md::controller& controller,
 	, m_lobby      {lobby}
 {
 	auto lesson   {[this](model::deck::deck& deck) { m_controller.run_lesson(deck); }};
-	auto designer {[this](model::deck::deck& deck) { m_controller.run_designer(deck); }};
+	auto add_card {[this](model::deck::deck& deck) { m_controller.add_card(deck); }};
+	auto update_deck {[this](model::deck::deck& deck) { m_controller.update_deck(deck); }};
 	
 	add_connect(m_lobby.call_lesson.connect(lesson),
-	            m_lobby.call_designer.connect(designer));
+	            m_lobby.add_card.connect(add_card),
+	            m_lobby.update_deck.connect(update_deck));
 	
 	run();
 }

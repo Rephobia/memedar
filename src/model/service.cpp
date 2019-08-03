@@ -125,6 +125,18 @@ std::deque<md::model::deck::deck>& service::get_decks()
 	return m_decks;
 }
 
+void service::update_deck(md::model::deck::deck& deck,
+                          md::model::deck::deck_value&& new_deck)
+{
+	decltype(auto) transaction {m_mapper.make_transaction()};
+	
+	if (deck.name() != new_deck.name()) {
+		m_mapper.update_deck(deck, std::move(new_deck));
+	}
+	
+	transaction.commit();
+}
+
 md::model::task::task_book& service::get_task_book(deck::deck& deck)
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};

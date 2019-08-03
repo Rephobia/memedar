@@ -56,7 +56,7 @@ card_adder::card_adder(model::deck::deck& deck,
 	auto action {[this](model::card::card_dto& new_card)
 	             { add_card(std::move(new_card)); }};
 	
-	add_connect(m_designer.add_card.connect(action));
+	add_connect(m_designer.get_card.connect(action));
 	
 	run();
 }
@@ -93,7 +93,7 @@ task_updater::task_updater(model::deck::deck& deck,
 	auto action {[this](md::model::card::card_dto& new_card)
 	             { update_task(std::move(new_card)); }};
 	
-	add_connect(m_designer.add_card.connect(action));
+	add_connect(m_designer.get_card.connect(action));
 	
 	run();
 }
@@ -127,7 +127,7 @@ deck_adder::deck_adder(model::service& service,
 	auto action {[this](model::deck::deck_value& deck_value)
 	             { add_deck(std::move(deck_value)); }};
 	
-	add_connect(m_designer.add_deck.connect(action));
+	add_connect(m_designer.get_deck.connect(action));
 	
 	run();
 }
@@ -146,4 +146,38 @@ void deck_adder::add_deck(model::deck::deck_value&& deck_value)
 	catch (std::system_error& e) {
 		m_error_delegate.show_error(e);
 	}
+}
+
+
+using deck_updater = md::designer_presenter::deck_updater;
+
+deck_updater::deck_updater(model::deck::deck& deck,
+                           model::service& service,
+                           view::error_delegate& error_delegate,
+                           view::designer& designer)
+	: m_deck           {deck}
+	, m_service        {service}
+	, m_error_delegate {error_delegate}
+	, m_designer       {designer}
+{
+	auto action {[this](model::deck::deck_value& deck_value)
+	             { update_deck(std::move(deck_value)); }};
+	
+	add_connect(m_designer.get_deck.connect(action));
+	run();
+}
+
+void deck_updater::run()
+{
+	m_designer.show_deck(m_deck);
+}
+
+void deck_updater::update_deck(md::model::deck::deck_value&& deck_value)
+{
+	try {
+		m_service.update_deck(m_deck, std::move(deck_value));
+	}
+	catch (std::system_error& e) {
+		m_error_delegate.show_error(e);
+	}	
 }

@@ -125,6 +125,16 @@ std::deque<md::model::deck::deck> deck_mapper::load_decks()
 	return decks;
 }
 
+void deck_mapper::update_deck(const md::model::deck::deck& deck,
+                              const md::model::deck::deck_value& new_deck)
+{
+	static connector conn {m_db, res::update_name_cmd()};
+	deck_index ind {res::update_name_index()};
+
+	conn.exec_bind(binder {ind.name(), new_deck.name()},
+	               binder {ind.id(), deck.id()});
+}
+
 void deck_mapper::decrement_daily_noob(deck::deck& deck)
 {
 	static connector conn {m_db, res::decrement_daily_noob_cmd()};

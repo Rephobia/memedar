@@ -38,7 +38,8 @@ public:
 	virtual void show(std::deque<md::model::deck::deck>& decks) = 0;
 
 	boost::signals2::signal<void(md::model::deck::deck&)> call_lesson {};
-	boost::signals2::signal<void(md::model::deck::deck&)> call_designer {};
+	boost::signals2::signal<void(md::model::deck::deck&)> add_card {};
+	boost::signals2::signal<void(md::model::deck::deck&)> update_deck {};
 
 	virtual ~lobby() = default;
 };

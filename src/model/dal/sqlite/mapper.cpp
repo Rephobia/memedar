@@ -109,6 +109,13 @@ std::deque<md::model::deck::deck> mapper::load_decks()
 	return m_deck_mapper->load_decks();
 }
 
+void mapper::update_deck(deck::deck& deck,
+                         deck::deck_value&& new_deck)
+{
+	m_deck_mapper->update_deck(deck, new_deck);
+	deck.change_name(std::move(new_deck.name()));
+}
+
 md::model::task::task_book mapper::make_task_book(deck::deck& deck)
 {
 	task::task_book task_book {deck};
