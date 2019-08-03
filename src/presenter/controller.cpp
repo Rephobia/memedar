@@ -93,7 +93,7 @@ void controller::run_lesson(md::model::deck::deck& deck)
 void controller::run_designer(md::model::deck::deck& deck)
 {
 	try {
-		m_designer_presenter = std::make_unique<md::card_designer_presenter>
+		m_designer_presenter = std::make_unique<designer_presenter::card_adder>
 			(deck, m_service, m_error_delegate, m_designer);
 	}
 	catch (std::system_error& e) {
@@ -104,7 +104,7 @@ void controller::run_designer(md::model::deck::deck& deck)
 void controller::run_designer(md::model::deck::deck& deck, md::model::task::task& task)
 {
 	try {
-		m_designer_presenter = std::make_unique<md::update_designer_presenter>
+		m_designer_presenter = std::make_unique<designer_presenter::task_updater>
 			(deck, task, m_service, m_error_delegate, m_designer);
 	}
 	catch (std::system_error& e) {
@@ -115,7 +115,7 @@ void controller::run_designer(md::model::deck::deck& deck, md::model::task::task
 void controller::run_designer()
 {
 	try {
-		m_designer_presenter = std::make_unique<md::deck_designer_presenter>
+		m_designer_presenter = std::make_unique<designer_presenter::deck_adder>
 			(m_service, m_error_delegate, m_designer);
 	}
 	catch (std::system_error& e) {

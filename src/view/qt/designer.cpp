@@ -46,7 +46,7 @@ designer::designer(qt::main_window* main_window)
 	: m_main_window {main_window}
 { ;}
 
-void designer::show(const model::deck::deck& deck)
+void designer::show_card(const model::deck::deck& deck)
 {
 	auto deck_name {new QLabel {deck.name()}};
 	auto question {new QTextEdit {}};
@@ -56,8 +56,8 @@ void designer::show(const model::deck::deck& deck)
 	make_card_box(deck_name, question, answer, typing);
 }
 
-void designer::show(const model::deck::deck& deck,
-                    const model::card::card& card)
+void designer::show_card(const model::deck::deck& deck,
+                         const model::card::card& card)
 {
 	auto deck_name {new QLabel {deck.name()}};
 	auto question {new QTextEdit {card.question.text()}};
@@ -93,21 +93,31 @@ void designer::make_card_box(QLabel* deck_name,
 	m_main_window->set_widget(box);	
 }
 
-void designer::show()
+void designer::show_deck()
 {
 	auto edit {new QLineEdit {}};
+	make_deck_box(edit);
+}
 
-	auto add_action {[this, edit]()
+void designer::show_deck(const md::model::deck::deck& deck)
+{
+	auto edit {new QLineEdit {deck.name()}};
+	make_deck_box(edit);
+}
+
+void designer::make_deck_box(QLineEdit* edit_line)
+{
+	auto add_action {[this, edit_line]()
 	                 {
-		                 model::deck::deck_value value {edit->text()};
+		                 model::deck::deck_value value {edit_line->text()};
 		                 add_deck(value);
 	                 }};
 
 	auto ok {new ui::button {"ok", add_action}};
 	auto close {new ui::button {"close", [this]() { cancel(); }}};
 
-	auto box {new ui::box {QBoxLayout::TopToBottom, edit}};
+	auto box {new ui::box {QBoxLayout::TopToBottom, edit_line}};
 	box->put_widget(QBoxLayout::LeftToRight, ok, close);
 
-	m_main_window->set_widget(box);
+	m_main_window->set_widget(box);	
 }
