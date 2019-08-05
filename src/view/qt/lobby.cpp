@@ -26,6 +26,7 @@
 #include <boost/signals2.hpp>
 #include <QString>
 #include <QMainWindow>
+#include <QLabel>
 
 #include "memedar/utils/storage.hpp"
 
@@ -48,11 +49,15 @@ lobby::lobby(qt::main_window* main_window)
 
 void lobby::show(std::deque<md::model::deck::deck>& decks)
 {
+	auto del_dialog {new ui::box {QBoxLayout::TopToBottom}};	
 	auto box {new ui::box {QBoxLayout::TopToBottom}};
+	box->put_widget(del_dialog);
 
+	del_dialog->setWindowFlag(Qt::Dialog);
+	
 	for (auto& e : decks) {
 
-		QString stat {e.name() +"\n" +
+		QString stat {e.name() + "\n" +
 		              QString::number(e.noob_cards()) + "\n" +
 		              QString::number(e.ready_cards()) + "\n" +
 		              QString::number(e.delayed_cards()) + "\n" +
@@ -66,10 +71,28 @@ void lobby::show(std::deque<md::model::deck::deck>& decks)
 		
 		auto add {new ui::button {"add", [this, &e]()
 		                                 { add_card(e); }}};
+		auto del {new ui::button {"del", [this, &e, del_dialog]()
+		                                 { show_delete_dialog(e, del_dialog); }}};
 
-
-		box->put_widget(QBoxLayout::LeftToRight, lesson, update, add);
+		box->put_widget(QBoxLayout::LeftToRight, lesson, update, del, add);
 	}
 
+
 	m_main_window->set_widget(box);
+
+}
+
+void lobby::show_delete_dialog(model::deck::deck& deck, view::qt::ui::box* dialog)
+{
+	auto label {new QLabel {"Are you sure to delete deck " + deck.name() + "?"}};
+	auto ok {new ui::button {"ok", [this, &deck, dialog]()
+	                               {
+		                               delete_deck(deck);
+		                               dialog->hide();
+	                               }}};
+	auto cancel {new ui::button {"cancel", [this, &deck, dialog]()
+	                                       { dialog->hide(); }}};
+	dialog->set_widget(label);
+	dialog->put_widget(QBoxLayout::LeftToRight, ok, cancel);
+	dialog->show();
 }
