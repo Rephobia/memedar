@@ -135,6 +135,13 @@ void deck_mapper::update_deck(const md::model::deck::deck& deck,
 	               binder {ind.id(), deck.id()});
 }
 
+void deck_mapper::delete_deck(md::model::deck::deck& deck)
+{
+	static connector conn {m_db, res::delete_cmd()};
+	deck_index ind {res::delete_index()};
+	conn.exec_bind(binder {ind.id(), deck.id()});
+}
+
 void deck_mapper::decrement_daily_noob(deck::deck& deck)
 {
 	static connector conn {m_db, res::decrement_daily_noob_cmd()};

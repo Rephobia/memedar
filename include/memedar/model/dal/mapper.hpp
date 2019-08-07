@@ -68,6 +68,8 @@ public:
 	                         md::model::side::side_value&& new_side) = 0;
 	
 	virtual void update_card(md::model::card::card& card, bool typing) = 0;
+
+	virtual void delete_deck(md::model::deck::deck& deck) = 0;
 	
 	virtual md::model::task::task_book make_task_book(md::model::deck::deck& deck) = 0;
 	virtual void done_noob(md::model::deck::deck& deck,

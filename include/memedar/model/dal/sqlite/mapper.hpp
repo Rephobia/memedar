@@ -56,7 +56,9 @@ public:
 	                 md::model::side::side_value&& new_side) override;
 	
 	void update_card(md::model::card::card& card, bool typing) override;
-		
+	
+	void delete_deck(md::model::deck::deck& deck) override;
+	
 	md::model::task::task_book make_task_book(md::model::deck::deck& deck) override;	
 	void done_noob(md::model::deck::deck& deck,
 	               md::model::task::task& task, std::time_t gap) override;

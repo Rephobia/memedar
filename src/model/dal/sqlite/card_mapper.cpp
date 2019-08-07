@@ -123,6 +123,25 @@ md::model::side::side card_mapper::save_side(side::side_value&& side_value)
 	return side::side {id, std::move(side_value)};
 }
 
+void card_mapper::delete_side(const md::model::side::side& side) const
+{
+	static adapter::connector conn {m_db, res::delete_side_cmd()};
+	side_index ind {res::delete_side_index()};
+	
+	conn.exec_bind(binder {ind.id(), side.id()});
+}
+
+void card_mapper::delete_card(const md::model::card::card& card)
+{
+	delete_side(card.question);
+	delete_side(card.answer);
+	
+	static adapter::connector conn {m_db, res::delete_card_cmd()};
+	card_index ind {res::delete_card_index()};
+
+	conn.exec_bind(binder {ind.id(), card.id()});	
+}
+
 void card_mapper::update_side(const side::side& old_side,
                               const side::side_value& new_side)
 {

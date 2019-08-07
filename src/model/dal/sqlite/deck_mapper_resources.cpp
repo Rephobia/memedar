@@ -173,6 +173,18 @@ deck_index res::update_opening_index()
 	ind.set_id(2);
 	return ind;
 }
+std::string res::delete_cmd()
+{
+	std::string cmd {"delete from decks where decks.id = ?1;"};
+	return cmd;
+}
+
+deck_index res::delete_index()
+{
+	deck_index ind {};
+	ind.set_id(1);
+	return ind;
+}
 
 std::string res::reset_daily_limits_cmd()
 {
