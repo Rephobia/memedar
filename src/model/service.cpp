@@ -26,6 +26,7 @@
 
 #include <QString>
 
+#include "memedar/utils/find.hpp"
 #include "memedar/utils/storage.hpp"
 
 #include "memedar/model/side/side.hpp"
@@ -49,6 +50,7 @@ service::service(dal::mapper& mapper)
 void service::save_card(deck::deck& deck, card::card_dto&& new_card)
 
 {
+
 	decltype(auto) transaction {m_mapper.make_transaction()};
 	
 	m_mapper.save_card(deck,
@@ -103,6 +105,7 @@ void service::update_task(task::task& task, card::card_dto&& new_card)
 	
 	transaction.commit();
 }
+
 void service::save_deck(deck::deck_value&& deck_value)
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};
@@ -137,15 +140,30 @@ void service::update_deck(md::model::deck::deck& deck,
 	transaction.commit();
 }
 
+void service::delete_deck(md::model::deck::deck& deck)
+{
+	decltype(auto) transaction {m_mapper.make_transaction()};
+
+	m_mapper.delete_deck(deck);
+
+	auto deck_it = utils::find_by_id(deck.id(), m_decks);
+	if (deck_it != m_decks.end()) {
+		m_tasks.erase(deck.id());
+		m_decks.erase(deck_it);
+	}
+	
+	transaction.commit();
+}
+
 md::model::task::task_book& service::get_task_book(deck::deck& deck)
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};
 
 	decltype(auto) it {m_tasks.find(deck.id())};
-	
 	if (it == m_tasks.end()) {
 		decltype(auto) book {m_mapper.make_task_book(deck)};
 		decltype(auto) pair = std::make_pair(deck.id(), std::move(book));
+		transaction.commit();
 		return m_tasks.insert(std::move(pair)).first->second;
 	}
 	

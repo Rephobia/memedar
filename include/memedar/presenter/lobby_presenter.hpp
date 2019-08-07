@@ -29,6 +29,7 @@ namespace md::model {
 
 namespace md::view {
 	class lobby;
+	class error_delegate;
 }
 
 namespace md {
@@ -43,12 +44,16 @@ class md::lobby_presenter : public md::presenter
 public:
 	lobby_presenter(md::controller& controller,
 	                md::model::service& service,
+	                md::view::error_delegate& error_delegate,
 	                md::view::lobby& lobby);
 	
 	void run() override;
 protected:	
+	void delete_deck(model::deck::deck& deck);
+protected:
 	md::controller& m_controller;
 	md::model::service& m_service;
+	md::view::error_delegate& m_error_delegate;
 	md::view::lobby& m_lobby;
 };
 

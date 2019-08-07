@@ -51,6 +51,7 @@ public:
 	               const md::model::task::task& task) override;
 	void load_task_book(md::model::deck::deck& deck, task::task_book& task_book) override;
 
+	void delete_card(const md::model::card::card& card) override;
 	void change_state(md::model::task::task& task, md::model::task::state state) override;
 	void delete_done_task(md::model::deck::deck& deck) override;
 protected:

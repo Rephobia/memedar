@@ -64,7 +64,7 @@ mapper::mapper(md::model::dal::sqlite::adapter::handle& db)
 	, m_task_mapper    {std::make_unique<sqlite::task_mapper>(db)}
 {
 	auto guard {dal::make_transaction(*m_transaction)};
-
+		
 	m_card_mapper->create_table();
 	m_deck_mapper->create_table();
 	m_task_mapper->create_table();
@@ -81,6 +81,7 @@ void mapper::save_card(deck::deck& deck,
                        task::task_book& task_book,
                        card::card_dto&& new_card)
 {
+
 	if (deck.empty()) {
 		m_card_mapper->load_cards(deck);
 	}
@@ -116,6 +117,15 @@ void mapper::update_deck(deck::deck& deck,
 	deck.change_name(std::move(new_deck.name()));
 }
 
+void mapper::delete_deck(md::model::deck::deck& deck)
+{
+	for (auto& e : deck) {
+		m_task_mapper->delete_card(*e);
+		m_card_mapper->delete_card(*e);
+	}
+	m_deck_mapper->delete_deck(deck);
+}
+
 md::model::task::task_book mapper::make_task_book(deck::deck& deck)
 {
 	task::task_book task_book {deck};
@@ -123,13 +133,13 @@ md::model::task::task_book mapper::make_task_book(deck::deck& deck)
 	if (deck.empty()) {
 		m_card_mapper->load_cards(deck);
 	}
-
 	if (not utils::time::is_today(deck.last_opening())) {
 		m_task_mapper->delete_done_task(deck);
 		m_deck_mapper->reset_daily_limits(deck);
 	}
 
 	m_task_mapper->load_task_book(deck, task_book);
+
 	fill_from_deck(deck, task_book);
 	m_deck_mapper->update_last_opening(deck);
 		
@@ -146,6 +156,7 @@ void mapper::fill_from_deck(deck::deck& deck, task::task_book& task_book)
 		}
 	}
 }
+
 void mapper::update_side(side::side& old_side, side::side_value&& new_side)
 {
 	m_card_mapper->update_side(old_side, new_side);

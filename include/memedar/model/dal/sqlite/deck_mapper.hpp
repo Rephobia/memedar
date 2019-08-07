@@ -44,6 +44,8 @@ public:
 	void update_deck(const md::model::deck::deck& deck,
 	                 const md::model::deck::deck_value& new_deck) override;
 	
+	void delete_deck(md::model::deck::deck& deck) override;
+	
 	void decrement_daily_noob(md::model::deck::deck& deck) override;
 	void decrement_daily_ready(md::model::deck::deck& deck) override;
 	void reset_daily_limits(md::model::deck::deck& deck) override;
