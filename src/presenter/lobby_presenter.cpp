@@ -32,6 +32,7 @@
 #include "memedar/model/task/task_book.hpp"
 #include "memedar/model/service.hpp"
 
+#include "memedar/view/error_delegate.hpp"
 #include "memedar/view/lobby.hpp"
 
 #include "memedar/presenter/presenter.hpp"
@@ -43,18 +44,22 @@ using md::lobby_presenter;
 
 lobby_presenter::lobby_presenter(md::controller& controller,
                                  md::model::service& service,
+                                 md::view::error_delegate& error_delegate,
                                  md::view::lobby& lobby)
-	: m_controller {controller}
-	, m_service    {service}
-	, m_lobby      {lobby}
+	: m_controller     {controller}
+	, m_service        {service}
+	, m_error_delegate {error_delegate}
+	, m_lobby          {lobby}
 {
 	auto lesson   {[this](model::deck::deck& deck) { m_controller.run_lesson(deck); }};
 	auto add_card {[this](model::deck::deck& deck) { m_controller.add_card(deck); }};
 	auto update_deck {[this](model::deck::deck& deck) { m_controller.update_deck(deck); }};
+	auto delete_del {[this](model::deck::deck& deck) { delete_deck(deck); }};
 	
 	add_connect(m_lobby.call_lesson.connect(lesson),
 	            m_lobby.add_card.connect(add_card),
-	            m_lobby.update_deck.connect(update_deck));
+	            m_lobby.update_deck.connect(update_deck),
+	            m_lobby.delete_deck.connect(delete_del));
 	
 	run();
 }
@@ -62,4 +67,15 @@ lobby_presenter::lobby_presenter(md::controller& controller,
 void lobby_presenter::run()
 {
 	m_lobby.show(m_service.get_decks());
+}
+
+void lobby_presenter::delete_deck(model::deck::deck& deck)
+{
+	try {
+		m_service.delete_deck(deck);
+		run();
+	}
+	catch (std::system_error& e) {
+		m_error_delegate.show_error(e);
+	}
 }

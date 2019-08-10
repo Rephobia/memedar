@@ -41,6 +41,12 @@ namespace md::model::dal::sqlite {
 		std::string select_cmd();
 		card_index select_index();
 		
+		std::string delete_side_cmd();
+		side_index delete_side_index();
+
+		std::string delete_card_cmd();
+		card_index delete_card_index();
+		
 		std::string update_side_cmd();
 		side_index update_side_index();
 

@@ -42,6 +42,9 @@ namespace md::model::dal::sqlite {
 		std::string update_name_cmd();
 		deck_index update_name_index();
 		
+		std::string delete_cmd();
+		deck_index delete_index();
+		
 		std::string update_opening_cmd();
 		deck_index update_opening_index();
 

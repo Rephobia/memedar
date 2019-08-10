@@ -54,8 +54,9 @@ public:
 
 	void update_side(const md::model::side::side& old_side,
 	                 const md::model::side::side_value& new_side) override;
-	
 	void update_card(const md::model::card::card& card, bool typing) override;
+	
+	void delete_card(const md::model::card::card& card) override;
 	
 	void update_repeat(md::model::card::card& card, std::time_t repeat) override;
 	void reset_combo(md::model::card::card& card) override;
@@ -63,6 +64,7 @@ protected:
 	md::model::side::side save_side(md::model::side::side_value&& side_value);
 	md::model::side::side read_side(md::model::dal::sqlite::adapter::connector& conn,
 	                                md::model::dal::sqlite::side_index ind);
+	void delete_side(const md::model::side::side& side) const;
 protected:
 	md::model::dal::sqlite::adapter::handle& m_db;
 };

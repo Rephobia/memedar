@@ -40,6 +40,7 @@ public:
 	boost::signals2::signal<void(md::model::deck::deck&)> call_lesson {};
 	boost::signals2::signal<void(md::model::deck::deck&)> add_card {};
 	boost::signals2::signal<void(md::model::deck::deck&)> update_deck {};
+	boost::signals2::signal<void(md::model::deck::deck&)> delete_deck {};
 
 	virtual ~lobby() = default;
 };

@@ -34,6 +34,9 @@ namespace md::model::dal::sqlite {
 		std::string select_cmd();
 		task_index select_index();
 
+		std::string delete_cmd();
+		task_index delete_index();
+		
 		std::string change_state_cmd();
 		task_index change_state_index();
 

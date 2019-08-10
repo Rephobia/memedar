@@ -72,7 +72,7 @@ void controller::run_lobby()
 {
 	try {
 		m_presenter = std::make_unique<md::lobby_presenter>
-			(*this, m_service, m_lobby);
+			(*this, m_service, m_error_delegate, m_lobby);
 	}
 	catch (std::system_error& e) {
 		m_error_delegate.show_error(e);

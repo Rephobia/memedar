@@ -120,6 +120,33 @@ side_index res::insert_side_index()
 	return ind;
 }
 
+std::string res::delete_side_cmd()
+{
+
+	std::string cmd {"delete from sides where sides.id = ?1;"};
+	return cmd;
+}
+
+side_index res::delete_side_index()
+{
+	side_index ind {};
+	ind.set_id(1);
+	return ind;
+}
+
+std::string res::delete_card_cmd()
+{
+	std::string cmd {"delete from cards where cards.id = ?1;"};
+	return cmd;
+}
+
+card_index res::delete_card_index()
+{
+	card_index ind {};
+	ind.set_id(1);
+	return ind;
+}
+
 std::string res::update_side_cmd()
 {
 	std::string cmd {"update sides set text = ?1 where id = ?2;"};
