@@ -74,7 +74,6 @@ void task_mapper::load_task_book(deck::deck& deck, task::task_book& task_book)
 	task_index ind {res::select_index()};
 
 	conn.bind(ind.deck_id(), deck.id());
-
 	while (conn.step() == SQLITE_ROW and task_book.space()) {
 
 		auto card {*utils::find_by_id(conn.read_int64t(ind.card_id()),
@@ -86,6 +85,14 @@ void task_mapper::load_task_book(deck::deck& deck, task::task_book& task_book)
 			task_book.add_task(std::move(task.value()));
 		}
 	}
+}
+
+void task_mapper::delete_card(const md::model::card::card& card)
+{
+	static connector conn {m_db, res::delete_cmd()};
+	task_index ind {res::delete_index()};
+
+	conn.exec_bind(binder {ind.card_id(), card.id()});
 }
 
 void task_mapper::change_state(task::task& task, task::state state)

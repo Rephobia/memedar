@@ -36,6 +36,9 @@ public:
 	explicit lobby(md::view::qt::main_window* main_window);
 	void show(std::deque<md::model::deck::deck>& decks) override;
 protected:
+	void show_delete_dialog(md::model::deck::deck& deck,
+	                        md::view::qt::ui::box* dialog);
+protected:
 	md::view::qt::main_window* m_main_window;
 };
 
