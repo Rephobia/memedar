@@ -22,6 +22,7 @@
 #ifndef MEMEDAR_MODEL_SERVICE_HPP
 #define MEMEDAR_MODEL_SERVICE_HPP
 
+#include "memedar/model/deck_to_taskbook.hpp"
 
 namespace md::model::side {
 	class side_value;
@@ -51,7 +52,7 @@ namespace md::model {
 }
 
 
-class md::model::service
+class md::model::service : private md::model::deck_to_taskbook
 {
 public:
 	explicit service(md::model::dal::mapper& mapper);
@@ -75,9 +76,6 @@ public:
 	void done_task(md::model::deck::deck& deck, md::model::task::task& task, std::time_t gap);
 protected:
 	md::model::dal::mapper& m_mapper;
-protected:
-	std::deque<md::model::deck::deck> m_decks {};
-	std::map<std::int64_t, md::model::task::task_book> m_tasks {};
 };
 
 

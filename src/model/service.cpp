@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
+ * Copyright (C) 2019 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -44,13 +44,12 @@
 using md::model::service;
 
 service::service(dal::mapper& mapper)
-	: m_mapper    {mapper}
+       : m_mapper    {mapper}
 { ;}
 
 void service::save_card(deck::deck& deck, card::card_dto&& new_card)
 
 {
-
 	decltype(auto) transaction {m_mapper.make_transaction()};
 	
 	m_mapper.save_card(deck,
@@ -159,12 +158,12 @@ md::model::task::task_book& service::get_task_book(deck::deck& deck)
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};
 
-	decltype(auto) it {m_tasks.find(deck.id())};
-	if (it == m_tasks.end()) {
+	decltype(auto) it {deck_to_taskbook::get_taskbook(deck)};
+	
+	if (it == deck_to_taskbook::end()) {
+		
 		decltype(auto) book {m_mapper.make_task_book(deck)};
-		decltype(auto) pair = std::make_pair(deck.id(), std::move(book));
-		transaction.commit();
-		return m_tasks.insert(std::move(pair)).first->second;
+		it = deck_to_taskbook::add_taskbook(deck, std::move(book));	
 	}
 	
 	transaction.commit();

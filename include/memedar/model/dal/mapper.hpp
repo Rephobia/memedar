@@ -56,7 +56,13 @@ public:
 	virtual	void save_card(md::model::deck::deck& deck,
 		               md::model::task::task_book& task_book,
 		               md::model::card::card_dto&& new_card) = 0;
+
+	
 	virtual	void reset_task(md::model::task::task& task) = 0;
+
+
+
+
 	
 	virtual	void save_deck(std::deque<md::model::deck::deck>& decks,
 		               md::model::deck::deck_value&& deck_value) = 0;
@@ -69,9 +75,14 @@ public:
 	
 	virtual void update_card(md::model::card::card& card, bool typing) = 0;
 
+
+
+	
 	virtual void delete_deck(md::model::deck::deck& deck) = 0;
 	
 	virtual md::model::task::task_book make_task_book(md::model::deck::deck& deck) = 0;
+
+	
 	virtual void done_noob(md::model::deck::deck& deck,
 	                       md::model::task::task& task, std::time_t gap) = 0;
 	virtual void done_ready(md::model::deck::deck& deck,
