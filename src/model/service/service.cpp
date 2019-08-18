@@ -19,38 +19,34 @@
  */
 
 
-#ifndef MEMEDAR_MODEL_DECK_TO_TASKBOOK_HPP
-#define MEMEDAR_MODEL_DECK_TO_TASKBOOK_HPP
-
-
-#include <map>
+#include <ctime>
+#include <memory>
 #include <deque>
+#include <map>
+
+#include <QString>
+
+#include "memedar/utils/storage.hpp"
+
+#include "memedar/model/side/side.hpp"
+#include "memedar/model/card/card.hpp"
+#include "memedar/model/card/visitor.hpp"
+#include "memedar/model/deck/deck.hpp"
+#include "memedar/model/task/task.hpp"
+#include "memedar/model/task/task_book.hpp"
+
+#include "memedar/model/dal/transaction_guard.hpp"
+#include "memedar/model/dal/mapper.hpp"
+#include "memedar/model/service/service.hpp"
 
 
-namespace md::model {
-	class deck_to_taskbook;
-}
+using md::model::service;
 
-
-class md::model::deck_to_taskbook
-{
-public:
-	using iterator = std::map<std::int64_t,
-	                          md::model::task::task_book>::iterator;
-
-	iterator begin();
-	iterator end();
-	
-	std::deque<md::model::deck::deck>& get_decks();
-	iterator get_taskbook(md::model::deck::deck& deck);
-	
-	iterator add_taskbook(md::model::deck::deck& deck,
-	                      md::model::task::task_book&& task_book);
-	
-protected:
-	std::deque<md::model::deck::deck> m_decks {};
-	std::map<std::int64_t, md::model::task::task_book> m_tasks {};	
-};
-
-
-#endif // MEMEDAR_MODEL_DECK_TO_TASKBOOK_HPP
+service::service(dal::mapper& mapper)
+	: deck_to_taskbook {mapper}
+	, save_unit        {mapper}
+	, delete_unit      {mapper}
+	, update_unit      {mapper}
+	, lesson_unit      {mapper}
+	, m_mapper         {mapper}
+{ ;}

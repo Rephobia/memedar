@@ -119,6 +119,10 @@ void mapper::update_deck(deck::deck& deck,
 
 void mapper::delete_deck(md::model::deck::deck& deck)
 {
+	if (deck.empty()) {
+		m_card_mapper->load_cards(deck);
+	}
+	
 	for (auto& e : deck) {
 		m_task_mapper->delete_card(*e);
 		m_card_mapper->delete_card(*e);

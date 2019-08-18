@@ -18,65 +18,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#ifndef MEMEDAR_MODEL_UPDATE_UNIT_HPP
+#define MEMEDAR_MODEL_UPDATE_UNIT_HPP
 
-#ifndef MEMEDAR_MODEL_SERVICE_HPP
-#define MEMEDAR_MODEL_SERVICE_HPP
-
-#include "memedar/model/deck_to_taskbook.hpp"
-
-namespace md::model::side {
-	class side_value;
-	class side;
-}
-
-namespace md::model::card {
-	class card_dto;
-	class card;
-}
-
-namespace md::model::deck {
-	class deck;
-}
-
-namespace md::model::task {
-	class task;
-	class task_book;
-}
-
-namespace md::model::dal {
-	class mapper;
-}
 
 namespace md::model {
-	class service;
+	class update_unit;
 }
 
 
-class md::model::service : private md::model::deck_to_taskbook
+class md::model::update_unit
 {
 public:
-	explicit service(md::model::dal::mapper& mapper);
-
-	void save_card(md::model::deck::deck& deck,
-	               md::model::card::card_dto&& new_card);
+	explicit update_unit(md::model::dal::mapper& mapper);
+	
 	bool update_card(md::model::card::card& card,
 	                 md::model::card::card_dto&& new_card);
 	void update_task(md::model::task::task& task,
 	                 md::model::card::card_dto&& new_card);
-	
-	void save_deck(md::model::deck::deck_value&& deck_value);
-	std::deque<md::model::deck::deck>& get_decks();
 	void update_deck(md::model::deck::deck& deck,
 	                 md::model::deck::deck_value&& new_deck);
-
-	void delete_deck(md::model::deck::deck& deck);
-	
-	md::model::task::task_book& get_task_book(md::model::deck::deck& deck);
-	void again_task(md::model::task::task& task);
-	void done_task(md::model::deck::deck& deck, md::model::task::task& task, std::time_t gap);
-protected:
-	md::model::dal::mapper& m_mapper;
+private:
+	md::model::dal::mapper& m_mapper;	
 };
 
 
-#endif // MEMEDAR_MODEL_SERVICE_HPP
+#endif // MEMEDAR_MODEL_UPDATE_UNIT_HPP

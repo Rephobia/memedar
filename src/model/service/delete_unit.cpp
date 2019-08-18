@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov
+ * Copyright (C) 2019 Roman Erdyakov
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -19,32 +19,34 @@
  */
 
 
-#ifndef MEMEDAR_UTILS_FIND_HPP
-#define MEMEDAR_UTILS_FIND_HPP
+#include <deque>
+
+#include "memedar/utils/storage.hpp"
+
+#include "memedar/model/deck/deck.hpp"
+#include "memedar/model/task/task.hpp"
+#include "memedar/model/task/task_book.hpp"
+
+#include "memedar/model/dal/transaction_guard.hpp"
+#include "memedar/model/dal/mapper.hpp"
+
+#include "memedar/model/service/delete_unit.hpp"
 
 
-#include <memory>
-#include <algorithm>
+using md::model::delete_unit;
 
+delete_unit::delete_unit(dal::mapper& mapper)
+	: deck_to_taskbook {mapper}
+	, m_mapper {mapper}
+{ ;}
 
-namespace md::utils {
+void delete_unit::delete_deck(md::model::deck::deck& deck)
+{
+	decltype(auto) transaction {m_mapper.make_transaction()};
 
-	template<class T>
-	T& ignore_pointer(std::shared_ptr<T> t) { return *t; }
-	template<class T>
-	T& ignore_pointer(T& t) { return t; }
-		
-	template<class T>
-	typename T::iterator find_by_id(std::int64_t id, T& storage)
-	{
-		auto find {[id](const typename T::value_type& obj)
-		           {
-			           return ignore_pointer(obj).id() == id;
-		           }};
+	m_mapper.delete_deck(deck);
 
-		return std::find_if(storage.begin(), storage.end(), find);
-	}
+	deck_to_taskbook::delete_deck(deck);
+	
+	transaction.commit();
 }
-
-
-#endif // MEMEDAR_UTILS_FIND_HPP

@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov
+ * Copyright (C) 2019 Roman Erdyakov
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -18,33 +18,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
-#ifndef MEMEDAR_UTILS_FIND_HPP
-#define MEMEDAR_UTILS_FIND_HPP
-
-
-#include <memory>
-#include <algorithm>
+#ifndef MEMEDAR_MODEL_LESSON_UNIT_HPP
+#define MEMEDAR_MODEL_LESSON_UNIT_HPP
 
 
-namespace md::utils {
-
-	template<class T>
-	T& ignore_pointer(std::shared_ptr<T> t) { return *t; }
-	template<class T>
-	T& ignore_pointer(T& t) { return t; }
-		
-	template<class T>
-	typename T::iterator find_by_id(std::int64_t id, T& storage)
-	{
-		auto find {[id](const typename T::value_type& obj)
-		           {
-			           return ignore_pointer(obj).id() == id;
-		           }};
-
-		return std::find_if(storage.begin(), storage.end(), find);
-	}
+namespace md::model {
+	class lesson_unit;
 }
 
+class md::model::lesson_unit
+{
+public:
+	explicit lesson_unit(md::model::dal::mapper& mapper);
 
-#endif // MEMEDAR_UTILS_FIND_HPP
+	void again_task(md::model::task::task& task);
+	void done_task(md::model::deck::deck& deck, md::model::task::task& task,
+	               std::time_t gap);
+private:
+	md::model::dal::mapper& m_mapper;
+};
+
+
+#endif // MEMEDAR_MODEL_LESSON_UNIT_HPP

@@ -19,40 +19,45 @@
  */
 
 
+#include <deque>
+
 #include "memedar/utils/storage.hpp"
 
 #include "memedar/model/deck/deck.hpp"
 #include "memedar/model/task/task.hpp"
 #include "memedar/model/task/task_book.hpp"
-#include "memedar/model/deck_to_taskbook.hpp"
+
+#include "memedar/model/dal/transaction_guard.hpp"
+#include "memedar/model/dal/mapper.hpp"
+
+#include "memedar/model/service/save_unit.hpp"
 
 
-using md::model::deck_to_taskbook;
+using md::model::save_unit;
 
+save_unit::save_unit(dal::mapper& mapper)
+	: deck_to_taskbook {mapper}
+	, m_mapper {mapper}
+{ ;}
 
-std::deque<md::model::deck::deck>& deck_to_taskbook::get_decks()
+void save_unit::save_card(deck::deck& deck, card::card_dto&& new_card)
+
 {
-	return m_decks;
+	decltype(auto) transaction {m_mapper.make_transaction()};
+	
+	m_mapper.save_card(deck,
+	                   get_task_book(deck),
+	                   std::move(new_card));
+
+	transaction.commit();
 }
 
-deck_to_taskbook::iterator deck_to_taskbook::begin()
+void save_unit::save_deck(deck::deck_value&& deck_value)
 {
-	return m_tasks.begin();
+	decltype(auto) transaction {m_mapper.make_transaction()};
+	
+	m_mapper.save_deck(deck_to_taskbook::get_decks(), std::move(deck_value));
+	
+	transaction.commit();
 }
 
-deck_to_taskbook::iterator deck_to_taskbook::end()
-{
-	return m_tasks.end();
-}
-
-deck_to_taskbook::iterator deck_to_taskbook::add_taskbook(deck::deck& deck,
-                                                          task::task_book&& book)
-{
-	decltype(auto) pair = std::make_pair(deck.id(), std::move(book));
-	return m_tasks.insert(std::move(pair)).first;
-}
-
-deck_to_taskbook::iterator deck_to_taskbook::get_taskbook(md::model::deck::deck& deck)
-{
-	return m_tasks.find(deck.id());
-}
