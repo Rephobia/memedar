@@ -28,11 +28,16 @@
 
 
 namespace md::model {
+	class deck_to_taskbook_detail;
 	class deck_to_taskbook;
 }
 
+namespace md::model::dal {
+	class mapper;
+}
 
-class md::model::deck_to_taskbook
+
+class md::model::deck_to_taskbook_detail
 {
 public:
 	using iterator = std::map<std::int64_t,
@@ -50,6 +55,20 @@ public:
 protected:
 	std::deque<md::model::deck::deck> m_decks {};
 	std::map<std::int64_t, md::model::task::task_book> m_tasks {};	
+};
+
+
+class md::model::deck_to_taskbook : private md::model::deck_to_taskbook_detail
+{
+public:
+	explicit deck_to_taskbook(md::model::dal::mapper& mapper);
+	
+	md::model::task::task_book& get_task_book(md::model::deck::deck& deck);
+	std::deque<md::model::deck::deck>& get_decks();
+protected:
+	void delete_deck(md::model::deck::deck& deck);
+private:
+	md::model::dal::mapper& m_mapper;
 };
 
 

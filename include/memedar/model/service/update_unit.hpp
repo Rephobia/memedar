@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
+ * Copyright (C) 2019 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -18,33 +18,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
-#ifndef MEMEDAR_UTILS_FIND_HPP
-#define MEMEDAR_UTILS_FIND_HPP
-
-
-#include <memory>
-#include <algorithm>
+#ifndef MEMEDAR_MODEL_UPDATE_UNIT_HPP
+#define MEMEDAR_MODEL_UPDATE_UNIT_HPP
 
 
-namespace md::utils {
-
-	template<class T>
-	T& ignore_pointer(std::shared_ptr<T> t) { return *t; }
-	template<class T>
-	T& ignore_pointer(T& t) { return t; }
-		
-	template<class T>
-	typename T::iterator find_by_id(std::int64_t id, T& storage)
-	{
-		auto find {[id](const typename T::value_type& obj)
-		           {
-			           return ignore_pointer(obj).id() == id;
-		           }};
-
-		return std::find_if(storage.begin(), storage.end(), find);
-	}
+namespace md::model {
+	class update_unit;
 }
 
 
-#endif // MEMEDAR_UTILS_FIND_HPP
+class md::model::update_unit
+{
+public:
+	explicit update_unit(md::model::dal::mapper& mapper);
+	
+	bool update_card(md::model::card::card& card,
+	                 md::model::card::card_dto&& new_card);
+	void update_task(md::model::task::task& task,
+	                 md::model::card::card_dto&& new_card);
+	void update_deck(md::model::deck::deck& deck,
+	                 md::model::deck::deck_value&& new_deck);
+private:
+	md::model::dal::mapper& m_mapper;	
+};
+
+
+#endif // MEMEDAR_MODEL_UPDATE_UNIT_HPP
