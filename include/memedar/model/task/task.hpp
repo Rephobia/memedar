@@ -23,7 +23,11 @@
 #define MEMEDAR_MODEL_TASK_TASK_HPP
 
 
+#include <QString>
+#include <memory>
+
 #include "memedar/model/identity.hpp"
+
 
 namespace md::model::card {
 	class card;

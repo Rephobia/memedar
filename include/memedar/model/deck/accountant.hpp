@@ -43,7 +43,7 @@ public:
 	accountant(std::int64_t noob_count, std::int64_t ready_count,
 	           std::int64_t delayed_count);
 
-	accountant(md::model::deck::accountant&& other);
+	explicit accountant(md::model::deck::accountant&& other);
 	accountant(const md::model::deck::accountant& other) = delete;
 
 	md::model::deck::accountant& operator=(md::model::deck::accountant&& other);

@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov
+ * Copyright (C) 2019 Roman Erdyakov
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -19,37 +19,40 @@
  */
 
 
-#ifndef MEMEDAR_MODEL_IDENTITY_HPP
-#define MEMEDAR_MODEL_IDENTITY_HPP
+#ifndef MEMEDAR_MODEL_SAVE_UNIT_HPP
+#define MEMEDAR_MODEL_SAVE_UNIT_HPP
 
 
-#include <cstdint>
+#include "memedar/model/service/deck_to_taskbook.hpp"
 
+
+namespace md::model::card {
+	class card_dto;
+	class card;
+}
+
+namespace md::model::deck {
+	class deck_value;
+	class deck;
+}
 
 namespace md::model {
-	class identity;
+	class save_unit;
 }
 
 
-class md::model::identity
+class md::model::save_unit : private virtual md::model::deck_to_taskbook
 {
 public:
-	explicit identity(std::int64_t id)
-		: m_id {id}
-	{ ;}
+	explicit save_unit(md::model::dal::mapper& mapper);
 	
-	std::int64_t id() const
-	{
-		return m_id;
-	}
+	void save_card(md::model::deck::deck& deck,
+	               md::model::card::card_dto&& new_card);
 	
-	bool operator<(const md::model::identity& other) const
-	{
-		return m_id < other.m_id;
-	}
+	void save_deck(md::model::deck::deck_value&& deck_value);
 private:
-	std::int64_t m_id;
+	md::model::dal::mapper& m_mapper;
 };
 
 
-#endif // MEMEDAR_MODEL_IDENTITY_HPP
+#endif // MEMEDAR_MODEL_SAVE_UNIT_HPP

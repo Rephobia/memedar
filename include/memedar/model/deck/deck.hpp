@@ -60,7 +60,7 @@ public:
 	           md::model::deck::limit limit,
 	           md::model::deck::gaps gaps);
 	
-	deck_value(md::model::deck::deck_value&& other);
+	explicit deck_value(md::model::deck::deck_value&& other);
 	deck_value(const md::model::deck::deck_value& other) = delete;
 
 	md::model::deck::deck_value& operator=(md::model::deck::deck_value&& other);
@@ -85,8 +85,6 @@ public:
 	deck(md::model::identity id,
 	     md::model::deck::deck_value&& deck_value,
 	     md::model::deck::accountant&& accountant);
-
-	bool operator<(const md::model::deck::deck& other) const;
 
 	std::int64_t noob_cards() const;
 	std::int64_t ready_cards() const;

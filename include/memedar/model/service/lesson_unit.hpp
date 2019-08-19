@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov
+ * Copyright (C) 2019 Roman Erdyakov
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -18,38 +18,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
-#ifndef MEMEDAR_MODEL_IDENTITY_HPP
-#define MEMEDAR_MODEL_IDENTITY_HPP
-
-
-#include <cstdint>
+#ifndef MEMEDAR_MODEL_LESSON_UNIT_HPP
+#define MEMEDAR_MODEL_LESSON_UNIT_HPP
 
 
 namespace md::model {
-	class identity;
+	class lesson_unit;
 }
 
-
-class md::model::identity
+class md::model::lesson_unit
 {
 public:
-	explicit identity(std::int64_t id)
-		: m_id {id}
-	{ ;}
-	
-	std::int64_t id() const
-	{
-		return m_id;
-	}
-	
-	bool operator<(const md::model::identity& other) const
-	{
-		return m_id < other.m_id;
-	}
+	explicit lesson_unit(md::model::dal::mapper& mapper);
+
+	void again_task(md::model::task::task& task);
+	void done_task(md::model::deck::deck& deck, md::model::task::task& task,
+	               std::time_t gap);
 private:
-	std::int64_t m_id;
+	md::model::dal::mapper& m_mapper;
 };
 
 
-#endif // MEMEDAR_MODEL_IDENTITY_HPP
+#endif // MEMEDAR_MODEL_LESSON_UNIT_HPP

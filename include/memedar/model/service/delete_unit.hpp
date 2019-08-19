@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov
+ * Copyright (C) 2019 Roman Erdyakov
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -18,38 +18,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#ifndef MEMEDAR_MODEL_DELETE_UNIT_HPP
+#define MEMEDAR_MODEL_DELETE_UNIT_HPP
 
-#ifndef MEMEDAR_MODEL_IDENTITY_HPP
-#define MEMEDAR_MODEL_IDENTITY_HPP
 
-
-#include <cstdint>
+#include "memedar/model/service/deck_to_taskbook.hpp"
 
 
 namespace md::model {
-	class identity;
+	class delete_unit;
 }
 
 
-class md::model::identity
+class md::model::delete_unit : private virtual md::model::deck_to_taskbook
 {
 public:
-	explicit identity(std::int64_t id)
-		: m_id {id}
-	{ ;}
-	
-	std::int64_t id() const
-	{
-		return m_id;
-	}
-	
-	bool operator<(const md::model::identity& other) const
-	{
-		return m_id < other.m_id;
-	}
-private:
-	std::int64_t m_id;
+	explicit delete_unit(md::model::dal::mapper& mapper);
+	void delete_deck(md::model::deck::deck& deck);
+private:	
+	md::model::dal::mapper& m_mapper;
 };
 
 
-#endif // MEMEDAR_MODEL_IDENTITY_HPP
+#endif // MEMEDAR_MODEL_DELETE_UNIT_HPP
