@@ -44,9 +44,16 @@ void delete_unit::delete_deck(md::model::deck::deck& deck)
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};
 
-	m_mapper.delete_deck(deck);
-
-	deck_to_taskbook::delete_deck(deck);
+	if (deck.empty()) {
+		m_mapper.card->load_cards(deck);
+	}
 	
+	for (auto& e : deck) {
+		m_mapper.task->delete_card(*e);
+		m_mapper.card->delete_card(*e);
+	}
+	m_mapper.deck->delete_deck(deck);
+	deck_to_taskbook::delete_deck(deck);
+
 	transaction.commit();
 }

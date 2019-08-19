@@ -23,6 +23,8 @@
 #define MEMEDAR_UTILS_TIME_HPP
 
 
+#include <ctime>
+
 namespace md::utils::time {
 
 	inline constexpr std::time_t MINUTE {60};

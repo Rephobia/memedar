@@ -23,6 +23,8 @@
 #define MEMEDAR_MODEL_DAL_SQLITE_ADAPTER_HPP
 
 
+#include <filesystem>
+
 namespace md::model::dal::sqlite::adapter {
 
 	namespace detail {

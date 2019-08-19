@@ -23,14 +23,15 @@
 #define MEMEDAR_MODEL_DAL_MAPPER_HPP
 
 
-namespace md::model::side {
-	class side;
-	class side_value;
-}
+#include <filesystem>
+
+#include "memedar/model/dal/card_mapper.hpp"
+#include "memedar/model/dal/deck_mapper.hpp"
+#include "memedar/model/dal/task_mapper.hpp"
+#include "memedar/model/dal/transaction.hpp"
 
 namespace md::model::card {
 	class card;
-	class card_dto;
 }
 
 namespace md::model::deck {
@@ -40,6 +41,7 @@ namespace md::model::deck {
 
 namespace md::model::dal {
 	class mapper;
+	md::model::dal::mapper make_sqlite(const std::filesystem::path& path);
 	class transaction_guard;
 }
 
@@ -52,43 +54,19 @@ namespace md::model::task {
 class md::model::dal::mapper
 {
 public:
-	virtual md::model::dal::transaction_guard make_transaction() = 0;
-	virtual	void save_card(md::model::deck::deck& deck,
-		               md::model::task::task_book& task_book,
-		               md::model::card::card_dto&& new_card) = 0;
+	mapper(std::unique_ptr<md::model::dal::card_mapper> card_mapper,
+	       std::unique_ptr<md::model::dal::deck_mapper> deck_mapper,
+	       std::unique_ptr<md::model::dal::task_mapper> task_mapper,
+	       std::unique_ptr<md::model::dal::transaction> transaction_mapper);
 
+	std::unique_ptr<md::model::dal::card_mapper> card;
+	std::unique_ptr<md::model::dal::deck_mapper> deck;
+	std::unique_ptr<md::model::dal::task_mapper> task;
 	
-	virtual	void reset_task(md::model::task::task& task) = 0;
-
-
-
-
+	md::model::dal::transaction_guard make_transaction();
 	
-	virtual	void save_deck(std::deque<md::model::deck::deck>& decks,
-		               md::model::deck::deck_value&& deck_value) = 0;
-	virtual	std::deque<md::model::deck::deck> load_decks() = 0;
-	virtual void update_deck(md::model::deck::deck& deck,
-	                         md::model::deck::deck_value&& new_deck) = 0;
-	
-	virtual void update_side(md::model::side::side& old_side,
-	                         md::model::side::side_value&& new_side) = 0;
-	
-	virtual void update_card(md::model::card::card& card, bool typing) = 0;
-
-
-
-	
-	virtual void delete_deck(md::model::deck::deck& deck) = 0;
-	
-	virtual md::model::task::task_book make_task_book(md::model::deck::deck& deck) = 0;
-
-	
-	virtual void done_noob(md::model::deck::deck& deck,
-	                       md::model::task::task& task, std::time_t gap) = 0;
-	virtual void done_ready(md::model::deck::deck& deck,
-	                        md::model::task::task& task, std::time_t gap) = 0;
-	
-	virtual ~mapper() = default;
+protected:
+	std::unique_ptr<md::model::dal::transaction> transaction;
 };
 
 

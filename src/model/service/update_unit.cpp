@@ -47,29 +47,36 @@ bool update_unit::update_card(card::card& card, card::card_dto&& new_card)
 	
 	if (card.question.text() != new_card.question.text()
 	    and card.answer.text() != new_card.answer.text()) {
-		m_mapper.update_side(card.question, std::move(new_card.question));
-		m_mapper.update_side(card.answer, std::move(new_card.answer));
+		update_side(card.question, std::move(new_card.question));
+		update_side(card.answer, std::move(new_card.answer));
 		updated = true;
 	}
 	else if (card.question.text() != new_card.question.text()) {
-		m_mapper.update_side(card.question, std::move(new_card.question));
+		update_side(card.question, std::move(new_card.question));
 		updated = true;
 
 	}
 	else if (card.answer.text() != new_card.answer.text()) {
-		m_mapper.update_side(card.answer, std::move(new_card.answer));
+		update_side(card.answer, std::move(new_card.answer));
 		updated = true;
 	}
 
 
 	if (card.has_typing != new_card.value.has_typing) {
-		m_mapper.update_card(card, new_card.value.has_typing);
+		m_mapper.card->update_card(card, new_card.value.has_typing);
+		card.has_typing = new_card.value.has_typing;
 		updated = true;
 	}
 
 	transaction.commit();
 	
 	return updated;
+}
+
+void update_unit::update_side(side::side& old_side, side::side_value&& new_side)
+{
+	m_mapper.card->update_side(old_side, new_side);
+	old_side = std::move(new_side);	
 }
 
 void update_unit::update_task(task::task& task, card::card_dto&& new_card)
@@ -79,19 +86,21 @@ void update_unit::update_task(task::task& task, card::card_dto&& new_card)
 	bool is_card_updated {update_card(*task.card, std::move(new_card))};
 
 	if (is_card_updated) {
-		m_mapper.reset_task(task);
+		m_mapper.card->reset_combo(*task.card);
+		m_mapper.task->change_state(task, task::state::answering);
 	}
 	
 	transaction.commit();
 }
 
 void update_unit::update_deck(md::model::deck::deck& deck,
-                          md::model::deck::deck_value&& new_deck)
+                              md::model::deck::deck_value&& new_deck)
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};
 	
 	if (deck.name() != new_deck.name()) {
-		m_mapper.update_deck(deck, std::move(new_deck));
+		m_mapper.deck->update_deck(deck, new_deck);
+		deck.change_name(std::move(new_deck.name()));
 	}
 	
 	transaction.commit();

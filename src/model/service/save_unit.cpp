@@ -23,6 +23,7 @@
 
 #include "memedar/utils/storage.hpp"
 
+#include "memedar/model/card/card.hpp"
 #include "memedar/model/deck/deck.hpp"
 #include "memedar/model/task/task.hpp"
 #include "memedar/model/task/task_book.hpp"
@@ -40,14 +41,26 @@ save_unit::save_unit(dal::mapper& mapper)
 	, m_mapper {mapper}
 { ;}
 
-void save_unit::save_card(deck::deck& deck, card::card_dto&& new_card)
 
+void save_unit::save_card(deck::deck& deck, card::card_dto&& new_card)
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};
 	
-	m_mapper.save_card(deck,
-	                   get_task_book(deck),
-	                   std::move(new_card));
+	if (deck.empty()) {
+		m_mapper.card->load_cards(deck);
+	}
+		
+	decltype(auto) card {m_mapper.card->save_card(deck, std::move(new_card))};
+	decltype(auto) shared_card {deck.add_card(std::move(card))};
+
+	decltype(auto) taskbook {deck_to_taskbook::get_task_book(deck)};
+	
+	std::optional<task::task> task {taskbook.check_card(shared_card)};
+	
+	if (task) {
+		m_mapper.task->save_task(deck, task.value());
+		taskbook.add_task(std::move(task.value()));
+	}
 
 	transaction.commit();
 }
@@ -55,9 +68,10 @@ void save_unit::save_card(deck::deck& deck, card::card_dto&& new_card)
 void save_unit::save_deck(deck::deck_value&& deck_value)
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};
-	
-	m_mapper.save_deck(deck_to_taskbook::get_decks(), std::move(deck_value));
-	
+		
+	decltype(auto) deck {m_mapper.deck->save_deck(std::move(deck_value))};
+	deck_to_taskbook::add_deck(std::move(deck));
+
 	transaction.commit();
 }
 

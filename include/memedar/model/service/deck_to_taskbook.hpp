@@ -40,9 +40,11 @@ namespace md::model::dal {
 class md::model::deck_to_taskbook_detail
 {
 public:
+	void add_deck(md::model::deck::deck&& deck);
+	void delete_deck(md::model::deck::deck& deck);
+
 	using iterator = std::map<std::int64_t,
 	                          md::model::task::task_book>::iterator;
-
 	iterator begin();
 	iterator end();
 	
@@ -51,23 +53,28 @@ public:
 	
 	iterator add_taskbook(md::model::deck::deck& deck,
 	                      md::model::task::task_book&& task_book);
-	
-protected:
+private:
 	std::deque<md::model::deck::deck> m_decks {};
 	std::map<std::int64_t, md::model::task::task_book> m_tasks {};	
 };
 
 
-class md::model::deck_to_taskbook : private md::model::deck_to_taskbook_detail
+class md::model::deck_to_taskbook
 {
 public:
 	explicit deck_to_taskbook(md::model::dal::mapper& mapper);
-	
+		
 	md::model::task::task_book& get_task_book(md::model::deck::deck& deck);
 	std::deque<md::model::deck::deck>& get_decks();
 protected:
+	void add_deck(md::model::deck::deck&& deck);
 	void delete_deck(md::model::deck::deck& deck);
+	md::model::task::task_book make_task_book(md::model::deck::deck& deck);
 private:
+	void fill_from_deck(md::model::deck::deck& deck,
+	                    md::model::task::task_book& task_book);
+private:
+	md::model::deck_to_taskbook_detail m_storage {};
 	md::model::dal::mapper& m_mapper;
 };
 
