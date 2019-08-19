@@ -44,7 +44,7 @@ void deck_to_taskbook_detail::delete_deck(deck::deck& deck)
 {
 	auto deck_it = utils::find_by_id(deck.id(), m_decks);
 	if (deck_it != m_decks.end()) {
-		m_tasks.erase(deck.id());
+		m_tasks.erase(deck);
 		m_decks.erase(deck_it);
 	}	
 }
@@ -67,13 +67,13 @@ deck_to_taskbook_detail::iterator deck_to_taskbook_detail::end()
 deck_to_taskbook_detail::iterator deck_to_taskbook_detail::add_taskbook(deck::deck& deck,
 	  task::task_book&& book)
 {
-	decltype(auto) pair = std::make_pair(deck.id(), std::move(book));
+	decltype(auto) pair = std::make_pair(static_cast<identity>(deck), std::move(book));
 	return m_tasks.insert(std::move(pair)).first;
 }
 
 deck_to_taskbook_detail::iterator deck_to_taskbook_detail::get_taskbook(md::model::deck::deck& deck)
 {
-	return m_tasks.find(deck.id());
+	return m_tasks.find(deck);
 }
 
 

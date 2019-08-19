@@ -43,7 +43,7 @@ public:
 	void add_deck(md::model::deck::deck&& deck);
 	void delete_deck(md::model::deck::deck& deck);
 
-	using iterator = std::map<std::int64_t,
+	using iterator = std::map<md::model::identity,
 	                          md::model::task::task_book>::iterator;
 	iterator begin();
 	iterator end();
@@ -55,7 +55,7 @@ public:
 	                      md::model::task::task_book&& task_book);
 private:
 	std::deque<md::model::deck::deck> m_decks {};
-	std::map<std::int64_t, md::model::task::task_book> m_tasks {};	
+	std::map<md::model::identity, md::model::task::task_book> m_tasks {};	
 };
 
 
