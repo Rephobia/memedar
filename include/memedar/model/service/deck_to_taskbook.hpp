@@ -74,6 +74,7 @@ private:
 	void fill_from_deck(md::model::deck::deck& deck,
 	                    md::model::task::task_book& task_book);
 private:
+	bool m_decks_loaded {false};
 	md::model::deck_to_taskbook_detail m_storage {};
 	md::model::dal::mapper& m_mapper;
 };

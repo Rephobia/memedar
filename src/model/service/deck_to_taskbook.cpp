@@ -106,8 +106,9 @@ std::deque<md::model::deck::deck>& deck_to_taskbook::get_decks()
 
 	decltype(auto) decks {m_storage.get_decks()};
 	
-	if (decks.empty()) {
+	if (not m_decks_loaded) {
 		decks = m_mapper.deck->load_decks();
+		m_decks_loaded = true;
 	}
 	
 	transaction.commit();
