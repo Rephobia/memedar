@@ -47,7 +47,7 @@ namespace md::model::dal {
 
 namespace md::model::task {
 	class task;
-	class task_book;
+	class taskbook;
 }
 
 

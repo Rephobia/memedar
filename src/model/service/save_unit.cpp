@@ -26,7 +26,7 @@
 #include "memedar/model/card/card.hpp"
 #include "memedar/model/deck/deck.hpp"
 #include "memedar/model/task/task.hpp"
-#include "memedar/model/task/task_book.hpp"
+#include "memedar/model/task/taskbook.hpp"
 
 #include "memedar/model/dal/transaction_guard.hpp"
 #include "memedar/model/dal/mapper.hpp"
@@ -53,7 +53,7 @@ void save_unit::save_card(deck::deck& deck, card::card_dto&& new_card)
 	decltype(auto) card {m_mapper.card->save_card(deck, std::move(new_card))};
 	decltype(auto) shared_card {deck.add_card(std::move(card))};
 
-	decltype(auto) taskbook {deck_to_taskbook::get_task_book(deck)};
+	decltype(auto) taskbook {deck_to_taskbook::get_taskbook(deck)};
 	
 	std::optional<task::task> task {taskbook.check_card(shared_card)};
 	

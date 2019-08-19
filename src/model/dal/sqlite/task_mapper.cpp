@@ -33,7 +33,7 @@
 #include "memedar/model/card/card.hpp"
 #include "memedar/model/deck/deck.hpp"
 #include "memedar/model/task/task.hpp"
-#include "memedar/model/task/task_book.hpp"
+#include "memedar/model/task/taskbook.hpp"
 
 #include "memedar/model/dal/task_mapper.hpp"
 #include "memedar/model/dal/sqlite/adapter.hpp"
@@ -68,21 +68,21 @@ void task_mapper::save_task(const deck::deck& deck,
 	               binder {ind.state(), static_cast<int>(task.state)});
 }
 
-void task_mapper::load_task_book(deck::deck& deck, task::task_book& task_book)
+void task_mapper::load_taskbook(deck::deck& deck, task::taskbook& taskbook)
 {
 	static connector conn {m_db, res::select_cmd()};
 	task_index ind {res::select_index()};
 
 	conn.bind(ind.deck_id(), deck.id());
-	while (conn.step() == SQLITE_ROW and task_book.space()) {
+	while (conn.step() == SQLITE_ROW and taskbook.space()) {
 
 		auto card {*utils::find_by_id(conn.read_int64t(ind.card_id()),
 		                               deck)};
 		
 		auto state {static_cast<task::state>(conn.read_int64t(ind.state()))};
 
-		if (decltype(auto) task {task_book.check_card(card, state)}) {
-			task_book.add_task(std::move(task.value()));
+		if (decltype(auto) task {taskbook.check_card(card, state)}) {
+			taskbook.add_task(std::move(task.value()));
 		}
 	}
 }

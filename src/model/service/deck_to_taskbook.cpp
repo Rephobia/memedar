@@ -25,7 +25,7 @@
 
 #include "memedar/model/deck/deck.hpp"
 #include "memedar/model/task/task.hpp"
-#include "memedar/model/task/task_book.hpp"
+#include "memedar/model/task/taskbook.hpp"
 
 #include "memedar/model/service/deck_to_taskbook.hpp"
 
@@ -65,7 +65,7 @@ deck_to_taskbook_detail::iterator deck_to_taskbook_detail::end()
 }
 
 deck_to_taskbook_detail::iterator deck_to_taskbook_detail::add_taskbook(deck::deck& deck,
-	  task::task_book&& book)
+	  task::taskbook&& book)
 {
 	decltype(auto) pair = std::make_pair(static_cast<identity>(deck), std::move(book));
 	return m_tasks.insert(std::move(pair)).first;
@@ -83,7 +83,7 @@ deck_to_taskbook::deck_to_taskbook(dal::mapper& mapper)
 	: m_mapper    {mapper}
 { ;}
 
-md::model::task::task_book& deck_to_taskbook::get_task_book(deck::deck& deck)
+md::model::task::taskbook& deck_to_taskbook::get_taskbook(deck::deck& deck)
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};
 
@@ -91,7 +91,7 @@ md::model::task::task_book& deck_to_taskbook::get_task_book(deck::deck& deck)
 	
 	if (it == m_storage.end()) {
 		
-		decltype(auto) book {make_task_book(deck)};
+		decltype(auto) book {make_taskbook(deck)};
 		it = m_storage.add_taskbook(deck, std::move(book));	
 	}
 	
@@ -126,9 +126,9 @@ void deck_to_taskbook::delete_deck(deck::deck& deck)
 	m_storage.delete_deck(deck);
 }
 
-md::model::task::task_book deck_to_taskbook::make_task_book(deck::deck& deck)
+md::model::task::taskbook deck_to_taskbook::make_taskbook(deck::deck& deck)
 {
-	task::task_book task_book {deck};
+	task::taskbook taskbook {deck};
 	
 	if (deck.empty()) {
 		m_mapper.card->load_cards(deck);
@@ -139,21 +139,21 @@ md::model::task::task_book deck_to_taskbook::make_task_book(deck::deck& deck)
 		m_mapper.deck->reset_daily_limits(deck);
 	}
 
-	m_mapper.task->load_task_book(deck, task_book);
+	m_mapper.task->load_taskbook(deck, taskbook);
 
-	fill_from_deck(deck, task_book);
+	fill_from_deck(deck, taskbook);
 	m_mapper.deck->update_last_opening(deck);
 		
-	return task_book;
+	return taskbook;
 }
 
-void deck_to_taskbook::fill_from_deck(deck::deck& deck, task::task_book& task_book)
+void deck_to_taskbook::fill_from_deck(deck::deck& deck, task::taskbook& taskbook)
 {
-	for (auto it = deck.begin(); task_book.space() and it != deck.end(); it++) {
+	for (auto it = deck.begin(); taskbook.space() and it != deck.end(); it++) {
 
-		if (decltype(auto) task {task_book.check_card(*it)}) {
+		if (decltype(auto) task {taskbook.check_card(*it)}) {
 			m_mapper.task->save_task(deck, task.value());
-			task_book.add_task(std::move(task.value()));
+			taskbook.add_task(std::move(task.value()));
 		}
 	}
 }
