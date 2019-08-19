@@ -33,7 +33,7 @@ namespace md::model::deck {
 
 namespace md::model::task {
 	class task;
-	class task_book;
+	class taskbook;
 }
 
 namespace md::model::dal::sqlite {
@@ -49,7 +49,7 @@ public:
 
 	void save_task(const md::model::deck::deck& deck,
 	               const md::model::task::task& task) override;
-	void load_task_book(md::model::deck::deck& deck, task::task_book& task_book) override;
+	void load_taskbook(md::model::deck::deck& deck, task::taskbook& taskbook) override;
 
 	void delete_card(const md::model::card::card& card) override;
 	void change_state(md::model::task::task& task, md::model::task::state state) override;

@@ -19,8 +19,11 @@
  */
 
 
-#ifndef MEMEDAR_MODEL_TASK_TASK_BOOK_HPP
-#define MEMEDAR_MODEL_TASK_TASK_BOOK_HPP
+#ifndef MEMEDAR_MODEL_TASK_TASKBOOK_HPP
+#define MEMEDAR_MODEL_TASK_TASKBOOK_HPP
+
+
+#include <optional>
 
 
 namespace md::utils {
@@ -41,14 +44,14 @@ namespace md::model::task {
 	class task;
 
 	class add_visitor;
-	class task_book;
+	class taskbook;
 }
 
 
-class md::model::task::task_book : public md::utils::storage<md::model::task::task>
+class md::model::task::taskbook : public md::utils::storage<md::model::task::task>
 {
 public:
-	explicit task_book(md::model::deck::deck& deck);
+	explicit taskbook(md::model::deck::deck& deck);
 
 	std::optional<md::model::task::task>
 	check_card(std::shared_ptr<md::model::card::card> card,
@@ -74,4 +77,4 @@ protected:
 
 
 
-#endif // MEMEDAR_MODEL_TASK_TASK_BOOK_HPP
+#endif // MEMEDAR_MODEL_TASK_TASKBOOK_HPP
