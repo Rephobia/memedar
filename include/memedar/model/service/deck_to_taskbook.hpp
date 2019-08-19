@@ -44,7 +44,7 @@ public:
 	void delete_deck(md::model::deck::deck& deck);
 
 	using iterator = std::map<md::model::identity,
-	                          md::model::task::task_book>::iterator;
+	                          md::model::task::taskbook>::iterator;
 	iterator begin();
 	iterator end();
 	
@@ -52,10 +52,10 @@ public:
 	iterator get_taskbook(md::model::deck::deck& deck);
 	
 	iterator add_taskbook(md::model::deck::deck& deck,
-	                      md::model::task::task_book&& task_book);
+	                      md::model::task::taskbook&& taskbook);
 private:
 	std::deque<md::model::deck::deck> m_decks {};
-	std::map<md::model::identity, md::model::task::task_book> m_tasks {};	
+	std::map<md::model::identity, md::model::task::taskbook> m_tasks {};	
 };
 
 
@@ -64,15 +64,15 @@ class md::model::deck_to_taskbook
 public:
 	explicit deck_to_taskbook(md::model::dal::mapper& mapper);
 		
-	md::model::task::task_book& get_task_book(md::model::deck::deck& deck);
+	md::model::task::taskbook& get_taskbook(md::model::deck::deck& deck);
 	std::deque<md::model::deck::deck>& get_decks();
 protected:
 	void add_deck(md::model::deck::deck&& deck);
 	void delete_deck(md::model::deck::deck& deck);
-	md::model::task::task_book make_task_book(md::model::deck::deck& deck);
+	md::model::task::taskbook make_taskbook(md::model::deck::deck& deck);
 private:
 	void fill_from_deck(md::model::deck::deck& deck,
-	                    md::model::task::task_book& task_book);
+	                    md::model::task::taskbook& taskbook);
 private:
 	bool m_decks_loaded {false};
 	md::model::deck_to_taskbook_detail m_storage {};

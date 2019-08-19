@@ -31,22 +31,22 @@
 #include "memedar/model/card/card.hpp"
 #include "memedar/model/deck/deck.hpp"
 #include "memedar/model/task/task.hpp"
-#include "memedar/model/task/task_book.hpp"
+#include "memedar/model/task/taskbook.hpp"
 
 
 using md::model::task::task;
 using md::model::task::state;
-using md::model::task::task_book;
+using md::model::task::taskbook;
 
 
-task_book::task_book(deck::deck& deck)
+taskbook::taskbook(deck::deck& deck)
 	: m_noob_space    {deck.daily_noob_cards()}
 	, m_ready_space   {deck.daily_ready_cards()}
 	, m_current_index {0}
 { ;}
 
 std::optional<task>
-task_book::check_card(std::shared_ptr<card::card> card, state state)
+taskbook::check_card(std::shared_ptr<card::card> card, state state)
 {
 	std::optional<task> opt_task {std::nullopt};
 	if (md::utils::find_by_id(card->id(), *this) == storage::end()) {
@@ -69,48 +69,48 @@ task_book::check_card(std::shared_ptr<card::card> card, state state)
 	return opt_task;
 }
 
-void task_book::add_task(task&& task)
+void taskbook::add_task(task&& task)
 {
 	task.card->visit([this](card::noob_t&) { m_noob_space--; },
 	                 [this](card::ready_t&) { m_ready_space--; });
 	storage::add(std::move(task));
 }
 
-std::int64_t task_book::noob_space() const
+std::int64_t taskbook::noob_space() const
 {
 	return m_noob_space;
 }
 
-std::int64_t task_book::ready_space() const
+std::int64_t taskbook::ready_space() const
 {
 	return m_ready_space;
 }
 
-std::int64_t task_book::space() const
+std::int64_t taskbook::space() const
 {
 	return noob_space() + ready_space();
 }
 
-md::model::task::task& task_book::current_task()
+md::model::task::task& taskbook::current_task()
 {
 	return storage::index(m_current_index);
 }
 
-md::model::task::task& task_book::prev_task()
+md::model::task::task& taskbook::prev_task()
 {
 	return m_current_index > 0
 		? storage::index(--m_current_index)
 		: storage::index(m_current_index);
 }
 
-md::model::task::task& task_book::next_task()
+md::model::task::task& taskbook::next_task()
 {
 	return m_current_index < storage::size() - 1
 		? storage::index(++m_current_index)
 		: storage::index(m_current_index);
 }
 
-void task_book::push_back_current()
+void taskbook::push_back_current()
 {
 	decltype(auto) current_it = storage::begin() + m_current_index;
 	std::rotate(current_it, current_it + 1, storage::end());
