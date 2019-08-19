@@ -19,14 +19,12 @@
  */
 
 
-#ifndef MEMEDAR_MODEL_SERVICE_HPP
-#define MEMEDAR_MODEL_SERVICE_HPP
+#ifndef MEMEDAR_MODEL_SAVE_UNIT_HPP
+#define MEMEDAR_MODEL_SAVE_UNIT_HPP
 
 
-namespace md::model::side {
-	class side_value;
-	class side;
-}
+#include "memedar/model/service/deck_to_taskbook.hpp"
+
 
 namespace md::model::card {
 	class card_dto;
@@ -34,51 +32,27 @@ namespace md::model::card {
 }
 
 namespace md::model::deck {
+	class deck_value;
 	class deck;
 }
 
-namespace md::model::task {
-	class task;
-	class task_book;
-}
-
-namespace md::model::dal {
-	class mapper;
-}
-
 namespace md::model {
-	class service;
+	class save_unit;
 }
 
 
-class md::model::service
+class md::model::save_unit : private virtual md::model::deck_to_taskbook
 {
 public:
-	explicit service(md::model::dal::mapper& mapper);
-
+	explicit save_unit(md::model::dal::mapper& mapper);
+	
 	void save_card(md::model::deck::deck& deck,
 	               md::model::card::card_dto&& new_card);
-	bool update_card(md::model::card::card& card,
-	                 md::model::card::card_dto&& new_card);
-	void update_task(md::model::task::task& task,
-	                 md::model::card::card_dto&& new_card);
 	
 	void save_deck(md::model::deck::deck_value&& deck_value);
-	std::deque<md::model::deck::deck>& get_decks();
-	void update_deck(md::model::deck::deck& deck,
-	                 md::model::deck::deck_value&& new_deck);
-
-	void delete_deck(md::model::deck::deck& deck);
-	
-	md::model::task::task_book& get_task_book(md::model::deck::deck& deck);
-	void again_task(md::model::task::task& task);
-	void done_task(md::model::deck::deck& deck, md::model::task::task& task, std::time_t gap);
-protected:
+private:
 	md::model::dal::mapper& m_mapper;
-protected:
-	std::deque<md::model::deck::deck> m_decks {};
-	std::map<std::int64_t, md::model::task::task_book> m_tasks {};
 };
 
 
-#endif // MEMEDAR_MODEL_SERVICE_HPP
+#endif // MEMEDAR_MODEL_SAVE_UNIT_HPP

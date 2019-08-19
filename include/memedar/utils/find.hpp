@@ -23,6 +23,10 @@
 #define MEMEDAR_UTILS_FIND_HPP
 
 
+#include <memory>
+#include <algorithm>
+
+
 namespace md::utils {
 
 	template<class T>

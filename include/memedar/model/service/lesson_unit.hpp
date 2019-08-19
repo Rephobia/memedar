@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
+ * Copyright (C) 2019 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -18,38 +18,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
-#ifndef MEMEDAR_MODEL_TASK_TASK_HPP
-#define MEMEDAR_MODEL_TASK_TASK_HPP
-
-
-#include <QString>
-#include <memory>
-
-#include "memedar/model/identity.hpp"
+#ifndef MEMEDAR_MODEL_LESSON_UNIT_HPP
+#define MEMEDAR_MODEL_LESSON_UNIT_HPP
 
 
-namespace md::model::card {
-	class card;
+namespace md::model {
+	class lesson_unit;
 }
 
-namespace md::model::task {
-	class task;
-	enum class state : int { answering = 0, marking, done };
-
-}
-
-
-class md::model::task::task : public md::model::identity
+class md::model::lesson_unit
 {
 public:
-	task(std::shared_ptr<md::model::card::card> card,
-	     md::model::task::state state);
+	explicit lesson_unit(md::model::dal::mapper& mapper);
 
-	std::shared_ptr<md::model::card::card> card;
-	md::model::task::state state;
-	QString user_answer;
+	void again_task(md::model::task::task& task);
+	void done_task(md::model::deck::deck& deck, md::model::task::task& task,
+	               std::time_t gap);
+private:
+	md::model::dal::mapper& m_mapper;
 };
 
 
-#endif // MEMEDAR_MODEL_TASK_TASK_HPP
+#endif // MEMEDAR_MODEL_LESSON_UNIT_HPP

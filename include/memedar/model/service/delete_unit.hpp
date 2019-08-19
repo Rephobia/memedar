@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
+ * Copyright (C) 2019 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -18,38 +18,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
-#ifndef MEMEDAR_MODEL_TASK_TASK_HPP
-#define MEMEDAR_MODEL_TASK_TASK_HPP
-
-
-#include <QString>
-#include <memory>
-
-#include "memedar/model/identity.hpp"
+#ifndef MEMEDAR_MODEL_DELETE_UNIT_HPP
+#define MEMEDAR_MODEL_DELETE_UNIT_HPP
 
 
-namespace md::model::card {
-	class card;
-}
+#include "memedar/model/service/deck_to_taskbook.hpp"
 
-namespace md::model::task {
-	class task;
-	enum class state : int { answering = 0, marking, done };
 
+namespace md::model {
+	class delete_unit;
 }
 
 
-class md::model::task::task : public md::model::identity
+class md::model::delete_unit : private virtual md::model::deck_to_taskbook
 {
 public:
-	task(std::shared_ptr<md::model::card::card> card,
-	     md::model::task::state state);
-
-	std::shared_ptr<md::model::card::card> card;
-	md::model::task::state state;
-	QString user_answer;
+	explicit delete_unit(md::model::dal::mapper& mapper);
+	void delete_deck(md::model::deck::deck& deck);
+private:	
+	md::model::dal::mapper& m_mapper;
 };
 
 
-#endif // MEMEDAR_MODEL_TASK_TASK_HPP
+#endif // MEMEDAR_MODEL_DELETE_UNIT_HPP

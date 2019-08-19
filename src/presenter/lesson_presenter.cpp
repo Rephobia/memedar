@@ -33,7 +33,7 @@
 #include "memedar/model/deck/deck.hpp"
 #include "memedar/model/task/task.hpp"
 #include "memedar/model/task/task_book.hpp"
-#include "memedar/model/service.hpp"
+#include "memedar/model/service/service.hpp"
 
 #include "memedar/view/error_delegate.hpp"
 #include "memedar/view/lesson.hpp"

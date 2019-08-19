@@ -24,6 +24,7 @@
 
 
 namespace md::model::deck {
+	class deck_value;
 	class deck;
 }
 
