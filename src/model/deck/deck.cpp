@@ -97,11 +97,6 @@ deck::deck(deck::identity id,
 	, m_accountant     {std::move(accountant)}
 { ;}
 
-bool deck::operator<(const md::model::deck::deck& other) const
-{
-	return id() < other.id();
-}
-
 void deck::process_card(card::card& card)
 {
 	m_accountant.process_card(card);

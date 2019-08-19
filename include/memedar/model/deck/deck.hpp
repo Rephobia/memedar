@@ -86,8 +86,6 @@ public:
 	     md::model::deck::deck_value&& deck_value,
 	     md::model::deck::accountant&& accountant);
 
-	bool operator<(const md::model::deck::deck& other) const;
-
 	std::int64_t noob_cards() const;
 	std::int64_t ready_cards() const;
 	std::int64_t delayed_cards() const;
