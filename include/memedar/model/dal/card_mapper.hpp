@@ -23,7 +23,13 @@
 #define MEMEDAR_MODEL_DAL_CARD_MAPPER_HPP
 
 
+namespace md::model::side {
+	class side;
+	class side_value;
+}
+
 namespace md::model::card {
+	class card_dto;
 	class card;
 }
 

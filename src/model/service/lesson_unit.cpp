@@ -50,7 +50,8 @@ void lesson_unit::again_task(task::task& task)
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};
 
-	m_mapper.reset_task(task);
+	m_mapper.card->reset_combo(*task.card);
+	m_mapper.task->change_state(task, task::state::answering);
 	
 	transaction.commit();
 }
@@ -62,12 +63,22 @@ void lesson_unit::done_task(deck::deck& deck, task::task& task, std::time_t gap)
 	task.card->visit(
 	                 [this, &deck, &task, &gap](card::noob_t&)
 	                 {
-		                 m_mapper.done_noob(deck, task, gap);
+		                 gap += std::time(nullptr);		                 
+		                 m_mapper.deck->decrement_daily_noob(deck);
 	                 },
 	                 [this, &deck, &task, &gap](card::ready_t&)
 	                 {
-		                 m_mapper.done_ready(deck, task, gap);
+		                 gap += task.card->repeat();
+		                 m_mapper.deck->decrement_daily_ready(deck);
 	                 });
 	
+	m_mapper.card->update_repeat(*task.card, gap);
+	
+	m_mapper.task->change_state(task, task::state::done);
+	
+	task.card->increment_combo();
+	
+	deck.process_card(*task.card);
+		
 	transaction.commit();
 }

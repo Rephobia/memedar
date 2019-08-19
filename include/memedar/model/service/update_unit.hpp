@@ -22,6 +22,11 @@
 #define MEMEDAR_MODEL_UPDATE_UNIT_HPP
 
 
+namespace md::model::side {
+	class side;
+	class side_value;
+}
+
 namespace md::model {
 	class update_unit;
 }
@@ -38,6 +43,9 @@ public:
 	                 md::model::card::card_dto&& new_card);
 	void update_deck(md::model::deck::deck& deck,
 	                 md::model::deck::deck_value&& new_deck);
+protected:
+	void update_side(md::model::side::side& old_side,
+	                 md::model::side::side_value&& new_side);
 private:
 	md::model::dal::mapper& m_mapper;	
 };

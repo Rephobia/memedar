@@ -60,7 +60,7 @@ public:
 	           md::model::deck::limit limit,
 	           md::model::deck::gaps gaps);
 	
-	deck_value(md::model::deck::deck_value&& other);
+	explicit deck_value(md::model::deck::deck_value&& other);
 	deck_value(const md::model::deck::deck_value& other) = delete;
 
 	md::model::deck::deck_value& operator=(md::model::deck::deck_value&& other);
