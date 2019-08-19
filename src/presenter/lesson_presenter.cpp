@@ -32,7 +32,7 @@
 #include "memedar/model/card/card.hpp"
 #include "memedar/model/deck/deck.hpp"
 #include "memedar/model/task/task.hpp"
-#include "memedar/model/task/task_book.hpp"
+#include "memedar/model/task/taskbook.hpp"
 #include "memedar/model/service/service.hpp"
 
 #include "memedar/view/error_delegate.hpp"
@@ -55,10 +55,10 @@ lesson_presenter::lesson_presenter(md::controller& controller,
 	, m_error_delegate {error_delegate}
 	, m_lesson         {lesson}
 	, m_deck           {deck}
-	, m_task_book      {service.get_task_book(deck)}
+	, m_taskbook      {service.get_taskbook(deck)}
 {
-	auto prev {[this]() { m_lesson.redraw(m_task_book.prev_task()); }};
-	auto next {[this]() { m_lesson.redraw(m_task_book.next_task()); }};
+	auto prev {[this]() { m_lesson.redraw(m_taskbook.prev_task()); }};
+	auto next {[this]() { m_lesson.redraw(m_taskbook.next_task()); }};
 	
 	auto answer_task {[this](const QString& answer) { show_answer(answer); }};
 	auto again_task  {[this]() { again(); }};
@@ -66,7 +66,7 @@ lesson_presenter::lesson_presenter(md::controller& controller,
 	
 	auto designer {[this]() { m_controller.add_card(m_deck); }};
 	auto update_designer {[this]() { m_controller.update_task(m_deck,
-	                                                          m_task_book.current_task()); }};
+	                                                          m_taskbook.current_task()); }};
 		
 	add_connect(m_lesson.prev_task.connect(prev),
 	            m_lesson.next_task.connect(next),
@@ -80,15 +80,15 @@ lesson_presenter::lesson_presenter(md::controller& controller,
 
 void lesson_presenter::run()
 {
-	m_task_book.empty()
+	m_taskbook.empty()
 		? m_lesson.show()
-		: m_lesson.show(m_task_book.current_task(), m_deck);
+		: m_lesson.show(m_taskbook.current_task(), m_deck);
 }
 
 void lesson_presenter::show_answer(const QString& answer)
 {
 	try {
-		decltype(auto) current {m_task_book.current_task()};
+		decltype(auto) current {m_taskbook.current_task()};
 		current.state = model::task::state::marking;
 		current.user_answer = answer;
 		m_lesson.redraw(current);
@@ -101,10 +101,10 @@ void lesson_presenter::show_answer(const QString& answer)
 void lesson_presenter::again()
 {
 	try {
-		decltype(auto) current {m_task_book.current_task()};
+		decltype(auto) current {m_taskbook.current_task()};
 		m_service.again_task(current);
 		current.state = model::task::state::answering;
-		m_task_book.push_back_current();
+		m_taskbook.push_back_current();
 		m_lesson.redraw(current);
 	}
 	catch (std::system_error& e) {
@@ -116,9 +116,9 @@ void lesson_presenter::done(std::time_t gap)
 {
 	try {
 		m_service.done_task(m_deck,
-		                    m_task_book.current_task(),
+		                    m_taskbook.current_task(),
 		                    gap);
-		m_lesson.redraw(m_task_book.next_task());
+		m_lesson.redraw(m_taskbook.next_task());
 	}
 	catch (std::system_error& e) {
 		m_error_delegate.show_error(e);

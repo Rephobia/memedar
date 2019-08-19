@@ -30,7 +30,7 @@ namespace md::model::deck {
 }
 
 namespace md::model::task {
-	class task_book;
+	class taskbook;
 }
 
 namespace md::model {
@@ -70,7 +70,7 @@ protected:
 	md::view::lesson& m_lesson;
 protected:
 	md::model::deck::deck& m_deck;
-	md::model::task::task_book& m_task_book;
+	md::model::task::taskbook& m_taskbook;
 };
 
 
