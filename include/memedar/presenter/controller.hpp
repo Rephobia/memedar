@@ -37,6 +37,7 @@ namespace md::view {
 	class lobby;
 	class designer;
 	class lesson;
+	class browser;
 }
 
 namespace md {
@@ -53,10 +54,12 @@ public:
 	           md::view::menu& menu,
 	           md::view::lobby& lobby,
 	           md::view::lesson& lesson,
-	           md::view::designer& designer);
+	           md::view::designer& designer,
+	           md::view::browser& browser);
        
 	void run_lobby();
 	void run_lesson(md::model::deck::deck& deck);
+	void run_browser();
 	
 	void add_card(md::model::deck::deck& deck);
 	void update_task(md::model::deck::deck& deck, md::model::task::task& task);
@@ -72,6 +75,7 @@ protected:
 	md::view::lobby& m_lobby;
 	md::view::lesson& m_lesson;
 	md::view::designer& m_designer;
+	md::view::browser& m_browser;
 protected:
 	std::unique_ptr<md::presenter> m_presenter;
 	std::unique_ptr<md::presenter> m_designer_presenter;
