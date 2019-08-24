@@ -71,6 +71,7 @@ protected:
 	void delete_deck(md::model::deck::deck& deck);
 	md::model::task::taskbook make_taskbook(md::model::deck::deck& deck);
 private:
+	std::deque<md::model::deck::deck> load_decks();
 	void fill_from_deck(md::model::deck::deck& deck,
 	                    md::model::task::taskbook& taskbook);
 private:
