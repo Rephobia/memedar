@@ -102,14 +102,31 @@ md::model::task::taskbook& deck_to_taskbook::get_taskbook(deck::deck& deck)
 
 std::deque<md::model::deck::deck>& deck_to_taskbook::get_decks()
 {
-	decltype(auto) transaction {m_mapper.make_transaction()};
-
 	decltype(auto) decks {m_storage.get_decks()};
 	
 	if (not m_decks_loaded) {
-		decks = m_mapper.deck->load_decks();
-		m_decks_loaded = true;
+		decks = load_decks();
 	}
+	
+	return decks;
+}
+
+std::deque<md::model::deck::deck> deck_to_taskbook::load_decks()
+{
+	decltype(auto) transaction {m_mapper.make_transaction()};
+	
+	std::deque<md::model::deck::deck> decks {};
+	
+	decltype(auto) generator {m_mapper.deck->get_generator()};
+	
+	while (std::optional<deck::deck> deck_opt {generator->get_deck()}) {
+
+		deck::deck& deck {deck_opt.value()};
+			
+		decks.push_back(std::move(deck));
+	}
+		
+	m_decks_loaded = true;
 	
 	transaction.commit();
 	
