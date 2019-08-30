@@ -18,9 +18,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 #include "memedar/utils/storage.hpp"
-
+#include "memedar/model/deck/storage.hpp"
 #include "memedar/model/side/side.hpp"
 #include "memedar/model/card/card.hpp"
 #include "memedar/model/deck/deck.hpp"
@@ -82,50 +81,66 @@ void deck_value::change_name(QString&& name)
 
 using md::model::deck::deck;
 
-deck::deck(deck::identity id,
+deck::deck(identity id,
            deck::deck_value&& value)
-	: deck::identity   {id}
-	, deck::deck_value {std::move(value)}
-	, m_accountant     {md::model::deck::accountant {}}
+	: identity   {id}
+	, deck_value {std::move(value)}
 { ;}
 
-deck::deck(deck::identity id,
+deck::deck(identity id,
            deck::deck_value&& value,
            md::model::deck::accountant&& accountant)
-	: deck::identity   {id}
+	: identity         {id}
 	, deck::deck_value {std::move(value)}
 	, m_accountant     {std::move(accountant)}
 { ;}
+
 
 void deck::process_card(card::card& card)
 {
 	m_accountant.process_card(card);
 }
 
-std::shared_ptr<md::model::card::card> deck::add_card(card::card&& card)
+void deck::add_card(card::card&& card)
 {
-	m_accountant.process_card(card);
-	decltype(auto) shared_card {std::make_shared<card::card>(std::move(card))};
-	storage::add(shared_card);
-	return shared_card;
+	if (deck_storage::is_empty()) {
+		deck_storage::need_cards(*this);
+	}
+	else {
+		m_accountant.process_card(card);
+		auto shared_card {std::make_shared<card::card>(std::move(card))};
+		deck_storage::add(shared_card);
+		deck_storage::card_added(*this, shared_card);
+	}
+
 }
+
+md::utils::storage<std::shared_ptr<md::model::card::card>>& deck::cards()
+{
+	if (deck_storage::is_empty()) {
+		deck_storage::need_cards(*this);
+	}
+		
+	return static_cast<storage&>(*this);
+}
+
 
 std::int64_t deck::noob_cards() const
 {
-	return m_accountant.noob_cards(not storage::empty());
+	return m_accountant.noob_cards(deck_storage::is_loaded());
 }
 
 std::int64_t deck::ready_cards() const
 {
-	return m_accountant.ready_cards(not storage::empty());
+	return m_accountant.ready_cards(deck_storage::is_loaded());
 }
 
 std::int64_t deck::delayed_cards() const
 {
-	return m_accountant.delayed_cards(not storage::empty());
+	return m_accountant.delayed_cards(deck_storage::is_loaded());
 }
 
 std::int64_t deck::total_cards() const
 {
-	return m_accountant.total_cards(not storage::empty());
+	return m_accountant.total_cards(deck_storage::is_loaded());
 }

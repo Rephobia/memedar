@@ -31,6 +31,7 @@
 
 #include "memedar/model/side/side.hpp"
 #include "memedar/model/card/card.hpp"
+#include "memedar/model/deck/storage.hpp"
 #include "memedar/model/deck/deck.hpp"
 #include "memedar/model/task/task.hpp"
 #include "memedar/model/task/taskbook.hpp"
@@ -77,7 +78,7 @@ void task_mapper::load_taskbook(deck::deck& deck, task::taskbook& taskbook)
 	while (conn.step() == SQLITE_ROW and taskbook.space()) {
 
 		auto card {*utils::find_by_id(conn.read_int64t(ind.card_id()),
-		                               deck)};
+		                              deck.cards())};
 		
 		auto state {static_cast<task::state>(conn.read_int64t(ind.state()))};
 
