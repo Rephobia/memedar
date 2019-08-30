@@ -30,6 +30,7 @@
 
 #include "memedar/model/side/side.hpp"
 #include "memedar/model/card/card.hpp"
+#include "memedar/model/deck/storage.hpp"
 #include "memedar/model/deck/deck.hpp"
 
 #include "memedar/model/dal/card_mapper.hpp"
@@ -56,8 +57,7 @@ void card_mapper::create_table()
 	adapter::step(m_db, adapter::prepare_sqlite(m_db, res::create_cmd()));
 }
 
-md::model::card::card card_mapper::save_card(const deck::deck& deck,
-                                             card::card_dto&& new_card)
+void card_mapper::save_card(deck::deck& deck, card::card_dto&& new_card)
 {
 	decltype(auto) question {save_side(std::move(new_card.question))};
 	decltype(auto) answer {save_side(std::move(new_card.answer))};
@@ -74,7 +74,8 @@ md::model::card::card card_mapper::save_card(const deck::deck& deck,
 	               binder {ind.typing(), new_card.value.has_typing});
 
 	identity id {::sqlite3_last_insert_rowid(m_db.get())};
-	return card::card {id, new_card.value, std::move(question), std::move(answer)};
+
+	deck.add_card(card::card {id, new_card.value, std::move(question), std::move(answer)});
 }
 
 void card_mapper::load_cards(deck::deck& deck)
@@ -83,7 +84,6 @@ void card_mapper::load_cards(deck::deck& deck)
 
 	card_index ind {res::select_index()};
 	conn.bind(ind.deck_id(), deck.id());
-
 	while (conn.step() == SQLITE_ROW) {
 
 		identity id {conn.read_int64t(ind.id())};

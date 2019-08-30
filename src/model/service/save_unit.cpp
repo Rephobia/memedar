@@ -46,21 +46,7 @@ void save_unit::save_card(deck::deck& deck, card::card_dto&& new_card)
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};
 	
-	if (deck.empty()) {
-		m_mapper.card->load_cards(deck);
-	}
-		
-	decltype(auto) card {m_mapper.card->save_card(deck, std::move(new_card))};
-	decltype(auto) shared_card {deck.add_card(std::move(card))};
-
-	decltype(auto) taskbook {deck_to_taskbook::get_taskbook(deck)};
-	
-	std::optional<task::task> task {taskbook.check_card(shared_card)};
-	
-	if (task) {
-		m_mapper.task->save_task(deck, task.value());
-		taskbook.add_task(std::move(task.value()));
-	}
+	m_mapper.card->save_card(deck, std::move(new_card));
 
 	transaction.commit();
 }
@@ -70,7 +56,20 @@ void save_unit::save_deck(deck::deck_value&& deck_value)
 	decltype(auto) transaction {m_mapper.make_transaction()};
 		
 	decltype(auto) deck {m_mapper.deck->save_deck(std::move(deck_value))};
+	
+	deck.need_cards.connect([this](deck::deck& deck)
+	                        {
+		                        decltype(auto) transaction {m_mapper.make_transaction()};
+		                        decltype(auto) boss {deck.get_storage_boss()};
+		                        
+		                        m_mapper.card->load_cards(deck);
+		                        
+		                        boss.commit();
+		                        transaction.commit();
+	                        });
+	
 	deck_to_taskbook::add_deck(std::move(deck));
+
 
 	transaction.commit();
 }

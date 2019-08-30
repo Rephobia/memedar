@@ -31,6 +31,7 @@
 
 #include "memedar/model/side/side.hpp"
 #include "memedar/model/card/card.hpp"
+#include "memedar/model/deck/storage.hpp"
 #include "memedar/model/deck/deck.hpp"
 
 #include "memedar/model/dal/deck_mapper.hpp"

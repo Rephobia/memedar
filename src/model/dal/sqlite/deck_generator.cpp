@@ -23,6 +23,7 @@
 #include <sqlite3.h>
 
 #include "memedar/utils/storage.hpp"
+#include "memedar/model/deck/storage.hpp"
 #include "memedar/model/deck/deck.hpp"
 #include "memedar/model/dal/sqlite/adapter.hpp"
 

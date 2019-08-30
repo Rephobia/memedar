@@ -46,78 +46,68 @@ public:
 	storage operator=(const storage& other) = delete;
 
 	storage(storage&& other)
-		: m_storage {std::move(other.m_storage)}
+		: m_container {std::move(other.m_container)}
 	{ ;}
 
 	storage& operator=(storage&& other)
 	{
 		if (this != &other) {
-			m_storage = std::move(other.m_storage);
+			m_container = std::move(other.m_container);
 		}
 		return *this;
 	}
 
 	T& index(typename container::size_type pos)
 	{
-		return m_storage[pos];
+		return m_container[pos];
 	}
 		
 	const T& index(typename container::size_type pos) const
 	{
-		return m_storage[pos];
+		return m_container[pos];
 	}
 	
 	iterator begin()
 	{
-		return m_storage.begin();
+		return m_container.begin();
 	}
 
 	iterator end()
 	{
-		return m_storage.end();
+		return m_container.end();
 	}
 
 	const_iterator begin() const
 	{
-		return m_storage.begin();
+		return m_container.begin();
 	}
 
 	const_iterator end() const
 	{
-		return m_storage.end();
-	}
-
-	T& back()
-	{
-		return m_storage.back();
-	}
-
-	const T& back() const
-	{
-		return m_storage.back();
+		return m_container.end();
 	}
 
 	typename container::size_type size() const
 	{
-		return m_storage.size();
+		return m_container.size();
 	}
 
 	bool empty() const
 	{
-		return m_storage.empty();
+		return m_container.empty();
 	}
-
+protected:
 	void add(const T& value)
 	{
-		m_storage.push_back(value);
+		m_container.push_back(value);
 	}
 	
 	void add(T&& value)
 	{
-		m_storage.push_back(std::forward<T>(value));
+		m_container.push_back(std::forward<T>(value));
 	}
 private:
-	container m_storage {container {}};
+	container m_container {};
 };
 
 
