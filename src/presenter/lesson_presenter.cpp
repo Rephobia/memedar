@@ -26,8 +26,6 @@
 #include <QString>
 
 #include "memedar/utils/find.hpp"
-#include "memedar/utils/storage.hpp"
-
 #include "memedar/model/side/side.hpp"
 #include "memedar/model/card/card.hpp"
 #include "memedar/model/deck/deck.hpp"
@@ -55,7 +53,7 @@ lesson_presenter::lesson_presenter(md::controller& controller,
 	, m_error_delegate {error_delegate}
 	, m_lesson         {lesson}
 	, m_deck           {deck}
-	, m_taskbook      {service.get_taskbook(deck)}
+	, m_taskbook       {service.get_taskbook(deck)}
 {
 	auto prev {[this]() { m_lesson.redraw(m_taskbook.prev_task()); }};
 	auto next {[this]() { m_lesson.redraw(m_taskbook.next_task()); }};
