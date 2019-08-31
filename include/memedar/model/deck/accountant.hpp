@@ -23,6 +23,9 @@
 #define MEMEDAR_MODEL_DECK_ACCOUNTANT_HPP
 
 
+#include <memory>
+
+
 namespace md::model::card {
 	class card;
 

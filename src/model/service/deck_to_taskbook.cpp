@@ -21,7 +21,6 @@
 
 #include "memedar/utils/time.hpp"
 #include "memedar/utils/find.hpp"
-#include "memedar/utils/storage.hpp"
 
 #include "memedar/model/deck/deck.hpp"
 #include "memedar/model/task/task.hpp"
@@ -91,8 +90,22 @@ md::model::task::taskbook& deck_to_taskbook::get_taskbook(deck::deck& deck)
 	
 	if (it == m_storage.end()) {
 		
-		decltype(auto) book {make_taskbook(deck)};
-		it = m_storage.add_taskbook(deck, std::move(book));	
+		it = m_storage.add_taskbook(deck, make_taskbook(deck));
+		auto& taskbook {it->second};
+		deck.card_added.connect([this, &taskbook](md::model::deck::deck& deck,
+		                                          std::shared_ptr<md::model::card::card> card)
+		                        {
+			                        decltype(auto) transaction {m_mapper.make_transaction()};
+
+			                        std::optional<task::task> task {taskbook.check_card(card)};
+			                        
+			                        if (task) {
+				                        m_mapper.task->save_task(deck, task.value());
+				                        taskbook.add_task(std::move(task.value()));
+			                        }
+			                        
+			                        transaction.commit();
+		                        });
 	}
 	
 	transaction.commit();
@@ -122,7 +135,17 @@ std::deque<md::model::deck::deck> deck_to_taskbook::load_decks()
 	while (std::optional<deck::deck> deck_opt {generator->get_deck()}) {
 
 		deck::deck& deck {deck_opt.value()};
-			
+		deck.need_cards.connect([this](deck::deck& deck)
+		                       {
+			                       decltype(auto) transaction {m_mapper.make_transaction()};
+			                       decltype(auto) boss {deck.get_storage_boss()};
+			                       
+			                       m_mapper.card->load_cards(deck);
+			                       
+			                       boss.commit();
+			                       transaction.commit();
+		                       });
+		
 		decks.push_back(std::move(deck));
 	}
 		
@@ -146,11 +169,7 @@ void deck_to_taskbook::delete_deck(deck::deck& deck)
 md::model::task::taskbook deck_to_taskbook::make_taskbook(deck::deck& deck)
 {
 	task::taskbook taskbook {deck};
-	
-	if (deck.empty()) {
-		m_mapper.card->load_cards(deck);
-	}
-	
+
 	if (not utils::time::is_today(deck.last_opening())) {
 		m_mapper.task->delete_done_task(deck);
 		m_mapper.deck->reset_daily_limits(deck);
@@ -160,13 +179,14 @@ md::model::task::taskbook deck_to_taskbook::make_taskbook(deck::deck& deck)
 
 	fill_from_deck(deck, taskbook);
 	m_mapper.deck->update_last_opening(deck);
-		
+	
 	return taskbook;
 }
 
 void deck_to_taskbook::fill_from_deck(deck::deck& deck, task::taskbook& taskbook)
 {
-	for (auto it = deck.begin(); taskbook.space() and it != deck.end(); it++) {
+	decltype(auto) cards {deck.cards()};
+	for (auto it = cards.begin(); taskbook.space() and it != cards.end(); it++) {
 
 		if (decltype(auto) task {taskbook.check_card(*it)}) {
 			m_mapper.task->save_task(deck, task.value());

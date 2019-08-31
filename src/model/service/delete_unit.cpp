@@ -21,7 +21,6 @@
 
 #include <deque>
 
-#include "memedar/utils/storage.hpp"
 
 #include "memedar/model/deck/deck.hpp"
 #include "memedar/model/task/task.hpp"
@@ -43,12 +42,8 @@ delete_unit::delete_unit(dal::mapper& mapper)
 void delete_unit::delete_deck(md::model::deck::deck& deck)
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};
-
-	if (deck.empty()) {
-		m_mapper.card->load_cards(deck);
-	}
 	
-	for (auto& e : deck) {
+	for (auto& e : deck.cards()) {
 		m_mapper.task->delete_card(*e);
 		m_mapper.card->delete_card(*e);
 	}

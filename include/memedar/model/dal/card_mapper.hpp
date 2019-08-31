@@ -35,6 +35,7 @@ namespace md::model::card {
 
 namespace md::model::deck {
 	class deck;
+	class deck;
 }
 
 namespace md::model::dal {
@@ -47,8 +48,9 @@ class md::model::dal::card_mapper
 public:
 	virtual void create_table() = 0;
 
-	virtual md::model::card::card save_card(const md::model::deck::deck& deck,
-	                                        md::model::card::card_dto&& new_card) = 0;
+	virtual void save_card(md::model::deck::deck& deck,
+	                       md::model::card::card_dto&& new_card) = 0;
+	
 	virtual void load_cards(md::model::deck::deck& deck) = 0;
 
 	virtual void update_side(const md::model::side::side& old_side,

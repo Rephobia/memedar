@@ -32,6 +32,7 @@ function(cppcheck_targets)
 	    --template=gcc
 	    --inconclusive
 	    --suppress=missingIncludeSystem
+	    --inline-suppr
 	    ${suppressions}
 	    --quiet
 	    --error-exitcode=1
