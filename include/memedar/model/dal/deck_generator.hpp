@@ -19,36 +19,28 @@
  */
 
 
-#include <deque>
+#ifndef MEMEDAR_MODEL_DAL_DECK_GENERATOR_HPP
+#define MEMEDAR_MODEL_DAL_DECK_GENERATOR_HPP
 
 
-#include "memedar/model/deck/deck.hpp"
-#include "memedar/model/task/task.hpp"
-#include "memedar/model/task/taskbook.hpp"
+#include <optional>
 
-#include "memedar/model/dal/transaction_guard.hpp"
-#include "memedar/model/dal/mapper.hpp"
-
-#include "memedar/model/service/delete_unit.hpp"
-
-
-using md::model::delete_unit;
-
-delete_unit::delete_unit(dal::mapper& mapper)
-	: deck_to_taskbook {mapper}
-	, m_mapper {mapper}
-{ ;}
-
-void delete_unit::delete_deck(md::model::deck::deck& deck)
-{
-	decltype(auto) transaction {m_mapper.make_transaction()};
-	
-	for (auto& e : deck.cards()) {
-		m_mapper.task->delete_card(*e);
-		m_mapper.card->delete_card(*e);
-	}
-	m_mapper.deck->delete_deck(deck);
-	deck_to_taskbook::delete_deck(deck);
-
-	transaction.commit();
+namespace md::model::deck {
+	class deck;
 }
+
+namespace md::model::dal {
+	class deck_generator;
+}
+
+
+class md::model::dal::deck_generator
+{
+public:
+	virtual std::optional<md::model::deck::deck> get_deck() = 0;
+
+	virtual ~deck_generator() = default;
+};
+
+
+#endif // MEMEDAR_MODEL_DAL_DECK_GENERATOR_HPP

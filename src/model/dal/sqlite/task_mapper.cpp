@@ -23,10 +23,11 @@
 #include <memory>
 #include <filesystem>
 
+
 #include <sqlite3.h>
 #include <QString>
 
-#include "memedar/utils/storage.hpp"
+
 #include "memedar/utils/find.hpp"
 
 #include "memedar/model/side/side.hpp"
@@ -77,7 +78,7 @@ void task_mapper::load_taskbook(deck::deck& deck, task::taskbook& taskbook)
 	while (conn.step() == SQLITE_ROW and taskbook.space()) {
 
 		auto card {*utils::find_by_id(conn.read_int64t(ind.card_id()),
-		                               deck)};
+		                              deck.cards())};
 		
 		auto state {static_cast<task::state>(conn.read_int64t(ind.state()))};
 

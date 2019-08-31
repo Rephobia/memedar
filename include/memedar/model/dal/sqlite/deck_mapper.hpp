@@ -40,7 +40,7 @@ public:
 	void create_table() override;
 
 	md::model::deck::deck save_deck(md::model::deck::deck_value&& deck_value) override;
-	std::deque<md::model::deck::deck> load_decks() override;
+	std::unique_ptr<md::model::dal::deck_generator> get_generator() override;
 	void update_deck(const md::model::deck::deck& deck,
 	                 const md::model::deck::deck_value& new_deck) override;
 	

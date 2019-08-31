@@ -48,8 +48,9 @@ public:
 
 	void create_table() override;
 
-	md::model::card::card save_card(const md::model::deck::deck& deck,
-	                                md::model::card::card_dto&& new_card) override;
+	void save_card(md::model::deck::deck& deck,
+	               md::model::card::card_dto&& new_card) override;
+	
 	void load_cards(md::model::deck::deck& deck) override;
 
 	void update_side(const md::model::side::side& old_side,

@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov
+ * Copyright (C) 2018-2019 Roman Erdyakov
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -23,7 +23,6 @@
 #define MEMEDAR_MODEL_DECK_DECK_HPP
 
 
-#include <memory>
 #include <QString>
 
 #include "memedar/model/identity.hpp"
@@ -31,12 +30,8 @@
 #include "memedar/model/deck/gap.hpp"
 #include "memedar/model/deck/limit.hpp"
 #include "memedar/model/deck/accountant.hpp"
+#include "memedar/model/deck/storage.hpp"
 
-
-namespace md::utils {
-	template<class T>
-	class storage;
-}
 
 namespace md::model::card {
 	class card;
@@ -76,7 +71,7 @@ protected:
 
 class md::model::deck::deck : public md::model::identity
                             , public md::model::deck::deck_value
-                            , public md::utils::storage<std::shared_ptr<md::model::card::card>>
+                            , public md::model::deck::storage
 {
 public:
 	deck(md::model::identity id,
@@ -85,18 +80,19 @@ public:
 	deck(md::model::identity id,
 	     md::model::deck::deck_value&& deck_value,
 	     md::model::deck::accountant&& accountant);
-
+	
 	std::int64_t noob_cards() const;
 	std::int64_t ready_cards() const;
 	std::int64_t delayed_cards() const;
 	std::int64_t total_cards() const;
 
 	void process_card(md::model::card::card& card);
-	std::shared_ptr<md::model::card::card> add_card(md::model::card::card&& card);
+
+	md::utils::storage<std::shared_ptr<md::model::card::card>>& cards();
+
+	void add_card(md::model::card::card&& card);
 protected:
-	md::model::deck::accountant m_accountant;
-private:
-	using storage::add;
+	md::model::deck::accountant m_accountant {};
 };
 
 
