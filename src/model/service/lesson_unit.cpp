@@ -24,13 +24,12 @@
 #include <deque>
 #include <map>
 
+
 #include <QString>
 
-#include "memedar/utils/storage.hpp"
 
 #include "memedar/model/side/side.hpp"
 #include "memedar/model/card/card.hpp"
-#include "memedar/model/card/visitor.hpp"
 #include "memedar/model/deck/deck.hpp"
 #include "memedar/model/task/task.hpp"
 #include "memedar/model/task/taskbook.hpp"

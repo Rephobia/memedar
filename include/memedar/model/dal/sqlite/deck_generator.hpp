@@ -19,36 +19,28 @@
  */
 
 
-#include <deque>
+#ifndef MEMEDAR_MODEL_DAL_SQLITE_DECK_GENERATOR_HPP
+#define MEMEDAR_MODEL_DAL_SQLITE_DECK_GENERATOR_HPP
 
 
-#include "memedar/model/deck/deck.hpp"
-#include "memedar/model/task/task.hpp"
-#include "memedar/model/task/taskbook.hpp"
-
-#include "memedar/model/dal/transaction_guard.hpp"
-#include "memedar/model/dal/mapper.hpp"
-
-#include "memedar/model/service/delete_unit.hpp"
-
-
-using md::model::delete_unit;
-
-delete_unit::delete_unit(dal::mapper& mapper)
-	: deck_to_taskbook {mapper}
-	, m_mapper {mapper}
-{ ;}
-
-void delete_unit::delete_deck(md::model::deck::deck& deck)
-{
-	decltype(auto) transaction {m_mapper.make_transaction()};
-	
-	for (auto& e : deck.cards()) {
-		m_mapper.task->delete_card(*e);
-		m_mapper.card->delete_card(*e);
-	}
-	m_mapper.deck->delete_deck(deck);
-	deck_to_taskbook::delete_deck(deck);
-
-	transaction.commit();
+namespace md::model::dal::sqlite::adapter {
+	class connector;
 }
+namespace md::model::dal::sqlite {
+	class deck_generator;
+}
+
+
+class md::model::dal::sqlite::deck_generator : public md::model::dal::deck_generator
+{
+public:
+	explicit deck_generator(md::model::dal::sqlite::adapter::connector& connector);
+	
+	std::optional<md::model::deck::deck> get_deck() override;
+protected:
+	md::model::dal::sqlite::adapter::connector& m_conn;
+	md::model::dal::sqlite::deck_index m_ind;
+};
+
+
+#endif // MEMEDAR_MODEL_DAL_SQLITE_DECK_GENERATOR_HPP

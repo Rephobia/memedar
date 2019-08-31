@@ -54,6 +54,7 @@ browser::table::table(QWidget* parent)
 	: QTableView {parent}
 	, m_model    {new QStandardItemModel {}}
 {
+	m_model->setHorizontalHeaderLabels({"deck", "question", "answer"});
 	QTableView::setSelectionBehavior(QAbstractItemView::SelectRows);
 	QTableView::setEditTriggers(QAbstractItemView::NoEditTriggers);
 	QTableView::setModel(m_model);
@@ -86,7 +87,7 @@ void browser::show(std::deque<md::model::deck::deck>& decks)
 	
 	for (auto& deck : decks) {
 		
-		for (auto& card : deck) {
+		for (auto& card : deck.cards()) {
 
 			table->add_row(deck, *card);
 

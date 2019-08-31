@@ -26,7 +26,6 @@
 #include <QString>
 #include <boost/signals2.hpp>
 
-#include "memedar/utils/storage.hpp"
 #include "memedar/view/error_delegate.hpp"
 #include "memedar/view/menu.hpp"
 #include "memedar/view/lobby.hpp"
