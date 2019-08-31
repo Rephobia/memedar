@@ -26,6 +26,9 @@
 #include <optional>
 
 
+#include "memedar/utils/storage.hpp"
+
+
 namespace md::utils {
 	template<class T>
 	class storage;
@@ -42,8 +45,6 @@ namespace md::model::deck {
 namespace md::model::task {
 	enum class state : int;
 	class task;
-
-	class add_visitor;
 	class taskbook;
 }
 
@@ -67,8 +68,6 @@ public:
 	md::model::task::task& next_task();
 
 	void push_back_current();
-private:
-	using storage::add;
 protected:
 	std::int64_t m_noob_space;
 	std::int64_t m_ready_space;

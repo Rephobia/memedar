@@ -28,6 +28,9 @@
 namespace md::utils {
 	template<class T>
 	class storage;
+
+	template<class T>
+	class storage_with_add;
 }
 
 
@@ -108,6 +111,24 @@ protected:
 	}
 private:
 	container m_container {};
+};
+
+
+template<class T>
+class md::utils::storage_with_add : public md::utils::storage<T>
+{
+public:
+	storage_with_add() = default;
+	
+	void add(const T& value)
+	{
+		storage<T>::add(value);
+	}
+	
+	void add(T&& value)
+	{
+		storage<T>::add(std::forward<T>(value));
+	}
 };
 
 

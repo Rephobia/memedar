@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
+ * Copyright (C) 2018-2019 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -18,8 +18,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "memedar/utils/storage.hpp"
-#include "memedar/model/deck/storage.hpp"
+
 #include "memedar/model/side/side.hpp"
 #include "memedar/model/card/card.hpp"
 #include "memedar/model/deck/deck.hpp"
@@ -103,44 +102,44 @@ void deck::process_card(card::card& card)
 
 void deck::add_card(card::card&& card)
 {
-	if (deck_storage::is_empty()) {
-		deck_storage::need_cards(*this);
+	if (storage::is_empty()) {
+		storage::need_cards(*this);
 	}
 	else {
 		m_accountant.process_card(card);
 		auto shared_card {std::make_shared<card::card>(std::move(card))};
-		deck_storage::add(shared_card);
-		deck_storage::card_added(*this, shared_card);
+		storage::add_card(shared_card);
+		storage::card_added(*this, shared_card);
 	}
 
 }
 
 md::utils::storage<std::shared_ptr<md::model::card::card>>& deck::cards()
 {
-	if (deck_storage::is_empty()) {
-		deck_storage::need_cards(*this);
+	if (storage::is_empty()) {
+		storage::need_cards(*this);
 	}
 		
-	return static_cast<storage&>(*this);
+	return storage::cards();
 }
 
 
 std::int64_t deck::noob_cards() const
 {
-	return m_accountant.noob_cards(deck_storage::is_loaded());
+	return m_accountant.noob_cards(storage::is_loaded());
 }
 
 std::int64_t deck::ready_cards() const
 {
-	return m_accountant.ready_cards(deck_storage::is_loaded());
+	return m_accountant.ready_cards(storage::is_loaded());
 }
 
 std::int64_t deck::delayed_cards() const
 {
-	return m_accountant.delayed_cards(deck_storage::is_loaded());
+	return m_accountant.delayed_cards(storage::is_loaded());
 }
 
 std::int64_t deck::total_cards() const
 {
-	return m_accountant.total_cards(deck_storage::is_loaded());
+	return m_accountant.total_cards(storage::is_loaded());
 }

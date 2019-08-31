@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
+ * Copyright (C) 2018-2019 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -71,7 +71,7 @@ protected:
 
 class md::model::deck::deck : public md::model::identity
                             , public md::model::deck::deck_value
-                            , public md::model::deck::deck_storage
+                            , public md::model::deck::storage
 {
 public:
 	deck(md::model::identity id,

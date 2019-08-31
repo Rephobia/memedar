@@ -35,48 +35,69 @@ namespace md::model::card {
 
 namespace md::model::deck {
 	class deck;
-	class deck_storage;
+	class storage_status;
+	class storage_container;
+	class storage;
 }
 
 
-class md::model::deck::deck_storage
-	: protected md::utils::storage<std::shared_ptr<md::model::card::card>>
+class md::model::deck::storage_status
 {
 public:
-	deck_storage();
-
-	deck_storage(md::model::deck::deck_storage&& other);
-
-	md::model::deck::deck_storage& operator=(md::model::deck::deck_storage&& other);
-	
-	boost::signals2::signal<void(md::model::deck::deck& deck)> need_cards {};
-	boost::signals2::signal<void(md::model::deck::deck& deck,
-	                             std::shared_ptr<md::model::card::card>)> card_added {};
-
+	storage_status() = default;
 	bool is_empty() const;
 	bool is_loaded() const;
-	
-	class boss;
-	friend class boss;
-	// cppcheck-suppress functionConst
-	md::model::deck::deck_storage::boss get_storage_boss();
-private:
+protected:
 	enum class status : int {empty, loading, loaded};
-	md::model::deck::deck_storage::status m_status;
 
-	void set_status(md::model::deck::deck_storage::status status);
+	void set_status(md::model::deck::storage_status::status status);
+private:
+	md::model::deck::storage_status::status m_status {status::empty};
 };
 
 
-class md::model::deck::deck_storage::boss
+class md::model::deck::storage_container
 {
 public:
-	explicit boss(md::model::deck::deck_storage& deck_storage);
+	storage_container() = default;
+protected:
+	using shared_card = std::shared_ptr<md::model::card::card>;
+	
+	void add_card(shared_card card);
+	md::utils::storage<shared_card>& cards();
+private:
+	md::utils::storage_with_add<shared_card> m_storage {};
+};
+
+
+class md::model::deck::storage : public md::model::deck::storage_status
+                               , public md::model::deck::storage_container
+{
+public:
+	storage() = default;
+	storage(md::model::deck::storage&& other);
+
+	md::model::deck::storage& operator=(md::model::deck::storage&& other);
+	
+	boost::signals2::signal<void(md::model::deck::deck& deck)> need_cards {};
+	boost::signals2::signal<void(md::model::deck::deck& deck,
+	                             shared_card)> card_added {};
+	class boss;
+	friend class boss;
+	// cppcheck-suppress functionConst
+	md::model::deck::storage::boss get_storage_boss();
+};
+
+
+class md::model::deck::storage::boss
+{
+public:
+	explicit boss(md::model::deck::storage& storage);
 	void commit();
 	~boss();
 protected:
 	bool m_commit;
-	md::model::deck::deck_storage& m_storage;
+	md::model::deck::storage& m_storage;
 };
 
 

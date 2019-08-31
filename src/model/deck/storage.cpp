@@ -22,65 +22,78 @@
 #include "memedar/model/deck/storage.hpp"
 
 
-using md::model::deck::deck_storage;
+using md::model::deck::storage_status;
 
-md::model::deck::deck_storage::deck_storage()
-	: m_status {status::empty}
-{ ;}
+bool storage_status::is_empty() const
+{
+	return m_status == status::empty;
+}
 
-deck_storage::deck_storage(md::model::deck::deck_storage&& other)
-	: storage    {std::move(static_cast<storage&>(other))}
-	, need_cards {std::move(other.need_cards)}
-	, card_added {std::move(other.card_added)}
-	, m_status   {other.m_status}
+bool storage_status::is_loaded() const
+{
+	return m_status == status::loaded;
+}
+
+void storage_status::set_status(storage_status::status status)
+{
+	m_status = status;
+}
+
+
+using md::model::deck::storage_container;
+
+void storage_container::add_card(shared_card card)
+{
+	m_storage.add(card);
+}
+
+md::utils::storage<storage_container::shared_card>& storage_container::cards()
+{
+	return static_cast<md::utils::storage<shared_card>&>(m_storage);
+}
+
+
+using md::model::deck::storage;
+
+storage::storage(md::model::deck::storage&& other)
+	: storage_status    {static_cast<storage_status&>(other)}
+	, storage_container {std::move(static_cast<storage_container&>(other))}
+	, need_cards        {std::move(other.need_cards)}
+	, card_added        {std::move(other.card_added)}
 {;}
 
-md::model::deck::deck_storage& deck_storage::operator=(md::model::deck::deck_storage&& other)
+md::model::deck::storage& storage::operator=(md::model::deck::storage&& other)
 {
 	if (this != &other) {
-		storage::operator=(std::move(static_cast<storage&>(other)));
+		storage_status::operator=(static_cast<storage_status&>(other));
+		storage_container::operator=(std::move(static_cast<storage_container&>(other)));
 		need_cards = std::move(other.need_cards);
 		card_added = std::move(other.card_added);
-		m_status = other.m_status;
 	}
 	
 	return *this;
 }
 
-bool deck_storage::is_empty() const
-{
-	return m_status == status::empty;
-}
-
-bool deck_storage::is_loaded() const
-{
-	return m_status == status::loaded;
-}
-
-deck_storage::boss deck_storage::get_storage_boss()
+storage::boss storage::get_storage_boss()
 {
 	return boss {*this};
 }
 
-void deck_storage::set_status(md::model::deck::deck_storage::status status)
-{
-	m_status = status;
-}
 
-deck_storage::boss::boss(deck_storage& deck_storage)
+storage::boss::boss(storage& storage)
 	: m_commit  {false}
-	, m_storage {deck_storage}
+	, m_storage {storage}
 {
 	m_storage.set_status(status::loading);
 }
 
-void deck_storage::boss::commit()
+void storage::boss::commit()
 {
 	m_storage.set_status(status::loaded);
 	m_commit = true;
 }
 
-deck_storage::boss::~boss()
+storage::boss::~boss()
 {
 	if (not m_commit) {
 		m_storage.set_status(status::empty);
