@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
+ * Copyright (C) 2019 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -19,24 +19,43 @@
  */
 
 
-#ifndef MEMEDAR_VIEW_MENU_HPP
-#define MEMEDAR_VIEW_MENU_HPP
+#ifndef MEMEDAR_BROWSER_PRESENTER_HPP
+#define MEMEDAR_BROWSER_PRESENTER_HPP
 
+
+namespace md::model {
+	class service;
+}
 
 namespace md::view {
-	class menu;
+	class browser;
+	class error_delegate;
+}
+
+namespace md {
+	class presenter;
+	class browser_presenter;
+	class controller;
 }
 
 
-class md::view::menu
+class md::browser_presenter : public md::presenter
 {
 public:
-	boost::signals2::signal<void()> call_lobby {};
-	boost::signals2::signal<void()> call_designer {};
-	boost::signals2::signal<void()> call_browser {};
+	browser_presenter(md::controller& controller,
+	                  md::model::service& service,
+	                  md::view::error_delegate& error_delegate,
+	                  md::view::browser& browser);
 	
-	virtual ~menu() = default;
+	void run() override;
+protected:
+	md::controller& m_controller;
+	md::model::service& m_service;
+	md::view::error_delegate& m_error_delegate;
+	md::view::browser& m_browser;
 };
 
 
-#endif // MEMEDAR_VIEW_MENU_HPP
+
+
+#endif // MEMEDAR_BROWSER_PRESENTER_HPP

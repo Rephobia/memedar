@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
+ * Copyright (C) 2019 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -19,24 +19,26 @@
  */
 
 
-#ifndef MEMEDAR_VIEW_MENU_HPP
-#define MEMEDAR_VIEW_MENU_HPP
+#ifndef MEMEDAR_VIEW_BROWSER_HPP
+#define MEMEDAR_VIEW_BROWSER_HPP
 
+
+namespace md::model::deck {
+	class deck;
+}
 
 namespace md::view {
-	class menu;
+	class browser;
 }
 
 
-class md::view::menu
+class md::view::browser
 {
 public:
-	boost::signals2::signal<void()> call_lobby {};
-	boost::signals2::signal<void()> call_designer {};
-	boost::signals2::signal<void()> call_browser {};
-	
-	virtual ~menu() = default;
+	virtual void show(std::deque<md::model::deck::deck>& decks) = 0;
+	boost::signals2::signal<void(md::model::card::card& card)> call_designer {};
+	virtual ~browser() = default;
 };
 
 
-#endif // MEMEDAR_VIEW_MENU_HPP
+#endif // MEMEDAR_VIEW_BROWSER_HPP
