@@ -44,11 +44,13 @@
 #include "memedar/view/menu.hpp"
 #include "memedar/view/designer.hpp"
 #include "memedar/view/lesson.hpp"
+#include "memedar/view/browser.hpp"
 #include "memedar/view/qt/main_window.hpp"
 #include "memedar/view/qt/menu.hpp"
 #include "memedar/view/qt/lobby.hpp"
 #include "memedar/view/qt/designer.hpp"
 #include "memedar/view/qt/lesson.hpp"
+#include "memedar/view/qt/browser.hpp"
 
 #include "memedar/presenter/controller.hpp"
 
@@ -66,11 +68,13 @@ int main(int argc, char *argv[])
 	auto lobby    {std::make_unique<md::view::qt::lobby>(main_window)};
 	auto designer {std::make_unique<md::view::qt::designer>(main_window)};
 	auto lesson   {std::make_unique<md::view::qt::lesson>(main_window)};
+	auto browser  {std::make_unique<md::view::qt::browser>(main_window)};
 	main_window->show();
 
 	auto qt_error {std::make_unique<md::view::qt::error_delegate>()};
 	md::controller controller {service, *qt_error,
-	                           *menu, *lobby, *lesson, *designer};
+	                           *menu, *lobby, *lesson, *designer, *browser};
+	
 
 	return app.exec();
 }
