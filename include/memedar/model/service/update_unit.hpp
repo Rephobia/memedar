@@ -18,8 +18,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 #ifndef MEMEDAR_MODEL_UPDATE_UNIT_HPP
 #define MEMEDAR_MODEL_UPDATE_UNIT_HPP
+
+
+#include "memedar/model/service/deck_to_taskbook.hpp"
 
 
 namespace md::model::side {
@@ -27,23 +31,24 @@ namespace md::model::side {
 	class side_value;
 }
 
+
 namespace md::model {
 	class update_unit;
 }
 
 
-class md::model::update_unit
+class md::model::update_unit : private virtual md::model::deck_to_taskbook
 {
 public:
 	explicit update_unit(md::model::dal::mapper& mapper);
 	
-	bool update_card(md::model::card::card& card,
-	                 md::model::card::card_dto&& new_card);
-	void update_task(md::model::task::task& task,
+	bool update_card(md::model::deck::deck& deck,
+	                 md::model::card::card& card,
 	                 md::model::card::card_dto&& new_card);
 	void update_deck(md::model::deck::deck& deck,
 	                 md::model::deck::deck_value&& new_deck);
 protected:
+	void update_task(md::model::task::task& task);
 	void update_side(md::model::side::side& old_side,
 	                 md::model::side::side_value&& new_side);
 private:

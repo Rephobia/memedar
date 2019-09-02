@@ -62,7 +62,7 @@ public:
 	void run_browser();
 	
 	void add_card(md::model::deck::deck& deck);
-	void update_task(md::model::deck::deck& deck, md::model::task::task& task);
+	void update_card(md::model::deck::deck& deck, md::model::card::card& card);
 	void add_deck();
 	void update_deck(md::model::deck::deck& deck);
 	

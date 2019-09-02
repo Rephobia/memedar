@@ -70,6 +70,8 @@ protected:
 	void add_deck(md::model::deck::deck&& deck);
 	void delete_deck(md::model::deck::deck& deck);
 	md::model::task::taskbook make_taskbook(md::model::deck::deck& deck);
+	std::optional<md::model::task::task*> get_task(md::model::deck::deck& deck,
+	                                               md::model::card::card& card);
 private:
 	std::deque<md::model::deck::deck> load_decks();
 	void fill_from_deck(md::model::deck::deck& deck,
