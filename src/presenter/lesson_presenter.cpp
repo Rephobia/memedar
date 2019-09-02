@@ -63,8 +63,8 @@ lesson_presenter::lesson_presenter(md::controller& controller,
 	auto done_task   {[this](std::time_t gap) { done(gap); }};
 	
 	auto designer {[this]() { m_controller.add_card(m_deck); }};
-	auto update_designer {[this]() { m_controller.update_task(m_deck,
-	                                                          m_taskbook.current_task()); }};
+	auto update_designer {[this]() { m_controller.update_card(m_deck,
+	                                                          *m_taskbook.current_task().card); }};
 		
 	add_connect(m_lesson.prev_task.connect(prev),
 	            m_lesson.next_task.connect(next),
