@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov
+ * Copyright (C) 2018-2019 Roman Erdyakov
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -32,10 +32,6 @@ namespace md::model::deck {
 	class deck;
 }
 
-namespace md::model::task {
-	class task;
-}
-
 namespace md::model {
 	class service;
 }
@@ -49,7 +45,7 @@ namespace md::designer_presenter {
 	class presenter;
 	
 	class card_adder;
-	class task_updater;
+	class card_updater;
 	
 	class deck_adder;
 	class deck_updater;
@@ -75,21 +71,21 @@ protected:
 };
 
 
-class md::designer_presenter::task_updater : public md::presenter
+class md::designer_presenter::card_updater : public md::presenter
 {
 public:
-	task_updater(md::model::deck::deck& deck,
-	             md::model::task::task& task,
+	card_updater(md::model::deck::deck& deck,
+	             md::model::card::card& card,
 	             md::model::service& service,
 	             md::view::error_delegate& error_delegate,
 	             md::view::designer& designer);
 
 	void run() override;
 protected:
-	void update_task(md::model::card::card_dto&& new_card);
+	void update_card(md::model::card::card_dto&& new_card);
 protected:
 	md::model::deck::deck& m_deck;
-	md::model::task::task& m_task;
+	md::model::card::card& m_card;
 	md::model::service& m_service;
 	md::view::error_delegate& m_error_delegate;
 	md::view::designer& m_designer;

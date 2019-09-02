@@ -76,21 +76,21 @@ void card_adder::add_card(model::card::card_dto&& new_card)
 }
 
 
-using task_updater = md::designer_presenter::task_updater;
+using card_updater = md::designer_presenter::card_updater;
 
-task_updater::task_updater(model::deck::deck& deck,
-                           model::task::task& task,
+card_updater::card_updater(model::deck::deck& deck,
+                           model::card::card& card,
                            model::service& service,
                            view::error_delegate& error_delegate,
                            view::designer& designer)
 	: m_deck           {deck}
-	, m_task           {task}
+	, m_card           {card}
 	, m_service        {service}
 	, m_error_delegate {error_delegate}
 	, m_designer       {designer}
 {
 	auto action {[this](md::model::card::card_dto& new_card)
-	             { update_task(std::move(new_card)); }};
+	             { update_card(std::move(new_card)); }};
 	
 	add_connect(m_designer.get_card.connect(action));
 	
@@ -98,15 +98,15 @@ task_updater::task_updater(model::deck::deck& deck,
 }
 
 
-void task_updater::run()
+void card_updater::run()
 {
-	m_designer.show_card(m_deck, *m_task.card);
+	m_designer.show_card(m_deck, m_card);
 }
 
-void task_updater::update_task(model::card::card_dto&& new_card)
+void card_updater::update_card(model::card::card_dto&& new_card)
 {
 	try {
-		m_service.update_task(m_task, std::move(new_card));
+		m_service.update_card(m_deck, m_card, std::move(new_card));
 	}
 	catch (std::system_error& e) {
 		m_error_delegate.show_error(e);

@@ -22,6 +22,7 @@
 #include "memedar/utils/time.hpp"
 #include "memedar/utils/find.hpp"
 
+#include "memedar/model/card/card.hpp"
 #include "memedar/model/deck/deck.hpp"
 #include "memedar/model/task/task.hpp"
 #include "memedar/model/task/taskbook.hpp"
@@ -182,6 +183,25 @@ md::model::task::taskbook deck_to_taskbook::make_taskbook(deck::deck& deck)
 	
 	return taskbook;
 }
+
+std::optional<md::model::task::task*> deck_to_taskbook::get_task(deck::deck& deck,
+                                                                 card::card& card)
+{
+	decltype(auto) taskbook {m_storage.get_taskbook(deck)};
+	
+	if (taskbook == m_storage.end()) {
+		return std::nullopt;
+	}
+
+	decltype(auto) task {utils::find_by_id(card.id(), taskbook->second)};
+
+	if (task == taskbook->second.end()) {
+		return std::nullopt;
+	}
+		
+	return &*task;
+}
+
 
 void deck_to_taskbook::fill_from_deck(deck::deck& deck, task::taskbook& taskbook)
 {

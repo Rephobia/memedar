@@ -25,6 +25,7 @@
 #include "memedar/model/card/card.hpp"
 #include "memedar/model/deck/deck.hpp"
 #include "memedar/model/task/task.hpp"
+#include "memedar/model/task/taskbook.hpp"
 
 #include "memedar/model/dal/transaction_guard.hpp"
 #include "memedar/model/dal/mapper.hpp"
@@ -35,31 +36,26 @@
 using md::model::update_unit;
 
 update_unit::update_unit(dal::mapper& mapper)
-	: m_mapper {mapper}
+	: deck_to_taskbook {mapper}
+	, m_mapper         {mapper}
 { ;}
 
-bool update_unit::update_card(card::card& card, card::card_dto&& new_card)
+bool update_unit::update_card(deck::deck& deck,
+                              card::card& card, card::card_dto&& new_card)
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};
 
 	bool updated = false;
 	
-	if (card.question.text() != new_card.question.text()
-	    and card.answer.text() != new_card.answer.text()) {
+	if (card.question.text() != new_card.question.text()) {
 		update_side(card.question, std::move(new_card.question));
+		updated = true;
+	}
+	
+	if (card.answer.text() != new_card.answer.text()) {
 		update_side(card.answer, std::move(new_card.answer));
 		updated = true;
 	}
-	else if (card.question.text() != new_card.question.text()) {
-		update_side(card.question, std::move(new_card.question));
-		updated = true;
-
-	}
-	else if (card.answer.text() != new_card.answer.text()) {
-		update_side(card.answer, std::move(new_card.answer));
-		updated = true;
-	}
-
 
 	if (card.has_typing != new_card.value.has_typing) {
 		m_mapper.card->update_card(card, new_card.value.has_typing);
@@ -67,6 +63,12 @@ bool update_unit::update_card(card::card& card, card::card_dto&& new_card)
 		updated = true;
 	}
 
+	if (updated) {
+		if (std::optional<task::task*> task_opt {get_task(deck, card)}) {
+			update_task(*(task_opt.value()));
+		}
+	}
+	
 	transaction.commit();
 	
 	return updated;
@@ -78,18 +80,10 @@ void update_unit::update_side(side::side& old_side, side::side_value&& new_side)
 	old_side = std::move(new_side);	
 }
 
-void update_unit::update_task(task::task& task, card::card_dto&& new_card)
+void update_unit::update_task(task::task& task)
 {
-	decltype(auto) transaction {m_mapper.make_transaction()};
-
-	bool is_card_updated {update_card(*task.card, std::move(new_card))};
-
-	if (is_card_updated) {
-		m_mapper.card->reset_combo(*task.card);
-		m_mapper.task->change_state(task, task::state::answering);
-	}
-	
-	transaction.commit();
+	m_mapper.card->reset_combo(*task.card);
+	m_mapper.task->change_state(task, task::state::answering);
 }
 
 void update_unit::update_deck(md::model::deck::deck& deck,

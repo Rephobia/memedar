@@ -117,11 +117,11 @@ void controller::add_card(md::model::deck::deck& deck)
 	}
 }
 
-void controller::update_task(md::model::deck::deck& deck, md::model::task::task& task)
+void controller::update_card(md::model::deck::deck& deck, md::model::card::card& card)
 {
 	try {
-		m_designer_presenter = std::make_unique<designer_presenter::task_updater>
-			(deck, task, m_service, m_error_delegate, m_designer);
+		m_designer_presenter = std::make_unique<designer_presenter::card_updater>
+			(deck, card, m_service, m_error_delegate, m_designer);
 	}
 	catch (std::system_error& e) {
 		m_error_delegate.show_error(e);
