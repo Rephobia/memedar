@@ -55,14 +55,20 @@ browser::table::table(QWidget* parent)
 	, m_model    {new QStandardItemModel {}}
 {
 	m_model->setHorizontalHeaderLabels({"deck", "question", "answer"});
+	
 	QTableView::setSelectionBehavior(QAbstractItemView::SelectRows);
+	QTableView::setSelectionMode(QAbstractItemView::SingleSelection);
+	
 	QTableView::setEditTriggers(QAbstractItemView::NoEditTriggers);
+	
+
 	QTableView::setModel(m_model);
 }
 
-md::model::card::card& browser::table::get_card(std::size_t row_index)
+
+md::view::qt::browser::table_row browser::table::get_row(std::size_t row_index)
 {
-	return m_rows[row_index].card;
+	return m_rows[row_index];
 }
 
 void browser::table::add_row(md::model::deck::deck& deck, md::model::card::card& card)
@@ -98,12 +104,9 @@ void browser::show(std::deque<md::model::deck::deck>& decks)
 	                 &QAbstractItemView::doubleClicked,
 	                 [this, table](const QModelIndex& index)
 	                 {
-		                 decltype(auto) card {table->get_card(index.row())};
-
-		                 call_designer(card);
+		                 decltype(auto) row {table->get_row(index.row())};
+		                 call_designer(row.deck, row.card);
 	                 });
-		
+	
 	m_main_window->set_widget(table);
 }
-
-
