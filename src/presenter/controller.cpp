@@ -70,6 +70,9 @@ controller::controller(md::model::service& service,
 	m_menu.call_designer.connect([this]() { add_deck(); });
 	m_menu.call_browser.connect([this]() { run_browser(); });
 	m_designer.cancel.connect([this]() { m_presenter->run(); });
+	m_browser.call_designer.connect([this](md::model::deck::deck& deck,
+	                                       md::model::card::card& card)
+	                                { update_card(deck, card); });
 	run_lobby();
 }
 

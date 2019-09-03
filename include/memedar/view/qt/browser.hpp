@@ -26,9 +26,7 @@
 #include <QTableView>
 
 
-class QWidget;
 class QStandardItemModel;
-
 
 namespace md::view::qt {
 	class browser;
@@ -67,7 +65,8 @@ class md::view::qt::browser::table : public QTableView
 public:
 	explicit table(QWidget* parent);
 	void add_row(md::model::deck::deck& deck, md::model::card::card& card);
-	md::model::card::card& get_card(std::size_t row_index);
+
+	md::view::qt::browser::table_row get_row(std::size_t row_index);
 protected:
 	QStandardItemModel* m_model;
 	enum column : int {deck = 0, question, answer};
