@@ -60,13 +60,14 @@ class md::model::deck::storage_container
 {
 public:
 	storage_container() = default;
+	void delete_card(md::model::card::card& card);
 protected:
 	using shared_card = std::shared_ptr<md::model::card::card>;
 	
 	void add_card(shared_card card);
 	md::utils::storage<shared_card>& cards();
 private:
-	md::utils::storage_with_add<shared_card> m_storage {};
+	md::utils::editable_storage<shared_card> m_storage {};
 };
 
 

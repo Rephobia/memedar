@@ -51,10 +51,26 @@ browser_presenter::browser_presenter(md::controller& controller,
 	, m_error_delegate {error_delegate}
 	, m_browser        {browser}
 {
+	auto del_card {[this](model::deck::deck& deck,
+	                      model::card::card& card)
+	                  { delete_card(deck, card); }};
+
+	add_connect(m_browser.delete_card.connect(del_card));
 	run();
 }
 
 void browser_presenter::run()
 {
 	m_browser.show(m_service.get_decks());
+}
+
+void browser_presenter::delete_card(model::deck::deck& deck, model::card::card& card)
+{
+	try {
+		m_service.delete_card(deck, card);
+		run();
+	}
+	catch (std::system_error& e) {
+		m_error_delegate.show_error(e);
+	}
 }
