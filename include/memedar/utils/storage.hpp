@@ -30,7 +30,7 @@ namespace md::utils {
 	class storage;
 
 	template<class T>
-	class storage_with_add;
+	class editable_storage;
 }
 
 
@@ -119,10 +119,10 @@ private:
 
 
 template<class T>
-class md::utils::storage_with_add : public md::utils::storage<T>
+class md::utils::editable_storage : public md::utils::storage<T>
 {
 public:
-	storage_with_add() = default;
+	editable_storage() = default;
 	
 	void add(const T& value)
 	{
