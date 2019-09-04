@@ -107,6 +107,21 @@ void browser::show(std::deque<md::model::deck::deck>& decks)
 		                 decltype(auto) row {table->get_row(index.row())};
 		                 call_designer(row.deck, row.card);
 	                 });
+
+
+	auto del_lambda {[this, table]()
+	                 {
+		                 decltype(auto) select {table->selectionModel()};
+		                 if (select->hasSelection()) {
+			                 decltype(auto) rows {select->selectedRows()};
+			                 // table must be SingleSelection only
+			                 decltype(auto) row {table->get_row(rows.at(0).row())};
+			                 delete_card(row.deck, row.card);
+		                 }
+	                 }};
 	
-	m_main_window->set_widget(table);
+	auto del_card {new ui::button {"delete card", del_lambda}};
+	
+	auto box {new ui::box {QBoxLayout::TopToBottom, del_card, table}};
+	m_main_window->set_widget(box);
 }

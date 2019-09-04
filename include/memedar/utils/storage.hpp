@@ -109,6 +109,10 @@ protected:
 	{
 		m_container.push_back(std::forward<T>(value));
 	}
+	void erase(iterator it)
+	{
+		m_container.erase(it);
+	}
 private:
 	container m_container {};
 };
@@ -128,6 +132,10 @@ public:
 	void add(T&& value)
 	{
 		storage<T>::add(std::forward<T>(value));
+	}
+	void erase(typename md::utils::storage<T>::iterator it)
+	{
+		storage<T>::erase(it);
 	}
 };
 

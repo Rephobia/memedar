@@ -38,6 +38,10 @@ public:
 	virtual void show(std::deque<md::model::deck::deck>& decks) = 0;
 	boost::signals2::signal<void(md::model::deck::deck& deck,
 	                             md::model::card::card& card)> call_designer {};
+
+	boost::signals2::signal<void(md::model::deck::deck& deck,
+	                             md::model::card::card& card)> delete_card {};
+	
 	virtual ~browser() = default;
 };
 

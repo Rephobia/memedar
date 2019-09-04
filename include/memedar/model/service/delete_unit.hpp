@@ -35,6 +35,7 @@ class md::model::delete_unit : private virtual md::model::deck_to_taskbook
 public:
 	explicit delete_unit(md::model::dal::mapper& mapper);
 	void delete_deck(md::model::deck::deck& deck);
+	void delete_card(md::model::deck::deck& deck, md::model::card::card& card);
 private:	
 	md::model::dal::mapper& m_mapper;
 };

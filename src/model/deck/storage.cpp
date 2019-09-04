@@ -18,7 +18,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
+#include "memedar/model/side/side.hpp"
+#include "memedar/model/card/card.hpp"
+#include "memedar/utils/find.hpp"
 #include "memedar/model/deck/storage.hpp"
 
 
@@ -41,6 +43,14 @@ void storage_status::set_status(storage_status::status status)
 
 
 using md::model::deck::storage_container;
+
+void storage_container::delete_card(md::model::card::card& card)
+{
+	auto card_it {utils::find_by_id(card.id(), m_storage)};
+	if (card_it != m_storage.end()) {
+		m_storage.erase(card_it);
+	}
+}
 
 void storage_container::add_card(shared_card card)
 {
