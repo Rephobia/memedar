@@ -51,13 +51,13 @@ lobby_presenter::lobby_presenter(md::controller& controller,
 {
 	auto lesson   {[this](model::deck::deck& deck) { m_controller.run_lesson(deck); }};
 	auto add_card {[this](model::deck::deck& deck) { m_controller.add_card(deck); }};
-	auto update_deck {[this](model::deck::deck& deck) { m_controller.update_deck(deck); }};
-	auto delete_del {[this](model::deck::deck& deck) { delete_deck(deck); }};
+	auto upd_deck {[this](model::deck::deck& deck) { m_controller.update_deck(deck); }};
+	auto del_deck {[this](model::deck::deck& deck) { delete_deck(deck); }};
 	
 	add_connect(m_lobby.call_lesson.connect(lesson),
 	            m_lobby.add_card.connect(add_card),
-	            m_lobby.update_deck.connect(update_deck),
-	            m_lobby.delete_deck.connect(delete_del));
+	            m_lobby.update_deck.connect(upd_deck),
+	            m_lobby.delete_deck.connect(del_deck));
 	
 	run();
 }

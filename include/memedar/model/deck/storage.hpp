@@ -60,6 +60,7 @@ class md::model::deck::storage_container
 {
 public:
 	storage_container() = default;
+	void delete_card(md::model::card::card& card);
 protected:
 	using shared_card = std::shared_ptr<md::model::card::card>;
 	

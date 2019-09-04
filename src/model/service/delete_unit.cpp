@@ -39,7 +39,7 @@ delete_unit::delete_unit(dal::mapper& mapper)
 	, m_mapper {mapper}
 { ;}
 
-void delete_unit::delete_deck(md::model::deck::deck& deck)
+void delete_unit::delete_deck(deck::deck& deck)
 {
 	decltype(auto) transaction {m_mapper.make_transaction()};
 	
@@ -49,6 +49,18 @@ void delete_unit::delete_deck(md::model::deck::deck& deck)
 	}
 	m_mapper.deck->delete_deck(deck);
 	deck_to_taskbook::delete_deck(deck);
+
+	transaction.commit();
+}
+
+void delete_unit::delete_card(deck::deck& deck, card::card& card)
+{
+	decltype(auto) transaction {m_mapper.make_transaction()};
+	
+	m_mapper.task->delete_card(card);
+	m_mapper.card->delete_card(card);
+
+	deck_to_taskbook::delete_card(deck, card);
 
 	transaction.commit();
 }
