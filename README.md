@@ -11,7 +11,5 @@ Memedar is flashcard system like Anki
 ## Build
      
     cd memedar/
-    mkdir build/
-    cd build/
-    cmake ../
-    cmake --build .
+	cmake -Bbuild -H. && cmake --build build/
+	
