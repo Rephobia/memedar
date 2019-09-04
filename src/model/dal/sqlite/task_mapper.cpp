@@ -23,18 +23,18 @@
 #include <memory>
 #include <filesystem>
 
+
 #include <sqlite3.h>
 #include <QString>
 
+
 #include "memedar/utils/find.hpp"
-#include "memedar/utils/storage.hpp"
-#include "memedar/utils/ref_wrapper.hpp"
 
 #include "memedar/model/side/side.hpp"
 #include "memedar/model/card/card.hpp"
 #include "memedar/model/deck/deck.hpp"
 #include "memedar/model/task/task.hpp"
-#include "memedar/model/task/task_book.hpp"
+#include "memedar/model/task/taskbook.hpp"
 
 #include "memedar/model/dal/task_mapper.hpp"
 #include "memedar/model/dal/sqlite/adapter.hpp"
@@ -64,26 +64,36 @@ void task_mapper::save_task(const deck::deck& deck,
 	static connector conn {m_db, res::insert_cmd()};
 	task_index ind {res::insert_index()};
 
-	conn.exec_bind(binder {ind.card_id(), task.card.get().id()},
+	conn.exec_bind(binder {ind.card_id(), task.card->id()},
 	               binder {ind.deck_id(), deck.id()},
 	               binder {ind.state(), static_cast<int>(task.state)});
 }
 
-void task_mapper::load_task_book(task::task_book& task_book)
+void task_mapper::load_taskbook(deck::deck& deck, task::taskbook& taskbook)
 {
 	static connector conn {m_db, res::select_cmd()};
 	task_index ind {res::select_index()};
 
-	conn.bind(ind.deck_id(), task_book.deck.id());
+	conn.bind(ind.deck_id(), deck.id());
+	while (conn.step() == SQLITE_ROW and taskbook.space()) {
 
-	while (conn.step() == SQLITE_ROW and task_book.space()) {
+		auto card {*utils::find_by_id(conn.read_int64t(ind.card_id()),
+		                              deck.cards())};
+		
+		auto state {static_cast<task::state>(conn.read_int64t(ind.state()))};
 
-		auto card_it {utils::find_by_id(conn.read_int64t(ind.card_id()),
-		                                task_book.deck)};
-
-		auto  state {static_cast<task::state>(conn.read_int64t(ind.state()))};
-		task_book.add_card(*card_it, state);
+		if (decltype(auto) task {taskbook.check_card(card, state)}) {
+			taskbook.add_task(std::move(task.value()));
+		}
 	}
+}
+
+void task_mapper::delete_card(const md::model::card::card& card)
+{
+	static connector conn {m_db, res::delete_cmd()};
+	task_index ind {res::delete_index()};
+
+	conn.exec_bind(binder {ind.card_id(), card.id()});
 }
 
 void task_mapper::change_state(task::task& task, task::state state)

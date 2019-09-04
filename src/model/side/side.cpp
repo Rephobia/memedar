@@ -25,32 +25,38 @@
 
 #include "memedar/model/side/side.hpp"
 
-using md::model::side::side;
+using md::model::side::side_value;
 
-side::side(QString&& text)
-	: identity {identity {}}
-	, m_text   {std::move(text)}
-{ ;}
-side::side(identity id, QString&& text)
-	: identity {id}
-	, m_text   {std::move(text)}
+side_value::side_value(QString&& text)
+	: m_text   {std::move(text)}
 { ;}
 
-side::side(side&& other)
-	: identity {static_cast<identity>(other)}
-	, m_text   {std::move(other.m_text)}
+side_value::side_value(side_value&& other)
+	: m_text   {std::move(other.m_text)}
 { ;}
 
-side& side::operator=(side&& other)
+side_value& side_value::operator=(side_value&& other)
 {
 	if (this != &other) {
-		identity::operator=(static_cast<identity>(other));
 		m_text = std::move(other.m_text);
 	}
 	return *this;
 }
 
-const QString& side::text() const
+const QString& side_value::text() const
 {
 	return m_text;
+}
+
+using md::model::side::side;
+
+side::side(identity id, side::side_value&& value)
+	: identity   {id}
+	, side_value {std::move(value)}
+{ ;}
+
+md::model::side::side& side::operator=(md::model::side::side_value&& value)
+{
+	side_value::operator=(std::move(value));
+	return *this;
 }

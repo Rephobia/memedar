@@ -19,27 +19,40 @@
  */
 
 
-#ifndef MEMEDAR_MENU_PRESENTER_HPP
-#define MEMEDAR_MENU_PRESENTER_HPP
+#include <cassert>
+
+#include <ctime>
+#include <algorithm>
+
+#include "memedar/model/deck/gap.hpp"
+#include "memedar/model/card/combo.hpp"
 
 
-namespace md::view {
-	class menu;
-}
+using md::model::card::combo;
 
-namespace md {
-	class menu_presenter;
-}
-
-
-class md::menu_presenter
+combo::combo(int value)
+	: m_combo {std::min(value, MAX_COMBO)}
 {
-public:
-	explicit menu_presenter(md::view::menu& menu);
-	boost::signals2::signal<void()> go_to_designer {};
-protected:
-	md::view::menu& m_menu;
-};
+	assert(m_combo >= WITHOUT_COMBO && "combo isn't valid");
+}
 
+int combo::get_combo() const
+{
+	return m_combo;
+}
 
-#endif // MEMEDAR_MENU_PRESENTER_HPP
+void combo::increment_combo()
+{
+	m_combo = std::min(m_combo + 1, MAX_COMBO);
+}
+
+void combo::reset_combo()
+{
+	m_combo = WITHOUT_COMBO;
+}
+
+std::time_t combo::interval(md::model::deck::gap gap) const
+{
+	return gap.brutto_value() * m_combo - gap.brutto_value()
+		+ gap.netto_value();
+}

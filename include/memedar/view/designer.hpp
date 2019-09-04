@@ -23,6 +23,21 @@
 #define MEMEDAR_VIEW_DESIGNER_HPP
 
 
+namespace md::model::side {
+	class side_value;
+}
+
+namespace md::model::card {
+	class card_value;
+	class card;
+	class card_dto;
+}
+
+namespace md::model::deck {
+	class deck_value;
+	class deck;
+}
+
 namespace md::view {
 	class designer;
 }
@@ -31,14 +46,16 @@ namespace md::view {
 class md::view::designer
 {
 public:
-	virtual void show(const md::model::deck::deck& deck,
-	                  QString question = QString {},
-	                  QString answer = QString {}) = 0;
-	virtual void show() = 0;
+	virtual void show_card(const md::model::deck::deck& deck) = 0;
+	
+	virtual void show_card(const md::model::deck::deck& deck,
+	                  const md::model::card::card& card) = 0;
+		
+	virtual void show_deck() = 0;
+	virtual void show_deck(const md::model::deck::deck& deck) = 0;
 
-	boost::signals2::signal<void(std::int64_t deck_id,
-	                             md::model::card::card& card)> add_card {};
-	boost::signals2::signal<void(md::model::deck::deck& deck)> add_deck {};
+	boost::signals2::signal<void(md::model::card::card_dto& dto)> get_card {};
+	boost::signals2::signal<void(md::model::deck::deck_value& deck)> get_deck {};
 	boost::signals2::signal<void()> cancel {};
 
 	virtual ~designer() = default;

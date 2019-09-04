@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
+ * Copyright (C) 2019 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -19,15 +19,28 @@
  */
 
 
-#include <boost/signals2.hpp>
+#ifndef MEMEDAR_MODEL_DAL_DECK_GENERATOR_HPP
+#define MEMEDAR_MODEL_DAL_DECK_GENERATOR_HPP
 
-#include "memedar/presenter/menu_presenter.hpp"
-#include "memedar/view/menu.hpp"
 
-using md::menu_presenter;
+#include <optional>
 
-menu_presenter::menu_presenter(md::view::menu& menu)
-	: m_menu {menu}
-{
-	m_menu.go_to_designer.connect([this]() { go_to_designer(); });
+namespace md::model::deck {
+	class deck;
 }
+
+namespace md::model::dal {
+	class deck_generator;
+}
+
+
+class md::model::dal::deck_generator
+{
+public:
+	virtual std::optional<md::model::deck::deck> get_deck() = 0;
+
+	virtual ~deck_generator() = default;
+};
+
+
+#endif // MEMEDAR_MODEL_DAL_DECK_GENERATOR_HPP

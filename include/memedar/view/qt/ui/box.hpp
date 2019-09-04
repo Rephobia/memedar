@@ -23,7 +23,9 @@
 #define MEMEDAR_VIEW_QT_UI_BOX_HPP
 
 
+#include <QWidget>
 #include <QBoxLayout>
+
 
 namespace md::view::qt::ui {
 	class box;

@@ -63,7 +63,7 @@ void limit::decrement_daily_ready()
 	--m_daily_ready;
 }
 
-void limit::reset_daily()
+void limit::reset_daily_limits()
 {
 	m_daily_noob = m_max_noob;
 	m_daily_ready = m_max_ready;

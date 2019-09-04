@@ -19,45 +19,28 @@
  */
 
 
-#ifndef MEMEDAR_MODEL_CARD_SERVICE_HPP
-#define MEMEDAR_MODEL_CARD_SERVICE_HPP
+#include "memedar/model/deck/time.hpp"
 
 
-namespace md::model::card {
-	class card;
-}
-
-namespace md::model::deck {
-	class deck;
-}
-
-namespace md::model::dal {
-	class transaction;
-	class card_mapper;
-}
-
-namespace md::model {
-	class card_service;
-}
-
-namespace md::view {
-	class error_delegate;
-}
+using md::model::deck::time;
 
 
-class md::model::card_service
+time::time(std::time_t added, std::time_t last_opening)
+	: m_added        {added}
+	, m_last_opening {last_opening}
+{ ;}
+
+std::time_t time::added() const
 {
-public:
-	card_service(md::view::error_delegate& error_delegate,
-	             md::model::dal::transaction& transaction,
-	             md::model::dal::card_mapper& card_mapper);
+	return m_added;
+}
 
-	void save_card(md::model::deck::deck& deck, md::model::card::card&& card);
-protected:
-	md::view::error_delegate& m_error_delegate;
-	md::model::dal::transaction& m_transaction;
-	md::model::dal::card_mapper& m_card_mapper;
-};
+std::time_t time::last_opening() const
+{
+	return m_last_opening;
+}
 
-
-#endif // MEMEDAR_MODEL_CARD_SERVICE_HPP
+void time::change_last_opening(std::time_t timestamp)
+{
+	m_last_opening = timestamp;
+}

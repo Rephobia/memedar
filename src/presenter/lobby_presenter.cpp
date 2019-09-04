@@ -19,31 +19,61 @@
  */
 
 
+#include <ctime>
+#include <deque>
+
+#include <QString>
 #include <boost/signals2.hpp>
 
-#include "memedar/utils/storage.hpp"
+#include "memedar/model/deck/deck.hpp"
+#include "memedar/model/task/task.hpp"
+#include "memedar/model/task/taskbook.hpp"
+#include "memedar/model/service/service.hpp"
 
-#include "memedar/model/deck_service.hpp"
-
+#include "memedar/view/error_delegate.hpp"
 #include "memedar/view/lobby.hpp"
+
+#include "memedar/presenter/presenter.hpp"
 #include "memedar/presenter/lobby_presenter.hpp"
+#include "memedar/presenter/controller.hpp"
 
 
 using md::lobby_presenter;
 
-lobby_presenter::lobby_presenter(model::deck_service& deck_service,
-                                 view::lobby& lobby)
-	: m_deck_service {deck_service}
-	, m_lobby        {lobby}
+lobby_presenter::lobby_presenter(md::controller& controller,
+                                 md::model::service& service,
+                                 md::view::error_delegate& error_delegate,
+                                 md::view::lobby& lobby)
+	: m_controller     {controller}
+	, m_service        {service}
+	, m_error_delegate {error_delegate}
+	, m_lobby          {lobby}
 {
-	m_lobby.go_to_lesson.connect([this](std::int64_t id)
-	                             { go_to_lesson(id); });
-
-	m_lobby.go_to_designer.connect([this](const md::model::deck::deck& deck)
-	                               { go_to_designer(deck); });
+	auto lesson   {[this](model::deck::deck& deck) { m_controller.run_lesson(deck); }};
+	auto add_card {[this](model::deck::deck& deck) { m_controller.add_card(deck); }};
+	auto upd_deck {[this](model::deck::deck& deck) { m_controller.update_deck(deck); }};
+	auto del_deck {[this](model::deck::deck& deck) { delete_deck(deck); }};
+	
+	add_connect(m_lobby.call_lesson.connect(lesson),
+	            m_lobby.add_card.connect(add_card),
+	            m_lobby.update_deck.connect(upd_deck),
+	            m_lobby.delete_deck.connect(del_deck));
+	
+	run();
 }
 
 void lobby_presenter::run()
 {
-	m_lobby.show(m_deck_service);
+	m_lobby.show(m_service.get_decks());
+}
+
+void lobby_presenter::delete_deck(model::deck::deck& deck)
+{
+	try {
+		m_service.delete_deck(deck);
+		run();
+	}
+	catch (std::system_error& e) {
+		m_error_delegate.show_error(e);
+	}
 }

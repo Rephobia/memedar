@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
+ * Copyright (C) 2019 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -19,16 +19,28 @@
  */
 
 
-#ifndef MEMEDAR_UTILS_CONSTANTS_HPP
-#define MEMEDAR_UTILS_CONSTANTS_HPP
+#ifndef MEMEDAR_MODEL_DAL_SQLITE_DECK_GENERATOR_HPP
+#define MEMEDAR_MODEL_DAL_SQLITE_DECK_GENERATOR_HPP
 
 
-namespace md::utils::constants {
-
-	inline constexpr unsigned int PTC_100 {100};
-	inline constexpr unsigned int PTC_200 {200};
-
+namespace md::model::dal::sqlite::adapter {
+	class connector;
+}
+namespace md::model::dal::sqlite {
+	class deck_generator;
 }
 
 
-#endif // MEMEDAR_UTILS_CONSTANTS_HPP
+class md::model::dal::sqlite::deck_generator : public md::model::dal::deck_generator
+{
+public:
+	explicit deck_generator(md::model::dal::sqlite::adapter::connector& connector);
+	
+	std::optional<md::model::deck::deck> get_deck() override;
+protected:
+	md::model::dal::sqlite::adapter::connector& m_conn;
+	md::model::dal::sqlite::deck_index m_ind;
+};
+
+
+#endif // MEMEDAR_MODEL_DAL_SQLITE_DECK_GENERATOR_HPP

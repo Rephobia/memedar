@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
+ * Copyright (C) 2018-2019 Roman Erdyakov (Linhurdos) <teremdev@gmail.com>
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -23,53 +23,76 @@
 #define MEMEDAR_MODEL_DECK_DECK_HPP
 
 
+#include <QString>
+
 #include "memedar/model/identity.hpp"
-#include "memedar/model/deck/info.hpp"
-#include "memedar/model/deck/interval.hpp"
-#include "memedar/model/deck/accountant.hpp"
+#include "memedar/model/deck/time.hpp"
+#include "memedar/model/deck/gap.hpp"
 #include "memedar/model/deck/limit.hpp"
+#include "memedar/model/deck/accountant.hpp"
+#include "memedar/model/deck/storage.hpp"
 
-
-namespace md::utils {
-	template<class T>
-	class storage;
-}
 
 namespace md::model::card {
 	class card;
 }
 
 namespace md::model::deck {
+	class deck_value;
 	class deck;
 }
 
 
-class md::model::deck::deck : public md::model::identity
-                            , public md::model::deck::info
-                            , public md::model::deck::limit
-                            , public md::model::deck::interval
-                            , public md::utils::storage<md::model::card::card>
+class md::model::deck::deck_value : public md::model::deck::time
+                                  , public md::model::deck::limit
+                                  , public md::model::deck::gaps
 {
 public:
-	explicit deck(md::model::deck::info&& info);
+	explicit deck_value(QString&& name);
+	
+	deck_value(QString&& name,
+	           md::model::deck::time time,
+	           md::model::deck::limit limit,
+	           md::model::deck::gaps gaps);
+	
+	explicit deck_value(md::model::deck::deck_value&& other);
+	deck_value(const md::model::deck::deck_value& other) = delete;
 
+	md::model::deck::deck_value& operator=(md::model::deck::deck_value&& other);
+	md::model::deck::deck_value& operator=(const md::model::deck::deck_value& other) = delete;
+
+	const QString& name() const;
+	QString& name();
+	void change_name(QString&& name);
+protected:
+	QString m_name;
+};
+
+
+class md::model::deck::deck : public md::model::identity
+                            , public md::model::deck::deck_value
+                            , public md::model::deck::storage
+{
+public:
 	deck(md::model::identity id,
-	     md::model::deck::info&& info,
-	     md::model::deck::limit limit,
-	     md::model::deck::interval interval,
+	     md::model::deck::deck_value&& deck_value);
+	
+	deck(md::model::identity id,
+	     md::model::deck::deck_value&& deck_value,
 	     md::model::deck::accountant&& accountant);
-
+	
 	std::int64_t noob_cards() const;
 	std::int64_t ready_cards() const;
 	std::int64_t delayed_cards() const;
 	std::int64_t total_cards() const;
 
 	void process_card(md::model::card::card& card);
+
+	md::utils::storage<std::shared_ptr<md::model::card::card>>& cards();
+
 	void add_card(md::model::card::card&& card);
 protected:
-	md::model::deck::accountant m_accountant;
-private:
-	using storage::add;
+	md::model::deck::accountant m_accountant {};
 };
 
 

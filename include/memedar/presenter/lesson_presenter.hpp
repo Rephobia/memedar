@@ -19,58 +19,59 @@
  */
 
 
-#ifndef LESSON_PRESENTER_HPP
-#define LESSON_PRESENTER_HPP
+#ifndef MEMEDAR_LESSON_PRESENTER_HPP
+#define MEMEDAR_LESSON_PRESENTER_HPP
 
 
 class QString;
 
+namespace md::model::deck {
+	class deck;
+}
+
 namespace md::model::task {
-	class task_book;
+	class taskbook;
 }
 
 namespace md::model {
-	class deck_service;
-	class task_service;
+	class service;
 }
 
 namespace md::view {
 	class error_delegate;
-}
-
-namespace md::view {
 	class lesson;
 }
 
 namespace md {
+	class presenter;
 	class lesson_presenter;
 
 }
 
-class md::lesson_presenter
+
+class md::lesson_presenter : public md::presenter
 {
 public:
-	lesson_presenter(md::model::deck_service& deck_service,
-	                 md::model::task_service& task_service,
+	lesson_presenter(md::controller& controller,
+	                 md::model::service& service,
 	                 md::view::error_delegate& error_delegate,
-	                 md::view::lesson& lesson);
+	                 md::view::lesson& lesson,
+	                 md::model::deck::deck& deck);
 
-	void run(std::int64_t deck_id);
-	~lesson_presenter();
+	void run() override;
 protected:
-	void show_answer();
 	void show_answer(const QString& answer);
 	void again();
 	void done(std::time_t gap);
 protected:
-	md::model::deck_service& m_deck_service;
-	md::model::task_service& m_task_service;
+	md::controller& m_controller;
+	md::model::service& m_service;
 	md::view::error_delegate& m_error_delegate;
 	md::view::lesson& m_lesson;
-
-	class body;
-	std::unique_ptr<md::lesson_presenter::body> m_body;
+protected:
+	md::model::deck::deck& m_deck;
+	md::model::task::taskbook& m_taskbook;
 };
 
 
-#endif // LESSON_PRESENTER_HPP
+#endif // MEMEDAR_LESSON_PRESENTER_HPP

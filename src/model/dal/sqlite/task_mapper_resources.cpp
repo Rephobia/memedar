@@ -34,8 +34,8 @@ std::string res::create_table()
 	                 "card_id integer primary key,"
 	                 "deck_id integer,"
 	                 "state integer,"
-	                 "foreign key (card_id) references cards(id),"
-	                 "foreign key (deck_id) references decks(id));"};
+	                 "foreign key (card_id) references cards(id) on delete cascade,"
+	                 "foreign key (deck_id) references decks(id) on delete cascade);"};
 	return cmd;
 }
 
@@ -83,6 +83,19 @@ task_index res::change_state_index()
 	task_index ind {};
 	ind.set_state(1);
 	ind.set_card_id(2);
+	return ind;
+}
+
+std::string res::delete_cmd()
+{
+	std::string cmd {"delete from tasks where tasks.card_id = ?1;"};
+	return cmd;
+}
+
+task_index res::delete_index()
+{
+	task_index ind {};
+	ind.set_card_id(1);
 	return ind;
 }
 

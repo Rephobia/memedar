@@ -18,6 +18,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <functional>
 
 #include "memedar/model/card/type.hpp"
 #include "memedar/model/card/visitor.hpp"
@@ -30,12 +31,10 @@ void noob_t::accept(visitor& v)
 	v.visit(*this);
 }
 
-
 void ready_t::accept(visitor& v)
 {
 	v.visit(*this);
 }
-
 
 void delayed_t::accept(visitor& v)
 {

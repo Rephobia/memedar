@@ -19,8 +19,14 @@
  */
 
 
-#ifndef MEMEDAR_MODEL_TASK_TASK_BOOK_HPP
-#define MEMEDAR_MODEL_TASK_TASK_BOOK_HPP
+#ifndef MEMEDAR_MODEL_TASK_TASKBOOK_HPP
+#define MEMEDAR_MODEL_TASK_TASKBOOK_HPP
+
+
+#include <optional>
+
+
+#include "memedar/utils/storage.hpp"
 
 
 namespace md::utils {
@@ -39,32 +45,37 @@ namespace md::model::deck {
 namespace md::model::task {
 	enum class state : int;
 	class task;
-
-	class add_visitor;
-	class task_book;
+	class taskbook;
 }
 
 
-class md::model::task::task_book : public md::utils::storage<md::model::task::task>
+class md::model::task::taskbook : public md::utils::storage<md::model::task::task>
 {
 public:
-	explicit task_book(md::model::deck::deck& deck);
-	bool add_card(md::model::card::card& card);
-	void add_card(md::model::card::card& card, md::model::task::state state);
+	explicit taskbook(md::model::deck::deck& deck);
+
+	std::optional<md::model::task::task>
+	check_card(std::shared_ptr<md::model::card::card> card,
+	           md::model::task::state state = md::model::task::state::answering);
+	void add_task(md::model::task::task&& task);
+	
+	void delete_task(md::model::card::card& card);
 
 	std::int64_t noob_space() const;
 	std::int64_t ready_space() const;
 	std::int64_t space() const;
 
-	md::model::deck::deck& deck;
-private:
-	friend class md::model::task::add_visitor;
-	using storage::add;
+	md::model::task::task& current_task();
+	md::model::task::task& prev_task();
+	md::model::task::task& next_task();
+
+	void push_back_current();
 protected:
 	std::int64_t m_noob_space;
 	std::int64_t m_ready_space;
+	std::size_t m_current_index;
 };
 
 
 
-#endif // MEMEDAR_MODEL_TASK_TASK_BOOK_HPP
+#endif // MEMEDAR_MODEL_TASK_TASKBOOK_HPP

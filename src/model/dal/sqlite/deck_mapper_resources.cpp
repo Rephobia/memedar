@@ -146,10 +146,23 @@ deck_index res::decrement_daily_index()
 	return ind;
 }
 
+std::string res::update_name_cmd()
+{
+	std::string cmd {"update decks set deck_name = ?1 where id = ?2;"};
+	return cmd;
+}
+
+deck_index res::update_name_index()
+{
+	deck_index ind {};
+	ind.set_name(1);
+	ind.set_id(2);
+	return ind;
+}
+
 std::string res::update_opening_cmd()
 {
 	std::string cmd {"update decks set last_opening = ?1 where id = ?2;"};
-
 	return cmd;
 }
 
@@ -160,8 +173,20 @@ deck_index res::update_opening_index()
 	ind.set_id(2);
 	return ind;
 }
+std::string res::delete_cmd()
+{
+	std::string cmd {"delete from decks where decks.id = ?1;"};
+	return cmd;
+}
 
-std::string res::reset_daily_cmd()
+deck_index res::delete_index()
+{
+	deck_index ind {};
+	ind.set_id(1);
+	return ind;
+}
+
+std::string res::reset_daily_limits_cmd()
 {
 	std::string cmd {"update decks set daily_noob_cards = ?1, "
 	                 "daily_ready_cards = ?2 "
@@ -169,7 +194,7 @@ std::string res::reset_daily_cmd()
 	return cmd;
 }
 
-deck_index res::reset_daily_index()
+deck_index res::reset_daily_limits_index()
 {
 	deck_index ind {};
 	ind.set_daily_noob_cards(1);

@@ -24,21 +24,26 @@
 
 
 namespace md::model::card {
-	class visitor;
+	struct visitor;
 
-	class noob_t;
-	class ready_t;
-	class delayed_t;
+	struct noob_t;
+	struct ready_t;
+	struct delayed_t;
 }
 
-class md::model::card::visitor
-{
-public:
-	virtual void visit(md::model::card::noob_t& ref) = 0;
-	virtual void visit(md::model::card::ready_t& ref) = 0;
-	virtual void visit(md::model::card::delayed_t& ref) = 0;
 
-	virtual ~visitor() = default;
+struct md::model::card::visitor
+{
+	visitor(std::function<void(md::model::card::noob_t&)>&& noob,
+	        std::function<void(md::model::card::ready_t&)>&& ready,
+	        std::function<void(md::model::card::delayed_t&)>&& delayed);
+	void visit(md::model::card::noob_t&);
+	void visit(md::model::card::ready_t&);
+	void visit(md::model::card::delayed_t&);
+protected:
+	std::function<void(md::model::card::noob_t&)> m_noob;
+	std::function<void(md::model::card::ready_t&)> m_ready;
+	std::function<void(md::model::card::delayed_t&)> m_delayed;
 };
 
 
