@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 
+project(memedar LANGUAGES CXX)
+
 set(MEMEDAR_INCLUDE_DIRECTORY "${CMAKE_SOURCE_DIR}/include")
 include(${CMAKE_SOURCE_DIR}/cmake/cppcheck_targets.cmake)
 
