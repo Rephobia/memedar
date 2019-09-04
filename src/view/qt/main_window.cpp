@@ -19,7 +19,6 @@
  */
 
 
-#include <QMainWindow>
 #include <QScrollArea>
 
 #include "memedar/view/qt/main_window.hpp"

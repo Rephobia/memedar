@@ -20,7 +20,6 @@
 
 
 #include <boost/signals2.hpp>
-#include <QMainWindow>
 #include <QApplication>
 
 #include "memedar/view/menu.hpp"

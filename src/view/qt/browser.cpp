@@ -19,13 +19,9 @@
  */
 
 
-#include <ctime>
-#include <memory>
 #include <deque>
 
 #include <boost/signals2.hpp>
-#include <QString>
-#include <QMainWindow>
 #include <QStandardItemModel>
 #include <QStandardItem>
 
