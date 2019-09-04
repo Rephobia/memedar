@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov
+ * Copyright (C) 2018-2019 Roman Erdyakov
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -34,7 +34,7 @@ using md::model::deck::gap;
 using namespace md::utils;
 
 
-TEST_CASE("card interval equal gap value without combo", "[card][combo]")
+TEST_CASE("card interval without combo equals gap value", "[card][combo][interval]")
 {
 	combo combo {combo::WITHOUT_COMBO};
 
@@ -50,7 +50,7 @@ TEST_CASE("card interval equal gap value without combo", "[card][combo]")
 }
 
 
-TEST_CASE("card interval is gaining combo correctly", "[card][combo]")
+TEST_CASE("card interval is gaining combo correctly", "[card][combo][interval]")
 {
 	combo combo {10};
 
