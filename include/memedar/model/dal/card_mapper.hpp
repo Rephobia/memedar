@@ -23,11 +23,18 @@
 #define MEMEDAR_MODEL_DAL_CARD_MAPPER_HPP
 
 
+namespace md::model::side {
+	class side;
+	class side_value;
+}
+
 namespace md::model::card {
+	class card_dto;
 	class card;
 }
 
 namespace md::model::deck {
+	class deck;
 	class deck;
 }
 
@@ -41,10 +48,17 @@ class md::model::dal::card_mapper
 public:
 	virtual void create_table() = 0;
 
-	virtual	void save_card(md::model::deck::deck& deck,
-		               md::model::card::card&& card) = 0;
+	virtual void save_card(md::model::deck::deck& deck,
+	                       md::model::card::card_dto&& new_card) = 0;
+	
 	virtual void load_cards(md::model::deck::deck& deck) = 0;
 
+	virtual void update_side(const md::model::side::side& old_side,
+	                         const md::model::side::side_value& new_side) = 0;
+	
+	virtual void update_card(const md::model::card::card& card, bool typing) = 0;
+	
+	virtual void delete_card(const md::model::card::card& card) = 0;	
 	virtual void update_repeat(md::model::card::card& card, std::time_t repeat) = 0;
 	virtual void reset_combo(md::model::card::card& card) = 0;
 

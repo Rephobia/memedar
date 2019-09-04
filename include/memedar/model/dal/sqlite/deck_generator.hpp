@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov
+ * Copyright (C) 2019 Roman Erdyakov
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -19,27 +19,28 @@
  */
 
 
-#ifndef MEMEDAR_MENU_PRESENTER_HPP
-#define MEMEDAR_MENU_PRESENTER_HPP
+#ifndef MEMEDAR_MODEL_DAL_SQLITE_DECK_GENERATOR_HPP
+#define MEMEDAR_MODEL_DAL_SQLITE_DECK_GENERATOR_HPP
 
 
-namespace md::view {
-	class menu;
+namespace md::model::dal::sqlite::adapter {
+	class connector;
+}
+namespace md::model::dal::sqlite {
+	class deck_generator;
 }
 
-namespace md {
-	class menu_presenter;
-}
 
-
-class md::menu_presenter
+class md::model::dal::sqlite::deck_generator : public md::model::dal::deck_generator
 {
 public:
-	explicit menu_presenter(md::view::menu& menu);
-	boost::signals2::signal<void()> go_to_designer {};
+	explicit deck_generator(md::model::dal::sqlite::adapter::connector& connector);
+	
+	std::optional<md::model::deck::deck> get_deck() override;
 protected:
-	md::view::menu& m_menu;
+	md::model::dal::sqlite::adapter::connector& m_conn;
+	md::model::dal::sqlite::deck_index m_ind;
 };
 
 
-#endif // MEMEDAR_MENU_PRESENTER_HPP
+#endif // MEMEDAR_MODEL_DAL_SQLITE_DECK_GENERATOR_HPP

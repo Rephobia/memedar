@@ -19,45 +19,43 @@
  */
 
 
-#ifndef MEMEDAR_MODEL_CARD_SERVICE_HPP
-#define MEMEDAR_MODEL_CARD_SERVICE_HPP
+#ifndef MEMEDAR_MODEL_DECK_GAP_HPP
+#define MEMEDAR_MODEL_DECK_GAP_HPP
 
-
-namespace md::model::card {
-	class card;
-}
 
 namespace md::model::deck {
-	class deck;
-}
-
-namespace md::model::dal {
-	class transaction;
-	class card_mapper;
-}
-
-namespace md::model {
-	class card_service;
-}
-
-namespace md::view {
-	class error_delegate;
+	class gap;
+	class gaps;
 }
 
 
-class md::model::card_service
+class md::model::deck::gap
 {
 public:
-	card_service(md::view::error_delegate& error_delegate,
-	             md::model::dal::transaction& transaction,
-	             md::model::dal::card_mapper& card_mapper);
+	gap(std::time_t gap_value, int gap_ratio);
 
-	void save_card(md::model::deck::deck& deck, md::model::card::card&& card);
+	std::time_t netto_value() const;
+	std::time_t brutto_value() const;
+	int ratio() const;
 protected:
-	md::view::error_delegate& m_error_delegate;
-	md::model::dal::transaction& m_transaction;
-	md::model::dal::card_mapper& m_card_mapper;
+	std::time_t m_value;
+	int m_ratio;
 };
 
 
-#endif // MEMEDAR_MODEL_CARD_SERVICE_HPP
+class md::model::deck::gaps
+{
+public:
+	gaps();
+	gaps(md::model::deck::gap good_gap,
+	     md::model::deck::gap easy_gap);
+
+	md::model::deck::gap good_gap() const;
+	md::model::deck::gap easy_gap() const;
+protected:
+	md::model::deck::gap m_good_gap;
+	md::model::deck::gap m_easy_gap;
+};
+
+
+#endif // MEMEDAR_MODEL_DECK_GAP_HPP

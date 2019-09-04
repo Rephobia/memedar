@@ -23,33 +23,37 @@
 #define MEMEDAR_LOBBY_PRESENTER_HPP
 
 
-namespace md::model::deck {
-	class deck;
-}
-
 namespace md::model {
-	class deck_service;
+	class service;
 }
-
 
 namespace md::view {
 	class lobby;
+	class error_delegate;
 }
 
 namespace md {
+	class presenter;
 	class lobby_presenter;
+	class controller;
 }
 
-class md::lobby_presenter
+
+class md::lobby_presenter : public md::presenter
 {
 public:
-	lobby_presenter(md::model::deck_service& deck_service,
+	lobby_presenter(md::controller& controller,
+	                md::model::service& service,
+	                md::view::error_delegate& error_delegate,
 	                md::view::lobby& lobby);
-	void run();
-	boost::signals2::signal<void(std::int64_t deck_id)> go_to_lesson {};
-	boost::signals2::signal<void(const md::model::deck::deck& deck)> go_to_designer {};
+	
+	void run() override;
+protected:	
+	void delete_deck(model::deck::deck& deck);
 protected:
-	md::model::deck_service& m_deck_service;
+	md::controller& m_controller;
+	md::model::service& m_service;
+	md::view::error_delegate& m_error_delegate;
 	md::view::lobby& m_lobby;
 };
 

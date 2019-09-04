@@ -39,11 +39,17 @@ namespace md::model::dal::sqlite {
 		std::string decrement_daily_ready_cmd();
 		deck_index decrement_daily_index();
 
+		std::string update_name_cmd();
+		deck_index update_name_index();
+		
+		std::string delete_cmd();
+		deck_index delete_index();
+		
 		std::string update_opening_cmd();
 		deck_index update_opening_index();
 
-		std::string reset_daily_cmd();
-		deck_index reset_daily_index();
+		std::string reset_daily_limits_cmd();
+		deck_index reset_daily_limits_index();
 	}
 }
 

@@ -42,7 +42,7 @@ public:
 
 	void decrement_daily_noob();
 	void decrement_daily_ready();
-	void reset_daily();
+	void reset_daily_limits();
 private:
 	enum : int { DEFAULT_MAX = 100000 };
 

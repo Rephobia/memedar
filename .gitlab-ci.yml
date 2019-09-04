@@ -3,8 +3,13 @@ build (Ubuntu 19.04):
     image: ubuntu:19.04
     before_script:
         - apt-get update
-        - apt-get install -y g++ cmake libsqlite3-dev qt5-default
+        - apt-get install -y g++ cmake git libsqlite3-dev qt5-default
             libboost-signals-dev cppcheck
+        - git clone https://github.com/catchorg/Catch2.git
+        - cd Catch2
+        - cmake -Bbuild -H. -DBUILD_TESTING=OFF
+        - cmake --build build/ --target install
+        - cd ..
     script:
-        - cmake .
-        - cmake --build . -- -j4
+        - cmake -Bbuild -H.
+        - cmake --build build/ -- -j4

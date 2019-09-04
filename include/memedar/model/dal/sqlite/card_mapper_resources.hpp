@@ -39,9 +39,20 @@ namespace md::model::dal::sqlite {
 		side_index insert_side_index();
 
 		std::string select_cmd();
-
 		card_index select_index();
+		
+		std::string delete_side_cmd();
+		side_index delete_side_index();
 
+		std::string delete_card_cmd();
+		card_index delete_card_index();
+		
+		std::string update_side_cmd();
+		side_index update_side_index();
+
+		std::string update_typing_cmd();
+		card_index update_typing_index();
+		
 		std::string update_repeat_cmd();
 		card_index update_repeat_index();
 
@@ -69,25 +80,25 @@ class md::model::dal::sqlite::card_index
 {
 public:
 	int id() const       { return m_id; }
-	void set_id(int ind) {  m_id = ind; }
+	void set_id(int ind) { m_id = ind; }
 
 	int deck_id() const       { return m_deck_id; }
-	void set_deck_id(int ind) {  m_deck_id = ind; }
+	void set_deck_id(int ind) { m_deck_id = ind; }
 
 	int added() const        { return m_added; }
 	int repeat() const       { return m_repeat; }
 	int combo() const        { return m_combo; }
-	void set_added(int ind)  {  m_added = ind; }
-	void set_repeat(int ind) {  m_repeat = ind; }
-	void set_combo(int ind)  {  m_combo = ind; }
+	void set_added(int ind)  { m_added = ind; }
+	void set_repeat(int ind) { m_repeat = ind; }
+	void set_combo(int ind)  { m_combo = ind; }
 
 	int question_id() const       { return m_question_id; }
 	int answer_id() const         { return m_answer_id; }
-	void set_question_id(int ind) {  m_question_id = ind; }
-	void set_answer_id(int ind)   {  m_answer_id = ind; }
+	void set_question_id(int ind) { m_question_id = ind; }
+	void set_answer_id(int ind)   { m_answer_id = ind; }
 
 	int typing() const       { return m_typing; }
-	void set_typing(int ind) {  m_typing = ind; }
+	void set_typing(int ind) { m_typing = ind; }
 
 	md::model::dal::sqlite::side_index question {md::model::dal::sqlite::side_index {}};
 	md::model::dal::sqlite::side_index answer {md::model::dal::sqlite::side_index {}};

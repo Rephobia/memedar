@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov
+ * Copyright (C) 2019 Roman Erdyakov
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -19,15 +19,32 @@
  */
 
 
-#include <boost/signals2.hpp>
+#include <functional>
 
-#include "memedar/presenter/menu_presenter.hpp"
-#include "memedar/view/menu.hpp"
+#include "memedar/model/card/visitor.hpp"
 
-using md::menu_presenter;
 
-menu_presenter::menu_presenter(md::view::menu& menu)
-	: m_menu {menu}
+using namespace  md::model::card;
+
+visitor::visitor(std::function<void(noob_t&)>&& noob,
+                 std::function<void(ready_t&)>&& ready,
+                 std::function<void(delayed_t&)>&& delayed)
+	: m_noob    {std::move(noob)}
+	, m_ready   {std::move(ready)}
+	, m_delayed {std::move(delayed)}
+{ ;}
+
+void visitor::visit(md::model::card::noob_t& ref)
 {
-	m_menu.go_to_designer.connect([this]() { go_to_designer(); });
+	m_noob(ref);
+}
+
+void visitor::visit(md::model::card::ready_t& ref)
+{
+	m_ready(ref);
+}
+
+void visitor::visit(md::model::card::delayed_t& ref)
+{
+	m_delayed(ref);
 }

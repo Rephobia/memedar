@@ -34,6 +34,9 @@ namespace md::model::dal::sqlite {
 		std::string select_cmd();
 		task_index select_index();
 
+		std::string delete_cmd();
+		task_index delete_index();
+		
 		std::string change_state_cmd();
 		task_index change_state_index();
 
@@ -50,9 +53,9 @@ public:
 	int deck_id() const { return m_deck_id; }
 	int state()   const { return m_state; }
 
-	void set_card_id(int ind) {  m_card_id = ind; }
-	void set_deck_id(int ind) {  m_deck_id = ind; }
-	void set_state(int ind)   {  m_state = ind; }
+	void set_card_id(int ind) { m_card_id = ind; }
+	void set_deck_id(int ind) { m_deck_id = ind; }
+	void set_state(int ind)   { m_state = ind; }
 protected:
 	int m_card_id = 0;
 	int m_deck_id = 0;

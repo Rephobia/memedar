@@ -39,12 +39,16 @@ public:
 
 	void create_table() override;
 
-	md::utils::storage<md::model::deck::deck> load_decks() override;
-	void save_deck(md::model::deck::deck& deck) override;
-
+	md::model::deck::deck save_deck(md::model::deck::deck_value&& deck_value) override;
+	std::unique_ptr<md::model::dal::deck_generator> get_generator() override;
+	void update_deck(const md::model::deck::deck& deck,
+	                 const md::model::deck::deck_value& new_deck) override;
+	
+	void delete_deck(md::model::deck::deck& deck) override;
+	
 	void decrement_daily_noob(md::model::deck::deck& deck) override;
 	void decrement_daily_ready(md::model::deck::deck& deck) override;
-	void reset_daily(md::model::deck::deck& deck) override;
+	void reset_daily_limits(md::model::deck::deck& deck) override;
 	void update_last_opening(md::model::deck::deck& deck) override;
 protected:
 	md::model::dal::sqlite::adapter::handle& m_db;

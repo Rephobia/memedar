@@ -21,67 +21,162 @@
 
 #include <ctime>
 #include <boost/signals2.hpp>
+#include <deque>
 
 #include <QString>
 
 #include "memedar/utils/find.hpp"
-#include "memedar/utils/storage.hpp"
 
+#include "memedar/model/side/side.hpp"
+#include "memedar/model/card/card.hpp"
 #include "memedar/model/deck/deck.hpp"
-#include "memedar/model/card_service.hpp"
-#include "memedar/model/deck_service.hpp"
+#include "memedar/model/task/task.hpp"
+#include "memedar/model/task/taskbook.hpp"
+#include "memedar/model/service/service.hpp"
 
 #include "memedar/view/error_delegate.hpp"
 #include "memedar/view/designer.hpp"
+
+#include "memedar/presenter/presenter.hpp"
 #include "memedar/presenter/designer_presenter.hpp"
 
-using md::designer_presenter;
 
+using card_adder = md::designer_presenter::card_adder;
 
-designer_presenter::designer_presenter(model::deck_service& deck_service,
-                                       model::card_service& cards_service,
-                                       view::error_delegate& error_delegate,
-                                       view::designer& designer)
-	: m_deck_service   {deck_service}
-	, m_card_service   {cards_service}
+card_adder::card_adder(model::deck::deck& deck,
+                       model::service& service,
+                       view::error_delegate& error_delegate,
+                       view::designer& designer)
+	: m_deck           {deck}
+	, m_service        {service}
 	, m_error_delegate {error_delegate}
 	, m_designer       {designer}
 {
-	m_designer.add_card.connect([this](std::int64_t id, model::card::card& card)
-	                            { add_card(id, std::move(card)); });
-
-	m_designer.add_deck.connect([this](model::deck::deck& deck)
-	                            { add_deck(std::move(deck)); });
-
-	m_designer.cancel.connect([this]() { cancel(); });
+	auto action {[this](model::card::card_dto& new_card)
+	             { add_card(std::move(new_card)); }};
+	
+	add_connect(m_designer.get_card.connect(action));
+	
+	run();
 }
 
-void designer_presenter::run(const model::deck::deck& deck)
+void card_adder::run()
 {
-	m_designer.show(deck);
+	m_designer.show_card(m_deck);	
 }
 
-void designer_presenter::run()
+void card_adder::add_card(model::card::card_dto&& new_card)
 {
-	m_designer.show();
-}
-
-void designer_presenter::add_card(std::int64_t id, model::card::card&& card)
-{
-	auto deck_it {utils::find_by_id(id, m_deck_service)};
-
-	if (deck_it != m_deck_service.end()) {
-		m_card_service.save_card(*deck_it, std::move(card));
+	try {
+		m_service.save_card(m_deck, std::move(new_card));
 	}
-	else {
-		m_error_delegate.show_error("deck (id: "
-		                           + QString::number(id)
-		                           + ") doesn't exists");
+	catch (std::system_error& e) {
+		m_error_delegate.show_error(e);
 	}
 }
 
-void designer_presenter::add_deck(model::deck::deck&& deck)
+
+using card_updater = md::designer_presenter::card_updater;
+
+card_updater::card_updater(model::deck::deck& deck,
+                           model::card::card& card,
+                           model::service& service,
+                           view::error_delegate& error_delegate,
+                           view::designer& designer)
+	: m_deck           {deck}
+	, m_card           {card}
+	, m_service        {service}
+	, m_error_delegate {error_delegate}
+	, m_designer       {designer}
 {
-	m_deck_service.save_deck(std::move(deck));
-	cancel();
+	auto action {[this](md::model::card::card_dto& new_card)
+	             { update_card(std::move(new_card)); }};
+	
+	add_connect(m_designer.get_card.connect(action));
+	
+	run();
+}
+
+
+void card_updater::run()
+{
+	m_designer.show_card(m_deck, m_card);
+}
+
+void card_updater::update_card(model::card::card_dto&& new_card)
+{
+	try {
+		m_service.update_card(m_deck, m_card, std::move(new_card));
+	}
+	catch (std::system_error& e) {
+		m_error_delegate.show_error(e);
+	}
+}
+
+
+using deck_adder = md::designer_presenter::deck_adder;
+
+deck_adder::deck_adder(model::service& service,
+                       view::error_delegate& error_delegate,
+                       view::designer& designer)
+	: m_service        {service}
+	, m_error_delegate {error_delegate}
+	, m_designer       {designer}
+{
+	auto action {[this](model::deck::deck_value& deck_value)
+	             { add_deck(std::move(deck_value)); }};
+	
+	add_connect(m_designer.get_deck.connect(action));
+	
+	run();
+}
+
+void deck_adder::run()
+{
+	m_designer.show_deck();	
+}
+
+void deck_adder::add_deck(model::deck::deck_value&& deck_value)
+{
+	try {
+		m_service.save_deck(std::move(deck_value));
+		m_designer.cancel();
+	}
+	catch (std::system_error& e) {
+		m_error_delegate.show_error(e);
+	}
+}
+
+
+using deck_updater = md::designer_presenter::deck_updater;
+
+deck_updater::deck_updater(model::deck::deck& deck,
+                           model::service& service,
+                           view::error_delegate& error_delegate,
+                           view::designer& designer)
+	: m_deck           {deck}
+	, m_service        {service}
+	, m_error_delegate {error_delegate}
+	, m_designer       {designer}
+{
+	auto action {[this](model::deck::deck_value& deck_value)
+	             { update_deck(std::move(deck_value)); }};
+	
+	add_connect(m_designer.get_deck.connect(action));
+	run();
+}
+
+void deck_updater::run()
+{
+	m_designer.show_deck(m_deck);
+}
+
+void deck_updater::update_deck(md::model::deck::deck_value&& deck_value)
+{
+	try {
+		m_service.update_deck(m_deck, std::move(deck_value));
+	}
+	catch (std::system_error& e) {
+		m_error_delegate.show_error(e);
+	}	
 }

@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov
+ * Copyright (C) 2018-2019 Roman Erdyakov
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -25,14 +25,15 @@
 
 namespace md::model::card {
 	class card;
+	class card_dto;
 }
 
 namespace md::model::deck {
 	class deck;
 }
+
 namespace md::model {
-	class card_service;
-	class deck_service;
+	class service;
 }
 
 namespace md::view {
@@ -40,29 +41,88 @@ namespace md::view {
 	class designer;
 }
 
-namespace md {
-	class designer_presenter;
+namespace md::designer_presenter {
+	class presenter;
+	
+	class card_adder;
+	class card_updater;
+	
+	class deck_adder;
+	class deck_updater;
 }
 
 
-class md::designer_presenter
+class md::designer_presenter::card_adder : public md::presenter
 {
 public:
-	designer_presenter(md::model::deck_service& deck_service,
-	                   md::model::card_service& card_service,
-	                   md::view::error_delegate& error_delegate,
-	                   md::view::designer& designer);
+	card_adder(md::model::deck::deck& deck,
+	           md::model::service& service,
+	           md::view::error_delegate& error_delegate,
+	           md::view::designer& designer);
 
-	boost::signals2::signal<void()> cancel {};
+	void run() override;
+protected:
+	void add_card(md::model::card::card_dto&& new_card);
+protected:
+	md::model::deck::deck& m_deck;
+	md::model::service& m_service;
+	md::view::error_delegate& m_error_delegate;
+	md::view::designer& m_designer;
+};
 
-	void run(const md::model::deck::deck& deck);
-	void run();
+
+class md::designer_presenter::card_updater : public md::presenter
+{
+public:
+	card_updater(md::model::deck::deck& deck,
+	             md::model::card::card& card,
+	             md::model::service& service,
+	             md::view::error_delegate& error_delegate,
+	             md::view::designer& designer);
+
+	void run() override;
 protected:
-	void add_card(std::int64_t deck_id, md::model::card::card&& card);
-	void add_deck(md::model::deck::deck&& deck);
+	void update_card(md::model::card::card_dto&& new_card);
 protected:
-	md::model::deck_service& m_deck_service;
-	md::model::card_service& m_card_service;
+	md::model::deck::deck& m_deck;
+	md::model::card::card& m_card;
+	md::model::service& m_service;
+	md::view::error_delegate& m_error_delegate;
+	md::view::designer& m_designer;
+};
+
+
+class md::designer_presenter::deck_adder : public md::presenter
+{
+public:
+	deck_adder(md::model::service& service,
+	           md::view::error_delegate& error_delegate,
+	           md::view::designer& designer);
+
+	void run() override;
+protected:
+	void add_deck(md::model::deck::deck_value&& deck_value);
+protected:
+	md::model::service& m_service;
+	md::view::error_delegate& m_error_delegate;
+	md::view::designer& m_designer;
+};
+
+
+class md::designer_presenter::deck_updater : public md::presenter
+{
+public:
+	deck_updater(md::model::deck::deck& deck,
+	             md::model::service& service,
+	             md::view::error_delegate& error_delegate,
+	             md::view::designer& designer);
+
+	void run() override;
+protected:
+	void update_deck(md::model::deck::deck_value&& deck_value);
+protected:
+	md::model::deck::deck& m_deck;
+	md::model::service& m_service;
 	md::view::error_delegate& m_error_delegate;
 	md::view::designer& m_designer;
 };

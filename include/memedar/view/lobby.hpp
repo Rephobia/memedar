@@ -23,6 +23,10 @@
 #define MEMEDAR_VIEW_LOBBY_HPP
 
 
+namespace md::model::deck {
+	class deck;
+}
+
 namespace md::view {
 	class lobby;
 }
@@ -31,10 +35,12 @@ namespace md::view {
 class md::view::lobby
 {
 public:
-	virtual void show(const md::utils::storage<md::model::deck::deck>& decks) = 0;
+	virtual void show(std::deque<md::model::deck::deck>& decks) = 0;
 
-	boost::signals2::signal<void(std::int64_t deck_id)> go_to_lesson {};
-	boost::signals2::signal<void(const md::model::deck::deck& deck)> go_to_designer {};
+	boost::signals2::signal<void(md::model::deck::deck&)> call_lesson {};
+	boost::signals2::signal<void(md::model::deck::deck&)> add_card {};
+	boost::signals2::signal<void(md::model::deck::deck&)> update_deck {};
+	boost::signals2::signal<void(md::model::deck::deck&)> delete_deck {};
 
 	virtual ~lobby() = default;
 };

@@ -19,32 +19,31 @@
  */
 
 
-#ifndef MEMEDAR_MODEL_TASK_ADD_VISITOR_HPP
-#define MEMEDAR_MODEL_TASK_ADD_VISITOR_HPP
+#ifndef MEMEDAR_VIEW_QT_LESSON_PAINTER_HPP
+#define MEMEDAR_VIEW_QT_LESSON_PAINTER_HPP
 
 
-namespace md::model::task {
-	class add_visitor;
+namespace md::view::qt {
+	class lesson;
+	class lesson_painter;
 }
 
-class md::model::task::add_visitor : public md::model::card::visitor
+
+class md::view::qt::lesson_painter : public md::view::qt::ui::box
 {
 public:
-	add_visitor(md::model::task::task_book& task_book,
-	            md::model::card::card& card,
-	            md::model::task::state state);
-
-	void visit(md::model::card::noob_t& ref) override;
-	void visit(md::model::card::ready_t& ref) override;
-	void visit(md::model::card::delayed_t& ref) override;
-
-	bool is_task() const;
+	lesson_painter(const md::model::deck::deck& deck,
+	               md::view::qt::lesson& lesson);
+	void draw(const md::model::task::task& task);
 protected:
-	bool m_task_status;
-	md::model::task::task_book& m_task_book;
-	md::model::card::card& m_card;
-	md::model::task::state m_state;
+	md::view::qt::ui::button* get_designer();
+	void answering_state(const md::model::card::card& card);
+	void marking_state(const md::model::task::task& task);
+	void done_state(const md::model::card::card& card);
+protected:
+	const md::model::deck::deck& m_deck;
+	md::view::qt::lesson& m_lesson;
 };
 
 
-#endif // MEMEDAR_MODEL_TASK_ADD_VISITOR_HPP
+#endif // MEMEDAR_VIEW_QT_LESSON_PAINTER_HPP

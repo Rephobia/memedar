@@ -23,6 +23,14 @@
 #define MEMEDAR_VIEW_LESSON_HPP
 
 
+namespace md::model::task {
+	class task;
+}
+
+namespace md::model::deck {
+	class deck;
+}
+
 namespace md::view {
 	class lesson;
 }
@@ -31,19 +39,21 @@ namespace md::view {
 class md::view::lesson
 {
 public:
+	virtual void show() = 0;
 	virtual void show(const md::model::task::task& task,
 	                  const md::model::deck::deck& deck) = 0;
-
 
 	boost::signals2::signal<void()> prev_task {};
 	boost::signals2::signal<void()> next_task {};
 
-	boost::signals2::signal<void(const md::model::task::task& task)> re_draw {};
-	boost::signals2::signal<void()> answer {};
-	boost::signals2::signal<void(const QString& answer)> answer_text {};
+	boost::signals2::signal<void(const md::model::task::task& task)> redraw {};
+	
+	boost::signals2::signal<void(const QString& answer)> answer {};
 	boost::signals2::signal<void()> again {};
 	boost::signals2::signal<void(std::time_t gap)> done {};
 
+	boost::signals2::signal<void()> call_update_designer {};
+	boost::signals2::signal<void()> call_designer {};
 	virtual ~lesson() = default;
 };
 

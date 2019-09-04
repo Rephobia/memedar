@@ -23,7 +23,11 @@
 #define MEMEDAR_MODEL_DAL_DECK_MAPPER_HPP
 
 
+#include "memedar/model/dal/deck_generator.hpp"
+
+
 namespace md::model::deck {
+	class deck_value;
 	class deck;
 }
 
@@ -37,13 +41,18 @@ class md::model::dal::deck_mapper
 public:
 	virtual void create_table() = 0;
 
-	virtual md::utils::storage<md::model::deck::deck> load_decks() = 0;
-	virtual void save_deck(md::model::deck::deck& deck) = 0;
+	virtual std::unique_ptr<md::model::dal::deck_generator> get_generator() = 0;
+	virtual md::model::deck::deck save_deck(md::model::deck::deck_value&& deck_value) = 0;
 
+	virtual void update_deck(const md::model::deck::deck& deck,
+	                         const md::model::deck::deck_value& new_deck) = 0;
+	
+	virtual void delete_deck(md::model::deck::deck& deck) = 0;
+	
 	virtual	void decrement_daily_noob(md::model::deck::deck& deck) = 0;
 	virtual	void decrement_daily_ready(md::model::deck::deck& deck) = 0;
 	virtual void update_last_opening(md::model::deck::deck& deck) = 0;
-	virtual void reset_daily(md::model::deck::deck& deck) = 0;
+	virtual void reset_daily_limits(md::model::deck::deck& deck) = 0;
 
 	virtual ~deck_mapper() = default;
 };

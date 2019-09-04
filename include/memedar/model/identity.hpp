@@ -23,6 +23,9 @@
 #define MEMEDAR_MODEL_IDENTITY_HPP
 
 
+#include <cstdint>
+
+
 namespace md::model {
 	class identity;
 }
@@ -31,9 +34,20 @@ namespace md::model {
 class md::model::identity
 {
 public:
-	explicit identity(std::int64_t id = 0) : m_id {id} { ;}
-	std::int64_t id() const { return m_id; }
-protected:
+	explicit identity(std::int64_t id)
+		: m_id {id}
+	{ ;}
+	
+	std::int64_t id() const
+	{
+		return m_id;
+	}
+	
+	bool operator<(const md::model::identity& other) const
+	{
+		return m_id < other.m_id;
+	}
+private:
 	std::int64_t m_id;
 };
 

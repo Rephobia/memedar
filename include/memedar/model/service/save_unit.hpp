@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
 
- * Copyright (C) 2018 Roman Erdyakov
+ * Copyright (C) 2019 Roman Erdyakov
 
  * This file is part of Memedar (flashcard system)
  * Memedar is free software: you can redistribute it and/or modify
@@ -19,52 +19,40 @@
  */
 
 
-#ifndef MEMEDAR_MODEL_TASK_TASK_BOOK_HPP
-#define MEMEDAR_MODEL_TASK_TASK_BOOK_HPP
+#ifndef MEMEDAR_MODEL_SAVE_UNIT_HPP
+#define MEMEDAR_MODEL_SAVE_UNIT_HPP
 
 
-namespace md::utils {
-	template<class T>
-	class storage;
-}
+#include "memedar/model/service/deck_to_taskbook.hpp"
+
 
 namespace md::model::card {
+	class card_dto;
 	class card;
 }
 
 namespace md::model::deck {
+	class deck_value;
 	class deck;
 }
 
-namespace md::model::task {
-	enum class state : int;
-	class task;
-
-	class add_visitor;
-	class task_book;
+namespace md::model {
+	class save_unit;
 }
 
 
-class md::model::task::task_book : public md::utils::storage<md::model::task::task>
+class md::model::save_unit : private virtual md::model::deck_to_taskbook
 {
 public:
-	explicit task_book(md::model::deck::deck& deck);
-	bool add_card(md::model::card::card& card);
-	void add_card(md::model::card::card& card, md::model::task::state state);
-
-	std::int64_t noob_space() const;
-	std::int64_t ready_space() const;
-	std::int64_t space() const;
-
-	md::model::deck::deck& deck;
+	explicit save_unit(md::model::dal::mapper& mapper);
+	
+	void save_card(md::model::deck::deck& deck,
+	               md::model::card::card_dto&& new_card);
+	
+	void save_deck(md::model::deck::deck_value&& deck_value);
 private:
-	friend class md::model::task::add_visitor;
-	using storage::add;
-protected:
-	std::int64_t m_noob_space;
-	std::int64_t m_ready_space;
+	md::model::dal::mapper& m_mapper;
 };
 
 
-
-#endif // MEMEDAR_MODEL_TASK_TASK_BOOK_HPP
+#endif // MEMEDAR_MODEL_SAVE_UNIT_HPP
