@@ -67,7 +67,7 @@ protected:
 	void add_card(shared_card card);
 	md::utils::storage<shared_card>& cards();
 private:
-	md::utils::storage_with_add<shared_card> m_storage {};
+	md::utils::editable_storage<shared_card> m_storage {};
 };
 
 
