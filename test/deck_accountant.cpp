@@ -18,15 +18,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 #include <ctime>
 
 #include <catch2/catch.hpp>
-#include <QString>
 
 #include "memedar/utils/time.hpp"
 #include "memedar/model/side/side.hpp"
 #include "memedar/model/card/card.hpp"
 #include "memedar/model/deck/accountant.hpp"
+
 
 using namespace md::utils;
 using md::model::identity;
@@ -35,6 +36,7 @@ using md::model::side::side_value;
 using md::model::side::side;
 using md::model::card::card_value;
 using md::model::card::card;
+
 
 TEST_CASE("result of accountant counts if db didn't load", "[deck][accountant]")
 {	
@@ -56,7 +58,6 @@ TEST_CASE("result of accountant counts if db didn't load", "[deck][accountant]")
 
 TEST_CASE("accountant processes card", "[deck][accountant]")
 {
-
 	side_value question_value {"q"};
 	side_value answer_value {"a"};
 	
