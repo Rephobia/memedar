@@ -23,7 +23,6 @@
 
 #include <QString>
 #include <QLabel>
-#include <QMainWindow>
 
 
 #include "memedar/model/side/side.hpp"

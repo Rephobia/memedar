@@ -25,8 +25,6 @@
 
 
 #include <boost/signals2.hpp>
-#include <QString>
-#include <QMainWindow>
 #include <QLabel>
 
 

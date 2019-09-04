@@ -23,6 +23,9 @@
 #define MEMEDAR_VIEW_QT_MAIN_WINDOW_HPP
 
 
+#include <QMainWindow>
+
+
 class QScrollArea;
 
 namespace md::view::qt {

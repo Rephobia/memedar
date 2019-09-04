@@ -20,12 +20,10 @@
 
 
 #include <boost/signals2.hpp>
-#include <QString>
 #include <QLabel>
 #include <QLineEdit>
 #include <QTextEdit>
 #include <QCheckBox>
-#include <QMainWindow>
 
 
 #include "memedar/model/side/side.hpp"
