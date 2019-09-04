@@ -42,12 +42,23 @@ void deck_to_taskbook_detail::add_deck(deck::deck&& deck)
 
 void deck_to_taskbook_detail::delete_deck(deck::deck& deck)
 {
-	auto deck_it = utils::find_by_id(deck.id(), m_decks);
+	auto deck_it {utils::find_by_id(deck.id(), m_decks)};
 	if (deck_it != m_decks.end()) {
 		m_tasks.erase(deck);
 		m_decks.erase(deck_it);
 	}	
 }
+
+void deck_to_taskbook_detail::delete_card(deck::deck& deck, card::card& card)
+{
+	decltype(auto) taskbook {get_taskbook(deck)};
+
+	if (taskbook != m_tasks.end()) {
+		taskbook->second.delete_task(card);
+	}
+	deck.delete_card(card);
+}
+
 
 std::deque<md::model::deck::deck>& deck_to_taskbook_detail::get_decks()
 {
@@ -165,6 +176,11 @@ void deck_to_taskbook::add_deck(deck::deck&& deck)
 void deck_to_taskbook::delete_deck(deck::deck& deck)
 {
 	m_storage.delete_deck(deck);
+}
+
+void deck_to_taskbook::delete_card(md::model::deck::deck& deck, md::model::card::card& card)
+{
+	m_storage.delete_card(deck, card);
 }
 
 md::model::task::taskbook deck_to_taskbook::make_taskbook(deck::deck& deck)

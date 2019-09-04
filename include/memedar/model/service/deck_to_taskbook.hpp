@@ -42,7 +42,8 @@ class md::model::deck_to_taskbook_detail
 public:
 	void add_deck(md::model::deck::deck&& deck);
 	void delete_deck(md::model::deck::deck& deck);
-
+	void delete_card(md::model::deck::deck& deck, md::model::card::card& card);
+	
 	using iterator = std::map<md::model::identity,
 	                          md::model::task::taskbook>::iterator;
 	iterator begin();
@@ -69,6 +70,8 @@ public:
 protected:
 	void add_deck(md::model::deck::deck&& deck);
 	void delete_deck(md::model::deck::deck& deck);
+	void delete_card(md::model::deck::deck& deck, md::model::card::card& card);
+	
 	md::model::task::taskbook make_taskbook(md::model::deck::deck& deck);
 	std::optional<md::model::task::task*> get_task(md::model::deck::deck& deck,
 	                                               md::model::card::card& card);

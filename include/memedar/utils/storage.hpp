@@ -30,7 +30,7 @@ namespace md::utils {
 	class storage;
 
 	template<class T>
-	class storage_with_add;
+	class editable_storage;
 }
 
 
@@ -109,16 +109,20 @@ protected:
 	{
 		m_container.push_back(std::forward<T>(value));
 	}
+	void erase(iterator it)
+	{
+		m_container.erase(it);
+	}
 private:
 	container m_container {};
 };
 
 
 template<class T>
-class md::utils::storage_with_add : public md::utils::storage<T>
+class md::utils::editable_storage : public md::utils::storage<T>
 {
 public:
-	storage_with_add() = default;
+	editable_storage() = default;
 	
 	void add(const T& value)
 	{
@@ -128,6 +132,10 @@ public:
 	void add(T&& value)
 	{
 		storage<T>::add(std::forward<T>(value));
+	}
+	void erase(typename md::utils::storage<T>::iterator it)
+	{
+		storage<T>::erase(it);
 	}
 };
 

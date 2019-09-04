@@ -49,6 +49,8 @@ public:
 	
 	void run() override;
 protected:
+	void delete_card(model::deck::deck& deck, model::card::card& card);
+protected:
 	md::controller& m_controller;
 	md::model::service& m_service;
 	md::view::error_delegate& m_error_delegate;

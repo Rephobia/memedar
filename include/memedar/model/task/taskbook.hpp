@@ -58,6 +58,8 @@ public:
 	check_card(std::shared_ptr<md::model::card::card> card,
 	           md::model::task::state state = md::model::task::state::answering);
 	void add_task(md::model::task::task&& task);
+	
+	void delete_task(md::model::card::card& card);
 
 	std::int64_t noob_space() const;
 	std::int64_t ready_space() const;

@@ -76,6 +76,17 @@ void taskbook::add_task(task&& task)
 	storage::add(std::move(task));
 }
 
+void taskbook::delete_task(md::model::card::card& card)
+{
+	auto task_it {utils::find_by_id(card.id(), *this)};
+	if (task_it != storage::end()) {
+		storage::erase(task_it);
+	}
+	if (m_current_index == storage::size()) {
+		--m_current_index;
+	}
+}
+
 std::int64_t taskbook::noob_space() const
 {
 	return m_noob_space;
