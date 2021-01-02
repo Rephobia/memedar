@@ -9,7 +9,5 @@ Memedar is flashcard system like Anki
 - **Qt5**
 
 ## Build
-     
-    cd memedar/
 	cmake -Bbuild -H. && cmake --build build/
 	
